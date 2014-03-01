@@ -220,17 +220,21 @@ public:
       mainly for compatibility with @p convert for MSExperiments. To use it in
       a meaningful way, apply one of the sorting methods to @p input_map
       beforehand.)
+      
+      If you want to @p keep_uids, make sure the Feature UIDs are valid.
 
       @param input_map_index The index of the input map.
       @param input_map The container to be converted.
       @param output_map The resulting ConsensusMap.
       @param n The maximum number of elements to be copied.
+      @param keep_uids Whether to keep the Feature UIDs in the resulting ConsensusFeatures or not. Needs to be true for referencing in use with e.g. mzq.
     */
     template <typename FeatureT>
     static void convert(UInt64 const input_map_index,
                         FeatureMap<FeatureT> const & input_map,
                         ConsensusMap & output_map,
-                        Size n = -1)
+                        Size n = -1, 
+                        bool keep_uids = false)
     {
       if (n > input_map.size())
       {
@@ -243,10 +247,21 @@ public:
       // An arguable design decision, see above.
       output_map.setUniqueId(input_map.getUniqueId());
 
-      for (UInt64 element_index = 0; element_index < n; ++element_index)
+      if (keep_uids) //if else only once - code copy of the loop
       {
-        output_map.push_back(ConsensusFeature(input_map_index, input_map[element_index]));
+        for (UInt64 element_index = 0; element_index < n; ++element_index)
+        { //make sure UniqueIDs are valid - this is const context, so no ensureUniqueId(); here
+          output_map.push_back(ConsensusFeature(input_map_index, input_map[element_index], input_map[element_index].getUniqueId()));
+        }      
       }
+      else 
+      {
+        for (UInt64 element_index = 0; element_index < n; ++element_index)
+        {
+          output_map.push_back(ConsensusFeature(input_map_index, input_map[element_index]));
+        }
+      }
+      
       output_map.getFileDescriptions()[input_map_index].size = (Size) input_map.size();
       output_map.setProteinIdentifications(input_map.getProteinIdentifications());
       output_map.setUnassignedPeptideIdentifications(input_map.getUnassignedPeptideIdentifications());

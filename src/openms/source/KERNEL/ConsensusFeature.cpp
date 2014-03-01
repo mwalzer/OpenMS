@@ -67,6 +67,12 @@ namespace OpenMS
   {
     insert(FeatureHandle(map_index, element));
   }
+  
+  ConsensusFeature::ConsensusFeature(UInt64 map_index, const BaseFeature & element, UInt64 element_index) :
+    BaseFeature(element), handles_(), ratios_()
+  {
+    insert(FeatureHandle(map_index, element, element_index));
+  }
 
   ConsensusFeature & ConsensusFeature::operator=(const ConsensusFeature & rhs)
   {

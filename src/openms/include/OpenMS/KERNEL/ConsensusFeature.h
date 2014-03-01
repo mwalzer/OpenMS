@@ -170,6 +170,14 @@ public:
       to the values of @p element as well.
     */
     ConsensusFeature(UInt64 map_index, const BaseFeature & element);
+    
+    /**
+      @brief Constructor with map index and element index for a singleton consensus feature.
+
+      Sets the consensus feature position, intensity, charge, quality, and peptide identifications
+      to the values of @p element as well.
+    */
+    ConsensusFeature(UInt64 map_index, const BaseFeature & element, UInt64 element_index);
 
     /// Assignment operator
     ConsensusFeature & operator=(const ConsensusFeature & rhs);

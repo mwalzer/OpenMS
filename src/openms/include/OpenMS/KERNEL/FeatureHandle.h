@@ -78,6 +78,19 @@ public:
     /// Constructor from map index and basic feature
     FeatureHandle(UInt64 map_index, const BaseFeature & feature);
 
+    /// Constructor from map index, element index and basic feature 
+    FeatureHandle(UInt64 map_index, const BaseFeature & feature, UInt64 element_index) :
+      Peak2D(feature),
+      UniqueIdInterface(feature),
+      map_index_(map_index),
+      charge_(feature.getCharge()),
+      width_(feature.getWidth())
+    {      
+      setUniqueId(element_index);
+    }
+
+
+
     /// Copy constructor
     FeatureHandle(const FeatureHandle & rhs);
 
