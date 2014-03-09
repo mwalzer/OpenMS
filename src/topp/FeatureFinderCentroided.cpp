@@ -185,6 +185,9 @@ protected:
     PeakMap exp;
     f.load(in, exp);
     exp.updateRanges();
+    
+    //essential for mzq processing
+    exp.setUniqueId();
 
     //load seeds
     FeatureMap<> seeds;
@@ -206,6 +209,8 @@ protected:
 
     // Apply the feature finder
     ff.run(FeatureFinderAlgorithmPicked<Peak1D, Feature>::getProductName(), exp, features, feafi_param, seeds);
+    
+    //essential for XML write out
     features.applyMemberFunction(&UniqueIdInterface::setUniqueId);
 
     // DEBUG
@@ -258,12 +263,17 @@ protected:
     
     if (!out_mzq.trim().empty())
     {
-      MSQuantifications msq(features, exp.getExperimentalSettings(), exp[0].getDataProcessing() );
-      msq.assignUIDs();
+      MSQuantifications msq;
+      MSQuantifications::QUANT_TYPES quant_type = MSQuantifications::LABELFREE;
+      msq.setAnalysisSummaryQuantType(quant_type);    //add analysis_summary_
+
+      std::pair< std::vector<UInt64>,UInt64 > reg_res = msq.registerExperiment(exp);
+      msq.addFeatureMap(features, reg_res.second);      
+      
       MzQuantMLFile file;
       file.store(out_mzq, msq);
     }
-    
+     
     return EXECUTION_OK;
   }
 

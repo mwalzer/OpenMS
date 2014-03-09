@@ -113,9 +113,11 @@ protected:
       /// Looks up a child CV term of @p parent_accession with the name @p name. If no such term is found, an empty term is returned.
       ControlledVocabulary::CVTerm getChildWithName_(const String & parent_accession, const String & name) const;
 
+      /// Helper method that writes a featuremaps
+      void writeFeatureMap_(String & feature_tag, const FeatureMap<> & fm, const UInt64 & ar, UInt indentation_level);
 
-      /// Helper method that writes the featuremaps
-      void writeFeature_(String & feature_xml, const std::vector<FeatureMap<> >& fm, UInt indentation_level);
+      /// Helper method that writes a featuremaps
+      void writeConsensusMap_(String & consensus_tag, const ConsensusMap & cm, UInt indentation_level);
 
       /// Helper method that writes a source file
       //void writeSourceFile_(std::ostream& os, const String& id, const SourceFile& software);
@@ -128,6 +130,7 @@ private:
 
       std::map<String, std::vector<ExperimentalSettings> > current_files_;           // 1.rawfilesgroup_ref 2.inputfiles for each assay as ExperimentalSettings
       String current_id_;
+      String current_parent_id_;
       String current_cf_id_;
       Size current_count_;
 

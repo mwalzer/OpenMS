@@ -39,8 +39,9 @@
 #include <OpenMS/FORMAT/ConsensusXMLFile.h>
 #include <OpenMS/FORMAT/FileHandler.h>
 #include <OpenMS/FORMAT/FileTypes.h>
-#include <OpenMS/FORMAT/MzQuantMLFile.h>
-#include <OpenMS/METADATA/MSQuantifications.h>
+
+//~ #include <OpenMS/FORMAT/MzQuantMLFile.h>
+//~ #include <OpenMS/METADATA/MSQuantifications.h>
 
 #include <OpenMS/ANALYSIS/ID/IDMapper.h>
 #include <OpenMS/APPLICATIONS/TOPPBase.h>
@@ -230,7 +231,7 @@ protected:
     //----------------------------------------------------------------
     // MzQuantML
     //----------------------------------------------------------------
-    if (in_type == FileTypes::MZQUANTML)
+/*     if (in_type == FileTypes::MZQUANTML)
     {
       // LOG_DEBUG << "Processing mzq ..." << endl;
       MSQuantifications msq;
@@ -250,7 +251,7 @@ protected:
       //~ writeDebug_(msq.getAnalysisSummary().quant_type_,3);
       file.store(out, msq);
     }
-
+ */
     // LOG_DEBUG << "Done." << endl;
     return EXECUTION_OK;
   }

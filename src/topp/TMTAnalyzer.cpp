@@ -39,8 +39,8 @@
 #include <OpenMS/FORMAT/ConsensusXMLFile.h>
 #include <OpenMS/FORMAT/MzMLFile.h>
 #include <OpenMS/SYSTEM/File.h>
-#include <OpenMS/FORMAT/MzQuantMLFile.h>
-#include <OpenMS/METADATA/MSQuantifications.h>
+//~ #include <OpenMS/FORMAT/MzQuantMLFile.h>
+//~ #include <OpenMS/METADATA/MSQuantifications.h>
 
 using namespace OpenMS;
 using namespace std;
@@ -204,7 +204,7 @@ protected:
     ConsensusXMLFile cm_file;
     cm_file.store(out, consensus_map_quant);
 
-    if (!out_mzq.trim().empty())
+/*     if (!out_mzq.trim().empty())
     {
       MSQuantifications msq;
       std::vector<std::vector<std::pair<String, DoubleReal> > > labels;
@@ -223,7 +223,7 @@ protected:
       //~ add AuditCollection - no such concept in TOPPTools yet
       MzQuantMLFile file;
       file.store(out_mzq, msq);
-    }
+    } */
 
     std::cout << itraq_quant.getStats();
     if (!out_stats.trim().empty())

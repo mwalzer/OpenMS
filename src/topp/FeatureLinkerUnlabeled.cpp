@@ -35,6 +35,9 @@
 
 #include "FeatureLinkerBase.cpp"
 
+//~ #include <OpenMS/FORMAT/MzQuantMLFile.h>
+//~ #include <OpenMS/METADATA/MSQuantifications.h>
+
 using namespace OpenMS;
 using namespace std;
 
@@ -137,7 +140,11 @@ protected:
         return ILLEGAL_PARAMETERS;
       }
     }
-
+    
+/*     MSQuantifications msq;
+    MSQuantifications::QUANT_TYPES quant_type = MSQuantifications::LABELFREE;
+    msq.setAnalysisSummaryQuantType(quant_type);    //add analysis_summary_
+ */
     //-------------------------------------------------------------
     // set up algorithm
     //-------------------------------------------------------------
@@ -194,7 +201,9 @@ protected:
         f_fxml_tmp.getOptions().setLoadConvexHull(false);
         f_fxml_tmp.getOptions().setLoadSubordinates(false);
         f_fxml_tmp.load(ins[i], tmp_map);
-
+        tmp_map.ensureUniqueId(); //this UID will go in the mzq! TODO @mths : how to get this when registering the feature in the mzq?
+        //~ msq.addFeatureMap(tmp_map);
+        
         if (i != reference_index)
         {
           algorithm->addToGroup(i, tmp_map);
@@ -266,6 +275,12 @@ protected:
       // -> the same ordering as FeatureGroupingAlgorithmUnlabeled::group applies!
       out_map.sortByMZ();
       out_map.updateRanges();
+      
+      //~ msq.registerExperiment(exp, labels);       //add assays
+      //~ msq.assignUIDs();      
+      //~ TODO for ratios?
+
+      
     }
     else
     {
@@ -303,6 +318,8 @@ protected:
     // annotate output with data processing info
     addDataProcessing_(out_map, getProcessingInfo_(DataProcessing::FEATURE_GROUPING));
 
+    //~ msq.addConsensusMap(out_map); 
+    
     // write output
     ConsensusXMLFile().store(out, out_map);
 
@@ -321,6 +338,9 @@ protected:
     LOG_INFO << "  total:      " << setw(6) << out_map.size() << endl;
 
     delete algorithm;
+    
+    //~ MzQuantMLFile msqfile;
+    //~ msqfile.store("/tmp/ul_test.msq", msq);
 
     return EXECUTION_OK;
   }

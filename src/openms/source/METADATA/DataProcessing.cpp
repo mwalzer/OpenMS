@@ -65,6 +65,7 @@ namespace OpenMS
 
   DataProcessing::DataProcessing() :
     MetaInfoInterface(),
+    UniqueIdInterface(),
     software_(),
     processing_actions_(),
     completion_time_()
@@ -74,6 +75,7 @@ namespace OpenMS
 
   DataProcessing::DataProcessing(const DataProcessing & rhs) :
     MetaInfoInterface(rhs),
+    UniqueIdInterface(rhs),
     software_(rhs.software_),
     processing_actions_(rhs.processing_actions_),
     completion_time_(rhs.completion_time_)
@@ -92,6 +94,7 @@ namespace OpenMS
       return *this;
 
     MetaInfoInterface::operator=(rhs);
+    UniqueIdInterface::operator=(rhs);
     software_ = rhs.software_;
     processing_actions_ = rhs.processing_actions_;
     completion_time_ = rhs.completion_time_;
@@ -105,6 +108,7 @@ namespace OpenMS
            processing_actions_ == rhs.processing_actions_ &&
            completion_time_ == rhs.completion_time_ &&
            MetaInfoInterface::operator==(rhs);
+           // UniqueIdInterface omitted
   }
 
   bool DataProcessing::operator!=(const DataProcessing & rhs) const

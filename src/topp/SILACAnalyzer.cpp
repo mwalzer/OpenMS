@@ -47,8 +47,8 @@
 #include <OpenMS/MATH/STATISTICS/LinearRegression.h>
 #include <OpenMS/KERNEL/RangeUtils.h>
 #include <OpenMS/KERNEL/ChromatogramTools.h>
-#include <OpenMS/FORMAT/MzQuantMLFile.h>
-#include <OpenMS/METADATA/MSQuantifications.h>
+//~ #include <OpenMS/FORMAT/MzQuantMLFile.h>
+//~ #include <OpenMS/METADATA/MSQuantifications.h>
 
 #include <OpenMS/FILTERING/DATAREDUCTION/SILACAnalyzer.h>
 #include <OpenMS/FILTERING/DATAREDUCTION/SILACFilter.h>
@@ -423,7 +423,7 @@ public:
   {
     // data to be passed through the algorithm
     vector<vector<SILACPattern> > data;
-    MSQuantifications msq;
+    //~ MSQuantifications msq;
     vector<Clustering *> cluster_data;
 
     // 
@@ -491,7 +491,7 @@ public:
     // sort according to RT and MZ
     exp.sortSpectra();
 
-    if (out_mzq != "")
+/*     if (out_mzq != "")
     {
       vector<vector<String> > SILAClabels = analyzer.getSILAClabels(); // list of SILAC labels, e.g. selected_labels="[Lys4,Arg6][Lys8,Arg10]" => SILAClabels[0][1]="Arg6"
 
@@ -512,7 +512,7 @@ public:
     }
     MSQuantifications::QUANT_TYPES quant_type = MSQuantifications::MS1LABEL;
     msq.setAnalysisSummaryQuantType(quant_type);    //add analysis_summary_
-
+ */
     //--------------------------------------------------
     // estimate peak width
     //--------------------------------------------------
@@ -657,7 +657,7 @@ public:
       addDataProcessing_(map, getProcessingInfo_(actions));
 
       analyzer.writeConsensus(out, map);
-      if (out_mzq != "")
+/*       if (out_mzq != "")
       {
         LOG_DEBUG << "Generating output mzQuantML file..." << endl;
         ConsensusMap numap(map);
@@ -697,7 +697,7 @@ public:
         //~ add AuditCollection - no such concept in TOPPTools yet
         analyzer.writeMzQuantML(out_mzq, msq);
       }
-    }
+ */    }
 
     if (out_clusters != "")
     {

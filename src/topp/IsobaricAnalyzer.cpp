@@ -53,9 +53,6 @@
 
 #include <OpenMS/FORMAT/ConsensusXMLFile.h>
 #include <OpenMS/FORMAT/MzMLFile.h>
-#include <OpenMS/FORMAT/MzQuantMLFile.h>
-
-#include <OpenMS/METADATA/MSQuantifications.h>
 
 using namespace OpenMS;
 using namespace std;

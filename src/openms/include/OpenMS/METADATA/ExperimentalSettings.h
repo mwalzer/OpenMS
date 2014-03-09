@@ -37,6 +37,7 @@
 
 #include <OpenMS/METADATA/Sample.h>
 #include <OpenMS/METADATA/MetaInfoInterface.h>
+#include <OpenMS/CONCEPT/UniqueIdInterface.h>
 #include <OpenMS/METADATA/HPLC.h>
 #include <OpenMS/METADATA/SourceFile.h>
 #include <OpenMS/METADATA/ContactPerson.h>
@@ -58,7 +59,8 @@ namespace OpenMS
   */
   class OPENMS_DLLAPI ExperimentalSettings :
     public MetaInfoInterface,
-    public DocumentIdentifier
+    public DocumentIdentifier,
+    public UniqueIdInterface
   {
 public:
     ///Constructor
@@ -75,6 +77,8 @@ public:
     bool operator==(const ExperimentalSettings & rhs) const;
     /// Equality operator
     bool operator!=(const ExperimentalSettings & rhs) const;
+    /// less operator (e.g. for use in set<ExperimentalSettings> )
+    bool operator<(const ExperimentalSettings & rhs) const;
 
     /// returns a const reference to the sample description
     const Sample & getSample() const;

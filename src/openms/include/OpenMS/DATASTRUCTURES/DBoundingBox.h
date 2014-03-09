@@ -36,6 +36,7 @@
 #define OPENMS_DATASTRUCTURES_DBOUNDINGBOX_H
 
 #include <OpenMS/DATASTRUCTURES/DIntervalBase.h>
+#include <OpenMS/DATASTRUCTURES/String.h>
 
 namespace OpenMS
 {
@@ -199,6 +200,19 @@ public:
         }
       }
       return false;
+    }
+    
+    /// to String
+    String toString() const
+    {
+      String mimi = "";
+      String mama = "";
+      for (UInt i = 0; i < DIMENSION; ++i)
+      {
+        mimi += String(min_[i]) + " ";
+        mama += String(max_[i]) + " ";
+      }
+      return mimi.trim() + " " + mama.trim();
     }
 
     //@}

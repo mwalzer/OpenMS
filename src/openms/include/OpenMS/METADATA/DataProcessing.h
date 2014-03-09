@@ -38,6 +38,7 @@
 #include <OpenMS/METADATA/MetaInfoInterface.h>
 #include <OpenMS/METADATA/Software.h>
 #include <OpenMS/DATASTRUCTURES/DateTime.h>
+#include <OpenMS/CONCEPT/UniqueIdInterface.h>
 
 #include <set>
 
@@ -49,7 +50,8 @@ namespace OpenMS
       @ingroup Metadata
   */
   class OPENMS_DLLAPI DataProcessing :
-    public MetaInfoInterface
+    public MetaInfoInterface,
+    public UniqueIdInterface
   {
 
 public:

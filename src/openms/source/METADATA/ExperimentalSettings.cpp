@@ -42,6 +42,7 @@ namespace OpenMS
   ExperimentalSettings::ExperimentalSettings() :
     MetaInfoInterface(),
     DocumentIdentifier(),
+    UniqueIdInterface(),
     sample_(),
     source_files_(),
     contacts_(),
@@ -57,6 +58,7 @@ namespace OpenMS
   ExperimentalSettings::ExperimentalSettings(const ExperimentalSettings & source) :
     MetaInfoInterface(source),
     DocumentIdentifier(source),
+    UniqueIdInterface(source),
     sample_(source.sample_),
     source_files_(source.source_files_),
     contacts_(source.contacts_),
@@ -89,6 +91,7 @@ namespace OpenMS
     fraction_identifier_ = source.fraction_identifier_;
     MetaInfoInterface::operator=(source);
     DocumentIdentifier::operator=(source);
+    UniqueIdInterface::operator=(source);
 
     return *this;
   }
@@ -106,11 +109,17 @@ namespace OpenMS
            fraction_identifier_ == rhs.fraction_identifier_ &&
            MetaInfoInterface::operator==(rhs) &&
            DocumentIdentifier::operator==(rhs);
+           // UniqueIdInterface ommitted
   }
 
   bool ExperimentalSettings::operator!=(const ExperimentalSettings & rhs) const
   {
     return !(operator==(rhs));
+  } 
+
+  bool ExperimentalSettings::operator<(const ExperimentalSettings & rhs) const
+  {
+    return this->getUniqueId()<rhs.getUniqueId();
   }
 
   const Sample & ExperimentalSettings::getSample() const

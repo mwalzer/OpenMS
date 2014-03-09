@@ -48,21 +48,6 @@ namespace OpenMS
   {
   }  
   
-  /// Detailed Constructor
-  MSQuantifications::MSQuantifications(FeatureMap<> fm, ExperimentalSettings& es, std::vector<DataProcessing>& dps, std::vector<std::vector<std::pair<String, DoubleReal> > > label) :
-    ExperimentalSettings()
-  {
-    MSQuantifications::QUANT_TYPES quant_type = MSQuantifications::LABELFREE;
-    this->setAnalysisSummaryQuantType(quant_type);
-
-    //~ AssayList,InputFiles,SoftwareList
-    //~ aus exp.
-    this->registerExperiment(es,dps,label);
-    
-    this->setDataProcessingList(fm.getDataProcessing()); //TODO add dp from experiment (i.e. mzml) ?
-    feature_maps_  = std::vector<FeatureMap<> > (1,fm);
-  }
-
   /// Copy constructor
   MSQuantifications::MSQuantifications(const MSQuantifications & source) :
     ExperimentalSettings(source)
@@ -79,10 +64,9 @@ namespace OpenMS
     if (&source == this)
       return *this;
 
+    //~ reassign members
     ExperimentalSettings::operator=(source);
     //~ PersistentObject::operator=(source);
-
-    //~ reassign members
 
     return *this;
   }
@@ -99,6 +83,7 @@ namespace OpenMS
     return !(operator==(rhs));
   }
 
+  /// getter & setter
   void MSQuantifications::setDataProcessingList(std::vector<DataProcessing> & dpl)
   {
     data_processings_ = dpl;
@@ -106,28 +91,15 @@ namespace OpenMS
 
   const std::vector<DataProcessing> MSQuantifications::getDataProcessingList() const
   {
-    std::vector<DataProcessing> list = data_processings_;
-
-    //This is one way street for dataprocessing - it probably wont get mapped back after writeout and readin
-    for (std::vector<FeatureMap<> >::const_iterator fit = feature_maps_.begin(); fit != feature_maps_.end(); ++fit)
-    {
-      list.insert(list.end(), fit->getDataProcessing().begin(), fit->getDataProcessing().end());
-    }
-
-    for (std::vector<ConsensusMap>::const_iterator cit = consensus_maps_.begin(); cit != consensus_maps_.end(); ++cit)
-    {
-      list.insert(list.end(), cit->getDataProcessing().begin(), cit->getDataProcessing().end());
-    }
-
-    return list;
+    return data_processings_;
   }
 
-  const std::vector<MSQuantifications::Assay> & MSQuantifications::getAssays() const
+  const std::map< UInt64, MSQuantifications::Assay> & MSQuantifications::getAssays() const
   {
     return assays_;
   }
 
-  std::vector<MSQuantifications::Assay> & MSQuantifications::getAssays()
+  std::map< UInt64, MSQuantifications::Assay> & MSQuantifications::getAssays()
   {
     return assays_;
   }
@@ -137,22 +109,22 @@ namespace OpenMS
   //~ return ratio_calculations_;
   //~ }
 
-  const std::vector<FeatureMap<> > & MSQuantifications::getFeatureMaps() const
+  const std::map< UInt64, FeatureMap<> > & MSQuantifications::getFeatureMaps() const
   {
     return feature_maps_;
   }
 
-  const std::vector<ConsensusMap> & MSQuantifications::getConsensusMaps() const
+  const std::map< UInt64, ConsensusMap > & MSQuantifications::getConsensusMaps() const
   {
     return consensus_maps_;
   }
 
-  void MSQuantifications::setConsensusMaps(const std::vector<ConsensusMap> & consensus_maps)
-  {
-      consensus_maps_ = consensus_maps;
-  }
+  //~ void MSQuantifications::setConsensusMaps(const std::vector<ConsensusMap> & consensus_maps)
+  //~ {
+      //~ consensus_maps_ = consensus_maps;
+  //~ }
 
-  std::vector<ConsensusMap> & MSQuantifications::getConsensusMaps()
+  std::map< UInt64, ConsensusMap > & MSQuantifications::getConsensusMaps()
   {
     return consensus_maps_;
   }
@@ -166,57 +138,136 @@ namespace OpenMS
   {
     return analysis_summary_;
   }
+  
+  const std::map< UInt64, std::set<ExperimentalSettings> > & MSQuantifications::getRawFiles() const
+  {
+    return raw_files_group_;
+  }
 
   void MSQuantifications::setAnalysisSummaryQuantType(MSQuantifications::QUANT_TYPES r)
   {
     analysis_summary_.quant_type_ = r;
   }
-
-  void MSQuantifications::addConsensusMap(ConsensusMap & m)
+  
+  std::vector<UInt64> MSQuantifications::getDataProcessingInRefs(UInt64 dp_ref) const
   {
-    consensus_maps_.push_back(m);
-  }
-
-  void MSQuantifications::assignUIDs()
-  {
-    for (std::vector<Assay>::iterator ait = assays_.begin(); ait != assays_.end(); ++ait)
+    std::pair<std::multimap<UInt64, UInt64>::const_iterator,std::multimap<UInt64, UInt64>::const_iterator> er = in_data_processings_.equal_range(dp_ref);
+    std::vector<UInt64> ret;
+    for (std::multimap<UInt64, UInt64>::const_iterator it=er.first; it!=er.second; ++it)
     {
-      ait->uid_ = String(UniqueIdGenerator::getUniqueId());
+      ret.push_back(it->second);
     }
-  }
-
-  void MSQuantifications::registerExperiment(MSExperiment<Peak1D> & exp, std::vector<std::vector<std::pair<String, DoubleReal> > > label)
-  {
-    for (std::vector<std::vector<std::pair<String, DoubleReal> > >::const_iterator lit = label.begin(); lit != label.end(); ++lit)
-    {
-      //TODO look for existing labels
-      Assay a;
-      a.mods_ = (*lit);
-      a.raw_files_.push_back(exp.getExperimentalSettings());
-      assays_.push_back(a);
-    }
-
-    data_processings_ = exp[0].getDataProcessing();             //TODO check if empty, overwrite MSExperiments inherited front method to work. [0] operator is ugly!
+    return ret;
   }
   
-  void MSQuantifications::registerExperiment(ExperimentalSettings & es, std::vector<DataProcessing>& dps,  std::vector<std::vector<std::pair<String, DoubleReal> > > label)
+  UInt64 MSQuantifications::getDataProcessingOutRefs(UInt64 dp_ref) const
   {
-    for (std::vector<std::vector<std::pair<String, DoubleReal> > >::const_iterator lit = label.begin(); lit != label.end(); ++lit)
+    std::map<UInt64, UInt64>::const_iterator ret = out_data_processings_.find(dp_ref);
+    if (ret != out_data_processings_.end())
     {
-      //TODO look for existing labels
+      return ret->second;
+    }
+    return 0; // TODO @mths : this could be nicer
+  }
+ 
+  
+  /// registerers
+  const std::pair< std::vector<UInt64>, UInt64 > MSQuantifications::registerExperiment(MSExperiment<Peak1D> & exp, std::vector<std::vector<std::pair<String, DoubleReal> > > labels)
+  {
+    //TODO check if exp.getSpectra().front() not empty, or better get and merge for each MS1-n
+    return this->registerExperiment(exp.getExperimentalSettings(),exp.getSpectra().front().getDataProcessing(),labels);            
+  }
+  
+  const std::pair< std::vector<UInt64>, UInt64 > MSQuantifications::registerExperiment(ExperimentalSettings & es, std::vector<DataProcessing>& dps, std::vector<std::vector<std::pair<String, DoubleReal> > > labels)
+  {
+    UInt64 rfg_uid = UniqueIdGenerator::getUniqueId();
+    std::vector<UInt64> auids;
+    for (std::vector<std::vector<std::pair<String, DoubleReal> > >::const_iterator lit = labels.begin(); lit != labels.end(); ++lit)
+    {
       Assay a;
+      a.uid_ = UniqueIdGenerator::getUniqueId();
+      a.rfg_ref_ = rfg_uid;
+      auids.push_back(a.uid_);
       a.mods_ = (*lit);
-      a.raw_files_.push_back(es);
-      assays_.push_back(a);
+      assays_.insert(std::pair<UInt64, Assay >(a.uid_, a));
     }
-    if (label.empty())
+    
+    if (labels.empty())
     {
       Assay a;
-      a.raw_files_.push_back(es);
-      assays_.push_back(a);
+      a.uid_ = UniqueIdGenerator::getUniqueId();
+      a.rfg_ref_ = rfg_uid;
+      auids.push_back(a.uid_);
+      assays_.insert(std::pair<UInt64, Assay >(a.uid_, a));
     }
+  
+    std::set<ExperimentalSettings> es_set;
+    es_set.insert(es);
+    raw_files_group_.insert( std::pair<UInt64, std::set<ExperimentalSettings> > (rfg_uid, es_set ) );
+    
+    this->registerProcessingsOfExperimentMap_(dps,es.getUniqueId());
+    data_processings_.insert(data_processings_.end(), dps.begin(), dps.end()); 
+    
+    return std::make_pair(auids,es.getUniqueId());
+  }
+  
+  const UInt64 MSQuantifications::addExperiment( std::vector<UInt64> & assay_uids, MSExperiment<Peak1D> & exp)
+  {
+    //TODO check if exp.getSpectra().front() not empty, or better get and merge for each MS1-n
+    return this->addExperiment(assay_uids, exp.getExperimentalSettings(), exp.getSpectra().front().getDataProcessing());            
+  }
 
-    //~ data_processings_ = dps; //TODO add in set fashion
+  const UInt64 MSQuantifications::addExperiment( std::vector<UInt64> & assay_uids ,ExperimentalSettings & es, std::vector<DataProcessing>& dps)
+  {
+    //~ UInt64 rfg_uid = UniqueIdGenerator::getUniqueId();
+    for (std::vector<UInt64>::const_iterator ait = assay_uids.begin(); ait != assay_uids.end(); ++ait)
+    {
+      std::map< UInt64, Assay >::const_iterator assay_it = assays_.find(*ait);
+      if (assay_it != assays_.end())
+      {  
+        std::map< UInt64, std::set<ExperimentalSettings> >::iterator rfg_it = raw_files_group_.find(assay_it->second.rfg_ref_);
+        if (rfg_it != raw_files_group_.end())
+        { 
+          rfg_it->second.insert(es); //if not exisits
+        }
+        else
+        {
+          //TODO @mths : warn
+        }
+      }
+      else
+      {
+        //TODO @mths : warn
+      }
+    }
+    
+    data_processings_.insert(data_processings_.end(), dps.begin(), dps.end());
+    this->registerProcessingsOfExperimentMap_(dps,es.getUniqueId());
+
+    return es.getUniqueId();
+  }
+  
+  void MSQuantifications::registerProcessingsOfExperimentMap_(std::vector<DataProcessing>& dps, UInt64 rawfile_uid)
+  {
+    for (std::vector<DataProcessing>::const_iterator dpit = dps.begin(); dpit != dps.end(); ++dpit)
+    {
+      in_data_processings_.insert( std::pair<UInt64, UInt64>(dpit->getUniqueId(), rawfile_uid) ); 
+      out_data_processings_.insert( std::pair<UInt64, UInt64>(dpit->getUniqueId(), rawfile_uid) ); 
+    }
+  }
+  
+  void MSQuantifications::addFeatureMap(FeatureMap<> & m, UInt64 rawfile_uid)
+  {
+    feature_maps_.insert(std::pair<UInt64, FeatureMap<> >(rawfile_uid, m)); //TODO @mths : check if experiment from featuremap is registered otherwise register a dummy
+    
+    data_processings_.insert(data_processings_.end(), m.getDataProcessing().begin(), m.getDataProcessing().end()); 
+    this->registerProcessingsOfExperimentMap_(m.getDataProcessing(), rawfile_uid);
+  }
+  
+  void MSQuantifications::addConsensusMap(ConsensusMap & m, std::vector<UInt64> rawfile_uids)
+  {
+    consensus_maps_.insert(std::pair<UInt64, ConsensusMap >(m.getUniqueId(), m));
+    maps_feature_consensus_.insert(std::pair<UInt64, std::vector<UInt64> >(m.getUniqueId(), rawfile_uids));
   }
 
 } //namespace OpenMS

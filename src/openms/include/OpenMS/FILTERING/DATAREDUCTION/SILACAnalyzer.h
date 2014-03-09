@@ -46,12 +46,12 @@
 #include <OpenMS/MATH/STATISTICS/LinearRegression.h>
 #include <OpenMS/KERNEL/RangeUtils.h>
 #include <OpenMS/KERNEL/ChromatogramTools.h>
-#include <OpenMS/METADATA/MSQuantifications.h>
+//~ #include <OpenMS/METADATA/MSQuantifications.h>
 
 // TODO remove dependency from file reader
 #include <OpenMS/FORMAT/FeatureXMLFile.h>
 #include <OpenMS/FORMAT/ConsensusXMLFile.h>
-#include <OpenMS/FORMAT/MzQuantMLFile.h>
+//~ #include <OpenMS/FORMAT/MzQuantMLFile.h>
 
 #include <OpenMS/FILTERING/DATAREDUCTION/SILACFilter.h>
 #include <OpenMS/FILTERING/DATAREDUCTION/SILACFiltering.h>
@@ -121,7 +121,7 @@ namespace OpenMS
 
     typedef SILACClustering Clustering;
 
-    MSQuantifications msq;
+    //~ MSQuantifications msq;
 
   public:
     SILACAnalyzer() :
@@ -186,7 +186,7 @@ namespace OpenMS
     {
       PeakWidthEstimator::Result peak_width;
       std::vector<std::vector<SILACPattern> > data;
-      MSQuantifications msq;
+      //~ MSQuantifications msq;
       std::vector<Clustering *> cluster_data;
 
       peak_width = estimatePeakWidth(exp);
@@ -303,7 +303,7 @@ namespace OpenMS
     /**
      * @brief Write MzQuantML from ConsensusMap to file
      */
-    void writeMzQuantML(const String & filename, MSQuantifications & msq) const
+/*     void writeMzQuantML(const String & filename, MSQuantifications & msq) const
     {
       //~ TODO apply above to ConsensusMap befor putting into Msq
       //~ out.sortByPosition();
@@ -313,7 +313,7 @@ namespace OpenMS
       MzQuantMLFile file;
       file.store(filename, msq);
     }
-
+ */
     /**
      * @brief Write featureXML from FeatureMap to file
      */
