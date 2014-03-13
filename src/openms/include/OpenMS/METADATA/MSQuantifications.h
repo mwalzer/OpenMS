@@ -209,40 +209,49 @@ public:
     const AnalysisSummary & getAnalysisSummary() const;
     AnalysisSummary & getAnalysisSummary();
     const std::map< UInt64, std::set<ExperimentalSettings> > & getRawFiles() const;
+    const std::vector< UInt64 > & getSourceFiles() const;
     void setDataProcessingList(std::vector<DataProcessing> & dpl);
     void setAnalysisSummaryQuantType(QUANT_TYPES r);
     
-    std::vector<UInt64> getDataProcessingInRefs(UInt64 dp_ref) const;
+    std::set<UInt64> getDataProcessingInRefs(UInt64 dp_ref) const;
     UInt64 getDataProcessingOutRefs(UInt64 dp_ref) const;
+    const UInt64 fromWhichInput(const UInt64 & feat) const;
     
     /// registerers
-    void addConsensusMap(ConsensusMap & m, std::vector<UInt64> rawfile_uids);
-    void addFeatureMap(FeatureMap<> & m, UInt64 rawfile_uid);        
-    const std::pair< std::vector<UInt64>,UInt64 > registerExperiment(MSExperiment<Peak1D> & exp, std::vector<std::vector<std::pair<String, DoubleReal> > > labels = (std::vector<std::vector<std::pair<String, DoubleReal> > >()));
+    void addConsensusMap(ConsensusMap & m, std::vector<UInt64> file_uids);
+    void registerFeatureMap(FeatureMap<> & m, UInt64 rawfile_uid);        
+    const std::pair< std::vector<UInt64>,UInt64 > registerExperimentMap(MSExperiment<Peak1D> & exp, std::vector<std::vector<std::pair<String, DoubleReal> > > labels = (std::vector<std::vector<std::pair<String, DoubleReal> > >()));
     
-    const std::pair< std::vector<UInt64>,UInt64 > registerExperiment(ExperimentalSettings & es, std::vector<DataProcessing>& dps, std::vector<std::vector<std::pair<String, DoubleReal> > > labels = (std::vector<std::vector<std::pair<String, DoubleReal> > >()));
+    const std::pair< std::vector<UInt64>,UInt64 > registerExperimentMap(ExperimentalSettings & es, std::vector<DataProcessing>& dps, std::vector<std::vector<std::pair<String, DoubleReal> > > labels = (std::vector<std::vector<std::pair<String, DoubleReal> > >()));
     
     const UInt64 addExperiment( std::vector<UInt64> & assay_uids, MSExperiment<Peak1D> & exp);
     
     const UInt64 addExperiment( std::vector<UInt64> & assay_uids ,ExperimentalSettings & es, std::vector<DataProcessing>& dps);
     
+    ///for mzquantml consumption
+    void stubFeatureMap(FeatureMap<> & m);        
+    void stubExperimentMap(FeatureMap<> & m);        
+
 private:
     AnalysisSummary analysis_summary_;
-    std::map< UInt64, Assay > assays_;
-    std::map< UInt64, std::set<ExperimentalSettings> > raw_files_group_; //this is implicite: raw->mzml ! ExperimentalSettings.getUniqueId() will be transformed to the mzml rawfile, corresponding ms-raw rawfilegroups created. dataprocessings with both in and out referencing this will be redirected to in created ms-raw, out this 
+    std::map< UInt64, std::set<ExperimentalSettings> > raw_files_group_; //implicite: raw->mzml ! so:ExperimentalSettings.getUniqueId()->ms-raw xsd:ID
+    std::vector< UInt64 > source_files_; // entry is a featuremap/consensusmap UID, also present in either feature or consensus map containing the file info in DocumentIdentifier Interface 
+    // TODO @mths : add missing searchdatabase files, identification files and method files
 
     std::vector<DataProcessing> data_processings_;
     std::multimap< UInt64, UInt64 > in_data_processings_; 
     std::map< UInt64, UInt64 > out_data_processings_; 
 
+    std::map< UInt64, Assay > assays_;
+
     std::map< UInt64, FeatureMap<> > feature_maps_;
+    std::map< UInt64, UInt64 > feature_to_raw_;
     std::map< UInt64, ConsensusMap > consensus_maps_;
-    std::map< UInt64, std::vector<UInt64> > maps_feature_consensus_;
+    std::map< UInt64, std::vector<UInt64> > consensus_to_features_;
 
     //~ std::vector<MetaInfo> bibliographic_reference_;
     //~ std::map<String,ConsensusFeature::Ratio > ratio_calculations_;
 
-    void registerProcessingsOfExperimentMap_(std::vector<DataProcessing>& dps, UInt64 rawfile_uid);
   };
 
 } // namespace OpenMS

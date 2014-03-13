@@ -143,19 +143,24 @@ namespace OpenMS
   {
     return raw_files_group_;
   }
+  
+  const std::vector< UInt64 > & MSQuantifications::getSourceFiles() const
+  {
+    return source_files_;
+  }
 
   void MSQuantifications::setAnalysisSummaryQuantType(MSQuantifications::QUANT_TYPES r)
   {
     analysis_summary_.quant_type_ = r;
   }
   
-  std::vector<UInt64> MSQuantifications::getDataProcessingInRefs(UInt64 dp_ref) const
+  std::set<UInt64> MSQuantifications::getDataProcessingInRefs(UInt64 dp_ref) const
   {
     std::pair<std::multimap<UInt64, UInt64>::const_iterator,std::multimap<UInt64, UInt64>::const_iterator> er = in_data_processings_.equal_range(dp_ref);
-    std::vector<UInt64> ret;
+    std::set<UInt64> ret;
     for (std::multimap<UInt64, UInt64>::const_iterator it=er.first; it!=er.second; ++it)
     {
-      ret.push_back(it->second);
+      ret.insert(it->second);
     }
     return ret;
   }
@@ -172,13 +177,13 @@ namespace OpenMS
  
   
   /// registerers
-  const std::pair< std::vector<UInt64>, UInt64 > MSQuantifications::registerExperiment(MSExperiment<Peak1D> & exp, std::vector<std::vector<std::pair<String, DoubleReal> > > labels)
+  const std::pair< std::vector<UInt64>, UInt64 > MSQuantifications::registerExperimentMap(MSExperiment<Peak1D> & exp, std::vector<std::vector<std::pair<String, DoubleReal> > > labels)
   {
     //TODO check if exp.getSpectra().front() not empty, or better get and merge for each MS1-n
-    return this->registerExperiment(exp.getExperimentalSettings(),exp.getSpectra().front().getDataProcessing(),labels);            
+    return this->registerExperimentMap(exp.getExperimentalSettings(),exp.getSpectra().front().getDataProcessing(),labels);            
   }
   
-  const std::pair< std::vector<UInt64>, UInt64 > MSQuantifications::registerExperiment(ExperimentalSettings & es, std::vector<DataProcessing>& dps, std::vector<std::vector<std::pair<String, DoubleReal> > > labels)
+  const std::pair< std::vector<UInt64>, UInt64 > MSQuantifications::registerExperimentMap(ExperimentalSettings & es, std::vector<DataProcessing>& dps, std::vector<std::vector<std::pair<String, DoubleReal> > > labels)
   {
     UInt64 rfg_uid = UniqueIdGenerator::getUniqueId();
     std::vector<UInt64> auids;
@@ -205,10 +210,19 @@ namespace OpenMS
     es_set.insert(es);
     raw_files_group_.insert( std::pair<UInt64, std::set<ExperimentalSettings> > (rfg_uid, es_set ) );
     
-    this->registerProcessingsOfExperimentMap_(dps,es.getUniqueId());
     data_processings_.insert(data_processings_.end(), dps.begin(), dps.end()); 
-    
+    for (std::vector<DataProcessing>::const_iterator dpit = dps.begin(); dpit != dps.end(); ++dpit)
+    {
+      in_data_processings_.insert( std::pair<UInt64, UInt64>(dpit->getUniqueId(), es.getUniqueId()) ); 
+      out_data_processings_.insert( std::pair<UInt64, UInt64>(dpit->getUniqueId(), es.getUniqueId()) ); 
+    }
+
     return std::make_pair(auids,es.getUniqueId());
+  }
+
+  void MSQuantifications::stubExperimentMap(ExperimentalSettings, UInt64 rfg_uid)
+  {
+    raw_files_group_.insert( std::pair<UInt64, std::set<ExperimentalSettings> > (rfg_uid, es_set ) );
   }
   
   const UInt64 MSQuantifications::addExperiment( std::vector<UInt64> & assay_uids, MSExperiment<Peak1D> & exp)
@@ -217,7 +231,7 @@ namespace OpenMS
     return this->addExperiment(assay_uids, exp.getExperimentalSettings(), exp.getSpectra().front().getDataProcessing());            
   }
 
-  const UInt64 MSQuantifications::addExperiment( std::vector<UInt64> & assay_uids ,ExperimentalSettings & es, std::vector<DataProcessing>& dps)
+  const UInt64 MSQuantifications::addExperiment( std::vector<UInt64> & assay_uids, ExperimentalSettings & es, std::vector<DataProcessing>& dps)
   {
     //~ UInt64 rfg_uid = UniqueIdGenerator::getUniqueId();
     for (std::vector<UInt64>::const_iterator ait = assay_uids.begin(); ait != assay_uids.end(); ++ait)
@@ -242,32 +256,45 @@ namespace OpenMS
     }
     
     data_processings_.insert(data_processings_.end(), dps.begin(), dps.end());
-    this->registerProcessingsOfExperimentMap_(dps,es.getUniqueId());
-
+    for (std::vector<DataProcessing>::const_iterator dpit = dps.begin(); dpit != dps.end(); ++dpit)
+    {
+      in_data_processings_.insert( std::pair<UInt64, UInt64>(dpit->getUniqueId(), es.getUniqueId()) ); 
+      out_data_processings_.insert( std::pair<UInt64, UInt64>(dpit->getUniqueId(), es.getUniqueId()) ); 
+    }
+    
     return es.getUniqueId();
   }
   
-  void MSQuantifications::registerProcessingsOfExperimentMap_(std::vector<DataProcessing>& dps, UInt64 rawfile_uid)
+  void MSQuantifications::registerFeatureMap(FeatureMap<> & m, UInt64 rawfile_uid)
   {
-    for (std::vector<DataProcessing>::const_iterator dpit = dps.begin(); dpit != dps.end(); ++dpit)
+    feature_maps_.insert(std::pair<UInt64, FeatureMap<> >(m.getUniqueId(), m)); //TODO @mths : whatif experiment from featuremap is not registered
+    feature_to_raw_.insert(std::pair<UInt64, UInt64>(m.getUniqueId(), rawfile_uid)); 
+    source_files_.push_back(m.getUniqueId());
+    data_processings_.insert(data_processings_.end(), m.getDataProcessing().begin(), m.getDataProcessing().end()); 
+    for (std::vector<DataProcessing>::const_iterator dpit = m.getDataProcessing().begin(); dpit != m.getDataProcessing().end(); ++dpit)
     {
       in_data_processings_.insert( std::pair<UInt64, UInt64>(dpit->getUniqueId(), rawfile_uid) ); 
-      out_data_processings_.insert( std::pair<UInt64, UInt64>(dpit->getUniqueId(), rawfile_uid) ); 
+      out_data_processings_.insert( std::pair<UInt64, UInt64>(dpit->getUniqueId(), m.getUniqueId()) ); 
     }
   }
   
-  void MSQuantifications::addFeatureMap(FeatureMap<> & m, UInt64 rawfile_uid)
+  void MSQuantifications::stubFeatureMap(FeatureMap<> & m)
   {
-    feature_maps_.insert(std::pair<UInt64, FeatureMap<> >(rawfile_uid, m)); //TODO @mths : check if experiment from featuremap is registered otherwise register a dummy
-    
-    data_processings_.insert(data_processings_.end(), m.getDataProcessing().begin(), m.getDataProcessing().end()); 
-    this->registerProcessingsOfExperimentMap_(m.getDataProcessing(), rawfile_uid);
+    feature_maps_.insert(std::pair<UInt64, FeatureMap<> >(m.getUniqueId(), m));
   }
-  
-  void MSQuantifications::addConsensusMap(ConsensusMap & m, std::vector<UInt64> rawfile_uids)
+
+  void MSQuantifications::addConsensusMap(ConsensusMap & m, std::vector<UInt64> file_uids)
   {
     consensus_maps_.insert(std::pair<UInt64, ConsensusMap >(m.getUniqueId(), m));
-    maps_feature_consensus_.insert(std::pair<UInt64, std::vector<UInt64> >(m.getUniqueId(), rawfile_uids));
+    consensus_to_features_.insert(std::pair<UInt64, std::vector<UInt64> >(m.getUniqueId(), file_uids));
+  }  
+  
+  const UInt64 MSQuantifications::fromWhichInput(const UInt64 & feat) const
+  {
+    UInt64 ret(0);
+    std::map< UInt64, UInt64 >::const_iterator it = feature_to_raw_.find(feat);
+    return it->second;
+    // TODO @mths : add consensus_to_features_
   }
 
 } //namespace OpenMS

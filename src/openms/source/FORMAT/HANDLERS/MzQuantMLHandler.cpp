@@ -117,6 +117,13 @@ namespace OpenMS
       {
         parent_parent_tag = *(open_tags_.end() - 3);
       }
+      
+      String id;
+      if (optionalAttributeAsString_(id, attributes, "id"))
+      {
+        id_stack_.push_back(parseUID_(id));
+        open_tag_id_stack_.push_back(tag_);
+      }
 
       static const XMLCh* s_value = xercesc::XMLString::transcode("value");
       static const XMLCh* s_type = xercesc::XMLString::transcode("type");
@@ -133,50 +140,6 @@ namespace OpenMS
         optionalAttributeAsString_(cv_ref, attributes, s_cv_ref); //TODO
         handleCVParam_(parent_parent_tag, parent_tag, attributeAsString_(attributes, s_accession), attributeAsString_(attributes, s_name), value, attributes, cv_ref, unit_accession);
       }
-      else if (tag_ == "MzQuantML")
-      {
-        // handle version and experiment type
-      }
-      else if (tag_ == "AnalysisSummary")
-      {
-        // handle version and experiment type
-        // consists of cvParam only -> handleCvParam
-      }
-      else if (tag_ == "RawFilesGroup")
-      {
-        current_id_ = attributeAsString_(attributes, "id");
-        std::set<ExperimentalSettings> exp_set;
-        current_files_.insert(std::make_pair(current_id_, exp_set));
-      }
-      else if (tag_ == "RawFile")
-      {
-        ExperimentalSettings es;
-        es.setLoadedFilePath(attributeAsString_(attributes, "location")+attributeAsString_(attributes, "name"));
-        es.setUniqueId(parseUID_(attributeAsString_(attributes, "id")));
-        //here would be the place to start looking for additional experimentalsettings readin
-        current_files_[current_id_].insert(es);
-      }
-
-/*      else if (tag_ == "DataProcessing")
-      {
-        int order = asInt_(attributeAsString_(attributes, "order"));
-        current_dp_ = std::make_pair(order, DataProcessing());
-        current_pas_.clear();
-        //~ order
-        DataValue sw_ref(attributeAsString_(attributes, "software_ref"));
-        current_dp_.second.setMetaValue("software_ref", sw_ref);
-      }
-      else if (tag_ == "ProcessingMethod")
-      {
-        //order gets implicity imposed by set<ProcessingAction> - so nothing to do here
-      }
-      else if (tag_ == "Software")
-      {
-        current_id_ = attributeAsString_(attributes, "id");
-        current_sws_.insert(std::make_pair(current_id_, Software()));
-        String vers = attributeAsString_(attributes, "version");
-        current_sws_[current_id_].setVersion(vers);
-      }
       else if (tag_ == "userParam")
       {
         String type = "";
@@ -185,17 +148,49 @@ namespace OpenMS
         optionalAttributeAsString_(value, attributes, s_value);
         handleUserParam_(parent_parent_tag, parent_tag, attributeAsString_(attributes, s_name), type, value);
       }
+      else if (tag_ == "MzQuantML")
+      {
+        // TODO @mths : handle version and experiment type
+      }
+      //AnalysisSummary consists of cvParam only -> handleCvParam
+      else if (tag_ == "RawFilesGroup")
+      {
+        std::set<ExperimentalSettings> exp_set;
+        current_rfgs_.insert(std::make_pair(id_stack_.back(), exp_set));
+      }
+      else if (tag_ == "RawFile")
+      {
+        ExperimentalSettings es;
+        es.setLoadedFilePath(String(attributeAsString_(attributes, "location")+attributeAsString_(attributes, "name")));
+        es.setUniqueId(id_stack_.back());
+        //here would be the place to start looking for additional experimentalsettings readin
+        current_rfgs_[*(id_stack_.end()-2)].insert(es);
+      }
+      else if (tag_ == "SourceFile")
+      {
+        current_sfs_.insert(std::make_pair(id_stack_.back(), String(attributeAsString_(attributes, "location")+attributeAsString_(attributes, "name")))
+      }
+      else if (tag_ == "Software")
+      {
+        current_sws_.insert(std::make_pair(id_stack_.back(), Software()));
+        current_sws_[id_stack_.back()].setVersion(attributeAsString_(attributes, "version"));
+        //userparam/cvparam to get the name
+      }
+      else if (tag_ == "DataProcessing")
+      {
+        int order = asInt_(attributeAsString_(attributes, "order"));
+        current_dps_.insert(std::make_pair(order, DataProcessing()));
+        current_pas_.clear();
+        current_dps_.setSoftware(current_sws_[parseUID(attributeAsString_(attributes, "software_ref"))];
+      }
+      //ProcessingMethod consists of userparam/cvparam , order gets implicity imposed by set<ProcessingAction>
+      // TODO @mths : handle input output object refs
+      }
       else if (tag_ == "Assay")
       {
-        current_assay_ = MSQuantifications::Assay();
-        current_assay_.uid_ = attributeAsString_(attributes, "id");
-        if (current_assay_.uid_.hasPrefix("a_"))
-        {
-          current_assay_.uid_ =  current_assay_.uid_.substr(2, current_assay_.uid_.size());
-        }
-        current_id_ = attributeAsString_(attributes, "rawFilesGroup_ref");
-        current_assay_.raw_files_ = current_files_[current_id_];
-        //TODO CVhandling
+        current_assays_.insert(std::make_pair(id_stack_.back(),MSQuantifications::Assay()));
+        current_assays_[id_stack_.back()].uid_ = id_stack_.back();
+        current_assays_[id_stack_.back()].rfg_ref_ = parseUID(attributeAsString_(attributes, "rawFilesGroup_ref"));
       }
       else if (tag_ == "Modification")
       {
@@ -207,18 +202,18 @@ namespace OpenMS
           optionalAttributeAsString_(residue, attributes, "residues");
           if (massdelta_string != "145")
           {
-            current_assay_.mods_.push_back(std::make_pair(residue, massdelta_string.toDouble()));
+            current_assays_[id_stack_.back()].mods_.push_back(std::make_pair(residue, massdelta_string.toDouble()));
           }
-          //TODO CVhandling
+          //TODO @mths : CVhandling
         }
         else
         {
           error(LOAD, "MzQuantMLHandler::startElement: Unhandable element found: '" + tag_ + "' in tag '" + parent_tag + "', ignoring.");
         }
       }
-      else if (tag_ == "Ratio")
+   /* else if (tag_ == "Ratio")
       {
-        current_id_ = attributeAsString_(attributes, "id");
+        id_stack_.back() = attributeAsString_(attributes, "id");
         String num = attributeAsString_(attributes, "numerator_ref");
         if (num.hasPrefix("a_"))
         {
@@ -232,13 +227,9 @@ namespace OpenMS
         ConsensusFeature::Ratio r;
         r.denominator_ref_ = den;
         r.numerator_ref_ = num;
-        r_rtemp_.insert(std::make_pair(current_id_, r));
-      }
-      else if (tag_ == "PeptideConsensusList")
-      {
-        current_id_ = attributeAsString_(attributes, "id"); //needed in all PeptideConsensus elements
-      }
-      else if (tag_ == "PeptideConsensus")
+        r_rtemp_.insert(std::make_pair(id_stack_.back(), r));
+      } */
+   /* else if (tag_ == "PeptideConsensus")
       {
         ConsensusFeature current_cf;
         current_cf_id_ = attributeAsString_(attributes, "id");
@@ -250,7 +241,7 @@ namespace OpenMS
         {
           current_cf.setMetaValue("SearchDatabase_ref", DataValue(searchDatabase_ref));
         }
-        cm_cf_ids_.insert(std::make_pair(current_id_, current_cf_id_));
+        cm_cf_ids_.insert(std::make_pair(id_stack_.back(), current_cf_id_));
         cf_cf_obj_.insert(std::make_pair(current_cf_id_, current_cf));
       }
       else if (tag_ == "EvidenceRef")
@@ -281,10 +272,9 @@ namespace OpenMS
         //~ for (StringList::const_iterator it = a_refs.begin(); it != a_refs.end(); ++it)
         //~ {
         //~ }
-      }
+      } */
       else if (tag_ == "Feature")
       {
-        current_id_ = attributeAsString_(attributes, "id");
         DoubleReal rt = attributeAsDouble_(attributes, "rt");
         DoubleReal mz = attributeAsDouble_(attributes, "mz");
         FeatureHandle fh;
@@ -295,7 +285,7 @@ namespace OpenMS
         {
           fh.setCharge(c);
         }
-        f_f_obj_.insert(std::make_pair(current_id_, fh)); // map_index was lost!! TODO artificial ones produced in ConsensusMap assembly
+        f_f_obj_.insert(std::make_pair(id_stack_.back(), fh)); // map_index was lost!! TODO artificial ones produced in ConsensusMap assembly
       }
       else if (tag_ == "FeatureQuantLayer" || tag_ == "RatioQuantLayer" || tag_ == "MS2AssayQuantLayer")
       {
@@ -308,13 +298,13 @@ namespace OpenMS
       }
       else if (tag_ == "Row")
       {
-        current_id_ = attributeAsString_(attributes, "object_ref");
+        id_stack_.back() = attributeAsString_(attributes, "object_ref");
         current_row_.clear();
       }
       else
       {
         error(LOAD, "MzQuantMLHandler::startElement: Unkown element found: '" + tag_ + "' in tag '" + parent_tag + "', ignoring.");
-      } */        
+      }      
     }
 
     void MzQuantMLHandler::characters(const XMLCh* const chars, const XMLSize_t /*length*/)
@@ -789,29 +779,32 @@ namespace OpenMS
       case 3:
         break; //why SIZE_OF_QUANT_TYPES anyway?
       }
-      //~ writeUserParam_(dataprocessinglist_tag, cmsq_->getAnalysisSummary().getUserParams(), UInt(2));
-      //~ writeCVParams_(dataprocessinglist_tag, (cmsq_->getAnalysisSummary().getCVTerms(), UInt(2));
       os << "\t</AnalysisSummary>\n";
       //---AnalysisSummary---
       
       //---InputFiles---
       os << "\t<InputFiles>\n"; 
       
-      // TODO @mths : add raw files to mzML 
       for (std::map< UInt64, std::set<ExperimentalSettings> >::const_iterator rfgit = cmsq_->getRawFiles().begin(); rfgit != cmsq_->getRawFiles().end(); ++rfgit)
       {
         os << "\t\t<RawFilesGroup id=\"" << "f_" << String(rfgit->first) << "\">\n";
         for (std::set<ExperimentalSettings>::const_iterator sit=rfgit->second.begin(); sit!=rfgit->second.end(); ++sit)
         {
-          os << "\t\t\t<RawFile location=\"" << sit->getSourceFiles().front().getPathToFile() << "\" name=\"" << sit->getSourceFiles().front().getNameOfFile() << "\" id=\"" << "f_" << String(sit->getUniqueId()) <<  "\"/>\n";
+          //~ os << "\t\t\t<RawFile location=\"" << sit->getSourceFiles().front().getPathToFile() << "\" id=\"" << "f_" << String(sit->getUniqueId()) <<  "\"/>\n";
+          os << "\t\t\t<RawFile location=\"" << sit->getLoadedFilePath() << "\" id=\"" << "f_" << String(sit->getUniqueId()) <<  "\"/>\n";
         }
         os << "\t\t</RawFilesGroup>\n";
       }
+      
+      for (std::vector< UInt64 >::const_iterator sfit = cmsq_->getSourceFiles().begin(); sfit != cmsq_->getSourceFiles().end(); ++sfit)
+      {
+        os << "\t\t<SourceFile location=\"" << cmsq_->getFeatureMaps().find(*sfit)->second.getLoadedFilePath() << "\" id=\"" << "sf_" << String(*sfit) <<  "\"/>\n"; //TODO @mths : make exception safe
+      }
+      
       // TODO @mths : add <IdentificationFiles> & <SearchDatabase>
       os << "\t</InputFiles>\n"; 
       //---InputFiles---
 
-      
       //---Software & DataProcessing---
       String softwarelist_tag;
       softwarelist_tag += "\t<SoftwareList>\n";
@@ -851,22 +844,22 @@ namespace OpenMS
         dataprocessinglist_tag += "\t\t<DataProcessing id=\"dp_" + String(UniqueIdGenerator::getUniqueId()) + "\" software_ref=\"" + sw_ref + "\" order=\"" + String(order_d) + "\">\n";
         Size order_c = 0;
         
-        std::vector<UInt64> dp_in = cmsq_->getDataProcessingInRefs(dit->getUniqueId());
+        std::set<UInt64> dp_in = cmsq_->getDataProcessingInRefs(dit->getUniqueId());
         if (!dp_in.empty())
         {
           String ior;
-          for (std::vector<UInt64>::iterator init = dp_in.begin(); init != dp_in.end(); ++init)
+          for (std::set<UInt64>::iterator init = dp_in.begin(); init != dp_in.end(); ++init)
           {
             ior += "f_";
             ior += String(*init);
             dataprocessinglist_tag += " ";
           }
-          dataprocessinglist_tag += "\t\t\t<InputObjects_ref>" + ior.trim() + "\t\t\t</InputObjects_ref>\n";
+          dataprocessinglist_tag += "\t\t\t<InputObjects_ref>" + ior.trim() + "</InputObjects_ref>\n";
         }
         UInt64 dp_out = cmsq_->getDataProcessingOutRefs(dit->getUniqueId());
         if (dp_out != 0)
         {
-          dataprocessinglist_tag += "\t\t\t<OutputObjects_ref>f_" + String(dp_out) + "\t\t\t</OutputObjects_ref>\n";
+          dataprocessinglist_tag += "\t\t\t<OutputObjects_ref>f_" + String(dp_out) + "</OutputObjects_ref>\n";
         }
         
         for (std::set<DataProcessing::ProcessingAction>::const_iterator pit = dit->getProcessingActions().begin(); pit != dit->getProcessingActions().end(); ++pit)
@@ -876,6 +869,7 @@ namespace OpenMS
           dataprocessinglist_tag += "\t\t\t\t<userParam name=\"" + String(DataProcessing::NamesOfProcessingAction[*pit]) + "\" value=\"" + String(dit->getSoftware().getName()) + "\" />\n";
           dataprocessinglist_tag += "\t\t\t</ProcessingMethod>\n";
         }
+        // TODO @mths: write algo params on demand (MetaInfoInterface of DP)
         dataprocessinglist_tag += "\t\t</DataProcessing>\n";
       }
       dataprocessinglist_tag += "\t</DataProcessingList>\n";
@@ -995,7 +989,7 @@ namespace OpenMS
       String feature_tag;
       for (std::map< UInt64, FeatureMap<> >::const_iterator fmit = cmsq_->getFeatureMaps().begin(); fmit != cmsq_->getFeatureMaps().end(); ++fmit)
       {
-        writeFeatureMap_(feature_tag,fmit->second,fmit->first,1);
+        writeFeatureMap_(feature_tag,fmit->second,cmsq_->fromWhichInput(fmit->first),1);
       }
       os << feature_tag; 
       os << "</MzQuantML>\n";
@@ -1060,7 +1054,7 @@ namespace OpenMS
       }
     }
 
-    UInt64 MzQuantMLHandler::parseUID_(String xml_id_string);
+    UInt64 MzQuantMLHandler::parseUID_(String xml_id_string)
     {
       std::vector< String > substrings;
       xml_id_string.split("_", substrings);
@@ -1070,14 +1064,14 @@ namespace OpenMS
       }
       catch (Exception::ConversionError&)
       {
-        warning(LOAD, String("xml uid could not be parsed");
-        return;
+        warning(LOAD, String("xml uid could not be parsed"));
+        return 0;
       }
     }
     
-    void MzQuantMLHandler::writeFeatureMap_(String& feature_tag, const FeatureMap<> & fm, const UInt64 & ar, UInt indentation_level)
+    void MzQuantMLHandler::writeFeatureMap_(String& feature_tag, const FeatureMap<> & fm, const UInt64 & rfg, UInt indentation_level)
     {
-      feature_tag = String(indentation_level, '\t') + "<FeatureList id=\"fl_" + String(ar) + "\" rawFilesGroup_ref=\"f_" + String(ar) + " \">\n";
+      feature_tag = String(indentation_level, '\t') + "<FeatureList id=\"fl_" + String(rfg) + "\" rawFilesGroup_ref=\"f_" + String(rfg) + " \">\n";
       String fql = String(indentation_level, '\t') + "\t<FeatureQuantLayer id=\"fql_" + String(UniqueIdGenerator::getUniqueId()) + "\">\n";
       fql += String(indentation_level, '\t') + "\t\t<ColumnDefinition>\n";
       fql += String(indentation_level, '\t') + "\t\t\t<Column index=\"0\">\n";
