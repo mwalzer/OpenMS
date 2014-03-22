@@ -64,7 +64,8 @@ namespace OpenMS
   };
 
   DataProcessing::DataProcessing() :
-    MetaInfoInterface(),
+    CVTermList(),
+    //~ MetaInfoInterface(),
     UniqueIdInterface(),
     software_(),
     processing_actions_(),
@@ -74,7 +75,8 @@ namespace OpenMS
   }
 
   DataProcessing::DataProcessing(const DataProcessing & rhs) :
-    MetaInfoInterface(rhs),
+    CVTermList(rhs),
+    //~ MetaInfoInterface(rhs),
     UniqueIdInterface(rhs),
     software_(rhs.software_),
     processing_actions_(rhs.processing_actions_),
@@ -93,7 +95,8 @@ namespace OpenMS
     if (&rhs == this)
       return *this;
 
-    MetaInfoInterface::operator=(rhs);
+    CVTermList::operator=(rhs);
+    //~ MetaInfoInterface::operator=(rhs);
     UniqueIdInterface::operator=(rhs);
     software_ = rhs.software_;
     processing_actions_ = rhs.processing_actions_;
@@ -107,7 +110,8 @@ namespace OpenMS
     return software_ == rhs.software_ &&
            processing_actions_ == rhs.processing_actions_ &&
            completion_time_ == rhs.completion_time_ &&
-           MetaInfoInterface::operator==(rhs);
+           CVTermList::operator==(rhs);
+            //~ &&  MetaInfoInterface::operator==(rhs);
            // UniqueIdInterface omitted
   }
 

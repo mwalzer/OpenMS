@@ -35,10 +35,11 @@
 #ifndef OPENMS_METADATA_DATAPROCESSING_H
 #define OPENMS_METADATA_DATAPROCESSING_H
 
-#include <OpenMS/METADATA/MetaInfoInterface.h>
+//~ #include <OpenMS/METADATA/MetaInfoInterface.h>
 #include <OpenMS/METADATA/Software.h>
 #include <OpenMS/DATASTRUCTURES/DateTime.h>
 #include <OpenMS/CONCEPT/UniqueIdInterface.h>
+#include <OpenMS/METADATA/CVTermList.h>
 
 #include <set>
 
@@ -50,7 +51,8 @@ namespace OpenMS
       @ingroup Metadata
   */
   class OPENMS_DLLAPI DataProcessing :
-    public MetaInfoInterface,
+    public CVTermList,
+    //~ public MetaInfoInterface,
     public UniqueIdInterface
   {
 

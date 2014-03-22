@@ -52,6 +52,20 @@ namespace OpenMS
   {
   }
 
+  CVTerm::CVTerm(const ControlledVocabulary::CVTerm & rhs, const DataValue & value) :
+    accession_(rhs.id),
+    name_(rhs.name),
+    cv_identifier_ref_(),
+    unit_(),
+    value_(value)
+  {
+    // TODO
+    //~ if (rhs.units.begin() != rhs.units.end())
+    //~ {      
+      //~ unit_ = *rhs.units.begin();
+    //~ }
+  }
+  
   CVTerm::CVTerm(const CVTerm & rhs) :
     accession_(rhs.accession_),
     name_(rhs.name_),

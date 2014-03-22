@@ -117,7 +117,7 @@ protected:
       void writeFeatureMap_(String & feature_tag, const FeatureMap<> & fm, const UInt64 & rfg, UInt indentation_level);
 
       /// Helper method that writes a featuremaps
-      void writeConsensusMap_(String & consensus_tag, const ConsensusMap & cm, UInt indentation_level);
+      void writeConsensusMap_(String & consensus_tag, const ConsensusMap & cm, const std::vector<UInt64> & asy, UInt indentation_level);
 
       /// Helper method to parse from xml id String to UID
       UInt64 parseUID_(String xml_id_string);
@@ -128,16 +128,20 @@ private:
       MzQuantMLHandler(const MzQuantMLHandler & rhs);
       MzQuantMLHandler & operator=(const MzQuantMLHandler & rhs);
 
-      String current_cf_id_;
+      UInt64 current_row_ref_;
       Size current_count_;
+      int current_order_;
+      UInt64 current_featurelist_rfgref_;
 
       std::map<UInt64, std::set<ExperimentalSettings> > current_rfgs_; // to be raw_files_group_
       std::map<UInt64, String> current_sfs_; // to be source_files_
       std::map<UInt64, Software> current_sws_;      
       std::map<int, DataProcessing> current_dps_;
       std::set<DataProcessing::ProcessingAction> current_pas_;
+      std::map<UInt64, MSQuantifications::Assay> current_assays_;
+      std::map<UInt64, Feature > current_features_;
+      std::vector<DoubleReal> current_masstrace_;
 
-      MSQuantifications::Assay current_assay_;
       std::vector<String> current_col_types_;
       std::vector<DoubleReal> current_dm_values_;
       std::vector<DoubleReal> current_row_;
@@ -147,13 +151,13 @@ private:
       std::vector<MetaInfo> up_stack_;
       std::vector<CVTerm> cvp_stack_;
 
-      std::multimap<String, String> cm_cf_ids_;
-      std::map<String, String> f_cf_ids_;
-      std::map<String, ConsensusFeature> cf_cf_obj_;
-      std::map<String, FeatureHandle> f_f_obj_;
-      std::map<String, ConsensusFeature::Ratio> r_rtemp_;
-      std::map<String, String> numden_r_ids_;
-      std::map<String, ConsensusFeature::Ratio> r_r_obj_;
+      //~ std::multimap<String, String> cm_cf_ids_;
+      //~ std::map<String, String> f_cf_ids_;
+      //~ std::map<String, ConsensusFeature> cf_cf_obj_;
+      //~ std::map<String, FeatureHandle> f_f_obj_;
+      //~ std::map<String, ConsensusFeature::Ratio> r_rtemp_;
+      //~ std::map<String, String> numden_r_ids_;
+      //~ std::map<String, ConsensusFeature::Ratio> r_r_obj_;
 
 
 

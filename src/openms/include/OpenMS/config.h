@@ -50,18 +50,6 @@
 
 // Here are some global configuration flags for OpenMS
 
-// The path to the directory where OpenMS data is installed
-#define OPENMS_DATA_PATH "/home/walzer/OpenMS/share/OpenMS"
-
-// The path to the directory where OpenMS doc is installed
-#define OPENMS_DOC_PATH "/home/walzer/OpenMS/doc"
-
-// The directory where OpenMS is build
-#define OPENMS_SOURCE_PATH "/home/walzer/OpenMS/src/openms"
-
-// The directory where the OpenMS sources are located
-#define OPENMS_BINARY_PATH "/home/walzer/OpenMS/src/openms"
-
 // Define compiler specifics (used in VERY few places only)
 // Microsoft Visual Studio .NET, 2005, 2008
 /* #undef OPENMS_COMPILER_MSVC */

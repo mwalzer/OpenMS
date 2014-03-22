@@ -38,6 +38,8 @@
 #include <OpenMS/FORMAT/FileTypes.h>
 #include <OpenMS/ANALYSIS/MAPMATCHING/FeatureGroupingAlgorithm.h>
 #include <OpenMS/DATASTRUCTURES/ListUtils.h>
+#include <OpenMS/FORMAT/MzQuantMLFile.h>
+#include <OpenMS/METADATA/MSQuantifications.h>
 
 #include <OpenMS/APPLICATIONS/TOPPBase.h>
 
@@ -72,9 +74,9 @@ protected:
   void registerOptionsAndFlags_()   // only for "unlabeled" algorithms!
   {
     registerInputFileList_("in", "<files>", ListUtils::create<String>(""), "input files separated by blanks", true);
-    setValidFormats_("in", ListUtils::create<String>("featureXML,consensusXML"));
+    setValidFormats_("in", ListUtils::create<String>("mzq,featureXML,consensusXML"));
     registerOutputFile_("out", "<file>", "", "Output file", true);
-    setValidFormats_("out", ListUtils::create<String>("consensusXML"));
+    setValidFormats_("out", ListUtils::create<String>("mzq,consensusXML"));
     addEmptyLine_();
     registerFlag_("keep_subelements", "For consensusXML input only: If set, the sub-features of the inputs are transferred to the output.");
   }
@@ -116,6 +118,7 @@ protected:
     //-------------------------------------------------------------
     // load input
     ConsensusMap out_map;
+    MSQuantifications mzq, tmp;
     if (file_type == FileTypes::FEATUREXML)
     {
       vector<FeatureMap<> > maps(ins.size());
@@ -146,6 +149,26 @@ protected:
       // group
       algorithm->group(maps, out_map);
     }
+    else if (file_type == FileTypes::MZQUANTML)
+    {
+      MzQuantMLFile file;
+      file.load(ins[0],mzq);
+      mzq.setLoadedFilePath(ins[0]);
+      for (Size i = 1; i < ins.size(); ++i)
+      {
+        file.load(ins[i],tmp);
+        //~ if (msq.getAnalysisSummaryQuantType() != MSQuantifications::LABELFREE)
+        //~ {
+          //abort! or check while merge?
+        //~ }
+        tmp.setLoadedFilePath(ins[i]);
+        mzq.simpleMerge(tmp);
+      }
+      algorithm->group(mzq.getFeatureMapVector(), out_map); // TODO overwrite to accept a map?!
+      mzq.addConsensusMap(out_map,mzq.getFeatureMapUIDs());
+      //~ addDataProcessing_(out_map, getProcessingInfo_(DataProcessing::FEATURE_GROUPING));
+
+    }
     else
     {
       vector<ConsensusMap> maps(ins.size());
@@ -175,15 +198,24 @@ protected:
         algorithm->transferSubelements(maps, out_map);
       }
     }
+    
+    if (FileHandler::getType(out) != FileTypes::MZQUANTML)
+    {
+      // assign unique ids
+      out_map.applyMemberFunction(&UniqueIdInterface::setUniqueId);
 
-    // assign unique ids
-    out_map.applyMemberFunction(&UniqueIdInterface::setUniqueId);
+      // annotate output with data processing info
+      addDataProcessing_(out_map, getProcessingInfo_(DataProcessing::FEATURE_GROUPING));
 
-    // annotate output with data processing info
-    addDataProcessing_(out_map, getProcessingInfo_(DataProcessing::FEATURE_GROUPING));
-
-    // write output
-    ConsensusXMLFile().store(out, out_map);
+      // write output
+      ConsensusXMLFile().store(out, out_map);
+    }
+    else
+    {
+      // TODO add dataprocessing
+      MzQuantMLFile file;
+      file.store(out, mzq);
+    }
 
     // some statistics
     map<Size, UInt> num_consfeat_of_size;

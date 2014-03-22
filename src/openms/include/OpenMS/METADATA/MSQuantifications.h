@@ -215,22 +215,39 @@ public:
     
     std::set<UInt64> getDataProcessingInRefs(UInt64 dp_ref) const;
     UInt64 getDataProcessingOutRefs(UInt64 dp_ref) const;
-    const UInt64 fromWhichInput(const UInt64 & feat) const;
+    const UInt64 featureMapWhichRaw(const UInt64 & what) const;
+    const std::vector<UInt64> rawWhichAssays(const UInt64 & what) const;
+    const std::vector<UInt64> getFeatureMapUIDs() const;
+    std::vector<FeatureMap<> > getFeatureMapVector() const;
     
     /// registerers
     void addConsensusMap(ConsensusMap & m, std::vector<UInt64> file_uids);
     void registerFeatureMap(FeatureMap<> & m, UInt64 rawfile_uid);        
     const std::pair< std::vector<UInt64>,UInt64 > registerExperimentMap(MSExperiment<Peak1D> & exp, std::vector<std::vector<std::pair<String, DoubleReal> > > labels = (std::vector<std::vector<std::pair<String, DoubleReal> > >()));
     
+    void registerInRefs(const UInt64 & dp_ref, const UInt64 & object_ref);
+    void registerOutRefs(const UInt64 & dp_ref, const UInt64 & object_ref);
+    
     const std::pair< std::vector<UInt64>,UInt64 > registerExperimentMap(ExperimentalSettings & es, std::vector<DataProcessing>& dps, std::vector<std::vector<std::pair<String, DoubleReal> > > labels = (std::vector<std::vector<std::pair<String, DoubleReal> > >()));
     
     const UInt64 addExperiment( std::vector<UInt64> & assay_uids, MSExperiment<Peak1D> & exp);
-    
     const UInt64 addExperiment( std::vector<UInt64> & assay_uids ,ExperimentalSettings & es, std::vector<DataProcessing>& dps);
     
     ///for mzquantml consumption
-    void stubFeatureMap(FeatureMap<> & m);        
-    void stubExperimentMap(FeatureMap<> & m);        
+    void consume_raw_file_groups(std::map<UInt64, std::set<ExperimentalSettings> > & rfgs);       
+    void consumeDataProcessingList(std::vector<DataProcessing> & dps);
+    void consumeAssays(std::map<UInt64, MSQuantifications::Assay> & asys);
+    void consumeFeatureMap(FeatureMap<> & fm, UInt64 & rfref);
+
+    void simpleMerge(MSQuantifications& rhs);
+
+    //TODO @mths : make these private - add accessors
+    std::multimap< UInt64, UInt64 > in_data_processings_; 
+    std::map< UInt64, UInt64 > out_data_processings_; 
+    
+    std::map< UInt64, UInt64 > featuremap_to_raw_; //featuremap ids 2 rawfile ids
+    std::map< UInt64, std::vector<UInt64> > raw_to_assays_;  //rawfile ids 2 assay ids
+    std::map< UInt64, std::vector<UInt64> > consensus_to_features_; //consensusmap ids 2 featuremap ids
 
 private:
     AnalysisSummary analysis_summary_;
@@ -239,15 +256,10 @@ private:
     // TODO @mths : add missing searchdatabase files, identification files and method files
 
     std::vector<DataProcessing> data_processings_;
-    std::multimap< UInt64, UInt64 > in_data_processings_; 
-    std::map< UInt64, UInt64 > out_data_processings_; 
-
     std::map< UInt64, Assay > assays_;
 
     std::map< UInt64, FeatureMap<> > feature_maps_;
-    std::map< UInt64, UInt64 > feature_to_raw_;
     std::map< UInt64, ConsensusMap > consensus_maps_;
-    std::map< UInt64, std::vector<UInt64> > consensus_to_features_;
 
     //~ std::vector<MetaInfo> bibliographic_reference_;
     //~ std::map<String,ConsensusFeature::Ratio > ratio_calculations_;

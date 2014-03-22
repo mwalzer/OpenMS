@@ -267,8 +267,8 @@ protected:
       MSQuantifications::QUANT_TYPES quant_type = MSQuantifications::LABELFREE;
       msq.setAnalysisSummaryQuantType(quant_type);    //add analysis_summary_
 
-      std::pair< std::vector<UInt64>,UInt64 > reg_res = msq.registerExperiment(exp);
-      msq.addFeatureMap(features, reg_res.second);      
+      std::pair< std::vector<UInt64>,UInt64 > reg_res = msq.registerExperimentMap(exp);
+      msq.registerFeatureMap(features, reg_res.second);      
       
       MzQuantMLFile file;
       file.store(out_mzq, msq);

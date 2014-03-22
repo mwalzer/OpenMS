@@ -35,8 +35,8 @@
 
 #include "FeatureLinkerBase.cpp"
 
-//~ #include <OpenMS/FORMAT/MzQuantMLFile.h>
-//~ #include <OpenMS/METADATA/MSQuantifications.h>
+#include <OpenMS/FORMAT/MzQuantMLFile.h>
+#include <OpenMS/METADATA/MSQuantifications.h>
 
 using namespace OpenMS;
 using namespace std;
@@ -141,10 +141,6 @@ protected:
       }
     }
     
-/*     MSQuantifications msq;
-    MSQuantifications::QUANT_TYPES quant_type = MSQuantifications::LABELFREE;
-    msq.setAnalysisSummaryQuantType(quant_type);    //add analysis_summary_
- */
     //-------------------------------------------------------------
     // set up algorithm
     //-------------------------------------------------------------
@@ -158,6 +154,8 @@ protected:
     //-------------------------------------------------------------
     // load input
     ConsensusMap out_map;
+    MSQuantifications mzq, tmp;
+
     if (file_type == FileTypes::FEATUREXML)
     {
       // use map with highest number of features as reference:
@@ -282,6 +280,30 @@ protected:
 
       
     }
+    else if (file_type == FileTypes::MZQUANTML)
+    {
+      MzQuantMLFile file;
+      file.load(ins[0],mzq);
+      LOG_INFO << String(mzq.getFeatureMapVector().size()) << "|" << ins.size() << endl;
+      algorithm->setReference(0, mzq.getFeatureMapVector().back());
+      for (Size i = 1; i < ins.size(); ++i)
+      {
+        file.load(ins[i],tmp);
+        //~ if (msq.getAnalysisSummaryQuantType() != MSQuantifications::LABELFREE)
+        //~ {
+          //abort! or check while merge?
+        //~ }
+        algorithm->addToGroup(i, tmp.getFeatureMapVector().back());
+        mzq.simpleMerge(tmp);
+      }
+      out_map = algorithm->getResultMap();
+      
+      out_map.sortByMZ();
+      out_map.updateRanges();
+
+      mzq.addConsensusMap(out_map,mzq.getFeatureMapUIDs());
+      //~ addDataProcessing_(out_map, getProcessingInfo_(DataProcessing::FEATURE_GROUPING));
+    }
     else
     {
       vector<ConsensusMap> maps(ins.size());
@@ -312,17 +334,25 @@ protected:
       }
     }
 
-    // assign unique ids
-    out_map.applyMemberFunction(&UniqueIdInterface::setUniqueId);
+    if (file_type != FileTypes::MZQUANTML)
+    {
+      // assign unique ids
+      out_map.applyMemberFunction(&UniqueIdInterface::setUniqueId);
 
-    // annotate output with data processing info
-    addDataProcessing_(out_map, getProcessingInfo_(DataProcessing::FEATURE_GROUPING));
+      // annotate output with data processing info
+      addDataProcessing_(out_map, getProcessingInfo_(DataProcessing::FEATURE_GROUPING));
 
-    //~ msq.addConsensusMap(out_map); 
+      //~ msq.addConsensusMap(out_map); 
+      
+      // write output
+      ConsensusXMLFile().store(out, out_map);
+    }
+    else
+    {
+      MzQuantMLFile file;
+      file.store(out,mzq);
+    }
     
-    // write output
-    ConsensusXMLFile().store(out, out_map);
-
     // some statistics
     map<Size, UInt> num_consfeat_of_size;
     for (ConsensusMap::const_iterator cmit = out_map.begin(); cmit != out_map.end(); ++cmit)

@@ -37,6 +37,7 @@
 
 #include <OpenMS/DATASTRUCTURES/String.h>
 #include <OpenMS/DATASTRUCTURES/DataValue.h>
+#include <OpenMS/FORMAT/ControlledVocabulary.h>
 
 namespace OpenMS
 {
@@ -111,6 +112,9 @@ public:
 
     /// Detailed constructor
     CVTerm(const String & accession, const String & name, const String & cv_identifier_ref, const String & value, const Unit & unit);
+
+    /// Intermediate constructor for ControlledVocabulary::CVTerm
+    CVTerm(const ControlledVocabulary::CVTerm& rhs, const DataValue & value);
 
     /// Copy constructor
     CVTerm(const CVTerm & rhs);
