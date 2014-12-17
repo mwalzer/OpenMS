@@ -1,4 +1,5 @@
 from libcpp cimport bool
+from libcpp cimport set
 from Types cimport *
 from BaseFeature cimport *
 from Peak2D cimport *
@@ -7,6 +8,7 @@ from UniqueIdInterface cimport *
 from FeatureMap cimport *
 from BaseFeature cimport *
 from PeptideIdentification cimport *
+from FeatureHandle cimport *
 
 cdef extern from "<OpenMS/KERNEL/ConsensusFeature.h>" namespace "OpenMS":
 
@@ -62,6 +64,9 @@ cdef extern from "<OpenMS/KERNEL/ConsensusFeature.h>" namespace "OpenMS":
         void removeMetaValue(String) nogil except +
         void removeMetaValue(unsigned int) nogil except +
         void clearMetaInfo() nogil except +
+        libcpp_vector[FeatureHandle] getFeatureHandles() nogil except +
+        #libcpp_vector[UInt64] getMapIndices() nogil except +
+        #libcpp_vector[Peak2D] getFeatureCentroids() nogil except +
 
         void addRatio(Ratio r) nogil except +
         void setRatios(libcpp_vector[Ratio] rs) nogil except +

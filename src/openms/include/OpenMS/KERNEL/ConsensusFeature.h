@@ -216,6 +216,8 @@ public:
 
     /// Non-mutable access to the contained feature handles
     const HandleSetType & getFeatures() const;
+    /// mutable access to the contained feature handles
+    std::vector<FeatureHandle> getFeatureHandles() const;
     //@}
 
     ///@name Accessors
