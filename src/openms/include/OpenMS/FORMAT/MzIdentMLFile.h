@@ -76,7 +76,7 @@ public:
         @exception Exception::FileNotFound is thrown if the file could not be opened
         @exception Exception::ParseError is thrown if an error occurs during parsing
     */
-    void load(const String& filename, Identification& id);
+    void load(const String& filename, std::vector<ProteinIdentification>& poid, std::vector<PeptideIdentification>& peid);
 
     /**
         @brief Loads a map from a MzIdentML file.
@@ -84,7 +84,7 @@ public:
         @exception Exception::FileNotFound is thrown if the file could not be opened
         @exception Exception::ParseError is thrown if an error occurs during parsing
     */
-    void load(const String& filename, std::vector<ProteinIdentification>& poid, std::vector<PeptideIdentification>& peid);
+    void load(const String& filename, Identification& id);
 
     /**
         @brief Stores a map in a MzIdentML file.
