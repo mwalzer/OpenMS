@@ -169,7 +169,7 @@ namespace OpenMS
   //destructor
   SuffixArraySeqan::~SuffixArraySeqan()
   {
-
+    delete it_;
   }
 
   String SuffixArraySeqan::toString()
