@@ -17,6 +17,7 @@ cdef extern from "<OpenMS/DATASTRUCTURES/DPosition.h>" namespace "OpenMS":
     cdef cppclass DPosition1 "OpenMS::DPosition<1> ":
         # wrap-ignore
         DPosition1()  nogil except +
+        DPosition1(double x)  nogil except +
         DPosition1(DPosition1)  nogil except +
 
         double & operator[](Size index) nogil except +
@@ -35,6 +36,7 @@ cdef extern from "<OpenMS/DATASTRUCTURES/DPosition.h>" namespace "OpenMS":
     cdef cppclass DPosition2 "OpenMS::DPosition<2> ":
         # wrap-ignore
         DPosition2()  nogil except +
+        DPosition2(double x, double y)  nogil except +
         DPosition2(DPosition2)  nogil except +
 
         double & operator[](Size index) nogil except +
