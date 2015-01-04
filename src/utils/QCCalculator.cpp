@@ -48,6 +48,9 @@
 #include <OpenMS/MATH/STATISTICS/StatisticFunctions.h>
 #include <OpenMS/FORMAT/ControlledVocabulary.h>
 #include <OpenMS/SYSTEM/File.h>
+#include <OpenMS/FORMAT/MzIdentMLFile.h>
+#include <OpenMS/FORMAT/FileHandler.h>
+
 
 #include <QFileInfo>
 //~ #include <boost/regex.hpp>
@@ -124,7 +127,7 @@ protected:
     registerOutputFile_("out", "<file>", "", "Your qcML file.");
     setValidFormats_("out", ListUtils::create<String>("qcML"));
     registerInputFile_("id", "<file>", "", "Input idXML file containing the identifications. Your identifications will be exported in an easy-to-read format", false);
-    setValidFormats_("id", ListUtils::create<String>("idXML"));
+    setValidFormats_("id", ListUtils::create<String>("idXML,mzid"));
     registerInputFile_("feature", "<file>", "", "feature input file (this is relevant for most QC issues)", false);
     setValidFormats_("feature", ListUtils::create<String>("featureXML"));
     registerInputFile_("consensus", "<file>", "", "consensus input file (this is only used for charge state deconvoluted output. Use the consensusXML output form the DeCharger)", false);
@@ -154,11 +157,11 @@ protected:
     //-------------------------------------------------------------
     // parsing parameters
     //-------------------------------------------------------------
-    String inputfile_id               = getStringOption_("id");
-    String inputfile_feature       = getStringOption_("feature");
-    String inputfile_consensus  = getStringOption_("consensus");
-    String inputfile_raw            = getStringOption_("in");
-    String outputfile_name       = getStringOption_("out");
+    String inputfile_id = getStringOption_("id");
+    String inputfile_feature = getStringOption_("feature");
+    String inputfile_consensus = getStringOption_("consensus");
+    String inputfile_raw = getStringOption_("in");
+    String outputfile_name = getStringOption_("out");
 
     //~ bool Ms1(getFlag_("MS1"));
     //~ bool Ms2(getFlag_("MS2"));
@@ -440,7 +443,16 @@ protected:
     //------------------------------------------------------------
     if (inputfile_id != "")
     {
-      IdXMLFile().load(inputfile_id, prot_ids, pep_ids);
+      FileTypes::Type in_type = FileHandler::getTypeByFileName(inputfile_id);
+
+      if (in_type == FileTypes::MZIDENTML)
+      {
+        MzIdentMLFile().load(inputfile_id, prot_ids, pep_ids);   //, document_id);
+      }
+      else
+      {
+        IdXMLFile().load(inputfile_id, prot_ids, pep_ids);
+      }
       cerr << "idXML read ended. Found " << pep_ids.size() << " peptide identifications." << endl;
 
       ProteinIdentification::SearchParameters params = prot_ids[0].getSearchParameters();
