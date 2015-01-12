@@ -2,6 +2,7 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:fo="http://www.w3.org/1999/XSL/Format" 
 	xmlns:ns="http://www.prime-xs.eu/ms/qcml" xmlns="">
+	<!--fop -xml example.qcml -xsl qc-xsl.fo -pdf test.pdf-->
 	<xsl:output method="xml" indent="yes"/>
     <xsl:template match="/">
 		<fo:root>
@@ -15,30 +16,23 @@
 		<fo:page-sequence master-reference="A4-portrait">
 			<fo:flow flow-name="xsl-region-body">
 <!-- Document caption-->
-			<fo:block>
+			<fo:block font-size="24pt" text-align="center" font-weight="bold" space-before="5mm" space-after="5mm">
 				Run Quality Report
 			</fo:block>
 <!-- MetaData Box-->
-			<fo:block>
-					<fo:table>
-					<fo:table-column column-width="9cm"/>
-					<fo:table-column column-width="9cm"/>
+			<fo:block border="solid 0.1mm black">
+					<fo:block font-weight="bold">Metadata:</fo:block>
+					
+					<fo:table space-before="1mm" space-after="1mm" margin="10mm">
+						<fo:table-column column-width="8cm"/>
+						<fo:table-column column-width="9cm"/>
 
-					<fo:table-header>
+					
+
+					<fo:table-body border="solid 0.1mm black">
 					  <fo:table-row>
 						<fo:table-cell>
-						  <fo:block font-weight="bold">Metadata: </fo:block>
-						</fo:table-cell>
-						<fo:table-cell>
-						  <fo:block font-weight="bold">...</fo:block>
-						</fo:table-cell>
-					  </fo:table-row>
-					</fo:table-header>
-
-					<fo:table-body>
-					  <fo:table-row>
-						<fo:table-cell>
-							<fo:block>Filename</fo:block>
+							<fo:block font-weight="bold">Filename</fo:block>
 						</fo:table-cell>
 						<fo:table-cell>
 								<xsl:for-each select="ns:qcML/ns:runQuality">
@@ -71,12 +65,14 @@
 			</fo:block>
 				
 <!-- Overview Box-->	
-			<fo:block>
+			<fo:block space-before="5mm" space-after="5mm">
+				<fo:block font-size="16pt" font-weight="bold">
 				Overview Plots
-					<fo:table>
-					<fo:table-column column-width="6cm"/>
-					<fo:table-column column-width="8cm"/>
-					<fo:table-column column-width="6cm"/>
+				</fo:block>
+					<fo:table border="solid 0.1mm black">
+					<fo:table-column column-width="5.725cm"/>
+					<fo:table-column column-width="7.5cm"/>
+					<fo:table-column column-width="5.725cm"/>
 
 					<fo:table-header>
 					  <fo:table-row>
@@ -111,57 +107,62 @@
 					  	</fo:block></fo:table-cell>
 					  </fo:table-row>
 					</fo:table-body>
-
 				</fo:table>
-				
 			</fo:block>
 			   
 <!-- Details Box-->
 			<fo:block>
+				<fo:block font-size="16pt" font-weight="bold">
 				Details
+				</fo:block>
+					<fo:table border="solid 0.1mm black">
+						<fo:table-column column-width="5cm"/>
+						<fo:table-column column-width="7cm"/>
+						<fo:table-column column-width="7cm"/>
+						<fo:table-header>
+						  <fo:table-row>
+							<fo:table-cell>
+							  <fo:block font-weight="bold">Aquisition details</fo:block>
+							</fo:table-cell>
+							<fo:table-cell>
+							  <fo:block font-weight="bold">Name</fo:block>
+							</fo:table-cell>
+							<fo:table-cell>
+							  <fo:block font-weight="bold">Value</fo:block>
+							</fo:table-cell>
+						  </fo:table-row>
+						</fo:table-header>
 
-					<fo:table>
-					<fo:table-column column-width="5cm"/>
-					<fo:table-column column-width="7cm"/>
-					<fo:table-column column-width="7cm"/>
-					<fo:table-header>
-					  <fo:table-row>
-						<fo:table-cell>
-						  <fo:block font-weight="bold">Aquisition details</fo:block>
-						</fo:table-cell>
-						<fo:table-cell>
-						  <fo:block font-weight="bold">Name</fo:block>
-						</fo:table-cell>
-						<fo:table-cell>
-						  <fo:block font-weight="bold">Value</fo:block>
-						</fo:table-cell>
-					  </fo:table-row>
-					</fo:table-header>
-
-					<fo:table-body>
-						<fo:table-row>
-							<xsl:for-each select="ns:qcML/ns:runQuality">
-								<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000006']"/>
-							</xsl:for-each>
-						</fo:table-row>
-						<fo:table-row>
-							<xsl:for-each select="ns:qcML/ns:runQuality">
-								<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000007']"/>
-							</xsl:for-each>
-						</fo:table-row>
-					</fo:table-body>
-				</fo:table>
+						<fo:table-body>
+							<fo:table-row>
+								<fo:table-cell><fo:block/></fo:table-cell>
+								<xsl:for-each select="ns:qcML/ns:runQuality">
+									<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000006']"/>
+								</xsl:for-each>
+							</fo:table-row>
+							<fo:table-row>
+								<fo:table-cell><fo:block/></fo:table-cell>
+								<xsl:for-each select="ns:qcML/ns:runQuality">
+									<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000007']"/>
+								</xsl:for-each>
+							</fo:table-row>
+						</fo:table-body>
+					</fo:table>
 				
 				
 
-					<fo:table>
+					<fo:table border="solid 0.1mm black">
 					<fo:table-column column-width="5cm"/>
-					<fo:table-column column-width="7cm"/>
-					<fo:table-column column-width="7cm"/>
+					<fo:table-column column-width="3cm"/>
+					<fo:table-column column-width="5.5cm"/>
+					<fo:table-column column-width="5.5cm"/>
 					<fo:table-header>
 					  <fo:table-row>
 						<fo:table-cell>
 						  <fo:block font-weight="bold">Aquisition ranges</fo:block>
+						</fo:table-cell>
+						<fo:table-cell>
+						  <fo:block font-weight="bold"></fo:block>
 						</fo:table-cell>
 						<fo:table-cell>
 						  <fo:block font-weight="bold">Minimum</fo:block>
@@ -174,16 +175,18 @@
 
 					<fo:table-body>
 						<fo:table-row>
+							<fo:table-cell><fo:block/></fo:table-cell>
 							<fo:table-cell>
-								<fo:block font-weight="bold">RT [s]</fo:block>
+								<fo:block  font-style="italic">RT [s]</fo:block>
 							</fo:table-cell>
 							<xsl:for-each select="ns:qcML/ns:runQuality">
 								<xsl:apply-templates select="ns:attachment[@accession = 'QC:0000012']"/>
 							</xsl:for-each>
 						</fo:table-row>
 						<fo:table-row>
+							<fo:table-cell><fo:block/></fo:table-cell>
 							<fo:table-cell>
-								<fo:block font-weight="bold">MZ [amu]</fo:block>
+								<fo:block font-style="italic">MZ [amu]</fo:block>
 							</fo:table-cell>
 							<xsl:for-each select="ns:qcML/ns:runQuality">
 								<xsl:apply-templates select="ns:attachment[@accession = 'QC:0000009']"/>
@@ -194,7 +197,7 @@
 				
 
 
-					<fo:table>
+					<fo:table border="solid 0.1mm black">
 					<fo:table-column column-width="5cm"/>
 					<fo:table-column column-width="7cm"/>
 					<fo:table-column column-width="7cm"/>
@@ -214,45 +217,51 @@
 
 					<fo:table-body>
 						<fo:table-row>
-						  <xsl:for-each select="ns:qcML/ns:runQuality">
-							<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000029']"/>
-						  </xsl:for-each>
+							<fo:table-cell><fo:block/></fo:table-cell>
+							<xsl:for-each select="ns:qcML/ns:runQuality">
+								<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000029']"/>
+							</xsl:for-each>
 					  </fo:table-row>
 					  <fo:table-row>
-						  <xsl:for-each select="ns:qcML/ns:runQuality">
-							<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000030']"/>
-						  </xsl:for-each>
+							<fo:table-cell><fo:block/></fo:table-cell>
+							<xsl:for-each select="ns:qcML/ns:runQuality">
+								<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000030']"/>
+							</xsl:for-each>
 					  </fo:table-row>
 					  <fo:table-row>
-						  <xsl:for-each select="ns:qcML/ns:runQuality">
-							<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000031']"/>
-						  </xsl:for-each>
+							<fo:table-cell><fo:block/></fo:table-cell>
+							<xsl:for-each select="ns:qcML/ns:runQuality">
+								<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000031']"/>
+							</xsl:for-each>
 					  </fo:table-row>
 					  <fo:table-row>
-						  <xsl:for-each select="ns:qcML/ns:runQuality">
-							<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000032']"/>
-						  </xsl:for-each>
+							<fo:table-cell><fo:block/></fo:table-cell>
+							<xsl:for-each select="ns:qcML/ns:runQuality">
+								<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000032']"/>
+							</xsl:for-each>
 					  </fo:table-row>
 					  <fo:table-row>
-						  <xsl:for-each select="ns:qcML/ns:runQuality">
-							<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000033']"/>
-						  </xsl:for-each>
+							<fo:table-cell><fo:block/></fo:table-cell>
+							<xsl:for-each select="ns:qcML/ns:runQuality">
+								<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000033']"/>
+							</xsl:for-each>
 					  </fo:table-row>
 					  <fo:table-row>
-						  <xsl:for-each select="ns:qcML/ns:runQuality">
-							<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000037']"/>
-						  </xsl:for-each>
+							<fo:table-cell><fo:block/></fo:table-cell>
+							<xsl:for-each select="ns:qcML/ns:runQuality">
+								<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000037']"/>
+							</xsl:for-each>
 					  </fo:table-row>
 					</fo:table-body>
 				</fo:table>
 				
 
 
-					<fo:table>
+					<fo:table border="solid 0.1mm black">						
 					<fo:table-body>
 						<fo:table-row>
 							<fo:table-cell>
-						  		<fo:block font-weight="bold">Databases</fo:block>
+						  		<fo:block font-weight="bold">Fastas used</fo:block>
 							</fo:table-cell>
 				
 							<xsl:for-each select="ns:qcML/ns:runQuality">
@@ -263,14 +272,14 @@
 					</fo:table-body>
 				</fo:table>
 
-					<fo:table>
+					<fo:table border="solid 0.1mm black">
 					<fo:table-column column-width="5cm"/>
 					<fo:table-column column-width="7cm"/>
 					<fo:table-column column-width="7cm"/>
 					<fo:table-header>
 					  <fo:table-row>
 						<fo:table-cell>
-						  <fo:block font-weight="bold">Feature Finding</fo:block>
+						  <fo:block font-weight="bold">Featuredetection details</fo:block>
 						</fo:table-cell>
 						<fo:table-cell>
 						  <fo:block font-weight="bold">Name</fo:block>
@@ -283,9 +292,10 @@
 
 					<fo:table-body>
 						<fo:table-row>
-						<xsl:for-each select="ns:qcML/ns:runQuality">
-							<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000046']"/>
-						</xsl:for-each>
+							<fo:table-cell><fo:block/></fo:table-cell>
+							<xsl:for-each select="ns:qcML/ns:runQuality">
+								<xsl:apply-templates select="ns:qualityParameter[@accession = 'QC:0000046']"/>
+							</xsl:for-each>
 						</fo:table-row>
 					</fo:table-body>
 				</fo:table>
@@ -294,7 +304,7 @@
 
 <!-- Rest of QP -->
 			<fo:block>
-					<fo:table>
+					<fo:table border="solid 0.1mm black">
 					<fo:table-column column-width="4cm"/>
 					<fo:table-column column-width="15cm"/>
 					<fo:table-body>
@@ -344,7 +354,7 @@
 	</xsl:template>
 <!-- for MetaData Box qp template: yields a block-->
     <xsl:template match="ns:qualityParameter[(@accession = 'MS:1000577') or (@accession = 'MS:1000031') or (@accession = 'MS:1000747' )]">
-    	<fo:block font-weight="bold"><xsl:value-of select="@value"/></fo:block>
+    	<fo:block><xsl:value-of select="@value"/></fo:block>
     </xsl:template>
 <!-- for further detail Box qp template: yields list of cells-->	
     <xsl:template match="ns:qualityParameter[not(@accession = 'MS:1000577') and not(@accession = 'MS:1000031') and not(@accession = 'MS:1000747' ) and @value]">
@@ -455,7 +465,7 @@
     </xsl:template>
 <!-- generic attachment template for att as table row: yields list of cells-->
     <xsl:template match="ns:attachment">
-    	<fo:table-row><fo:table-cell><fo:block><xsl:value-of select="@name"/></fo:block></fo:table-cell>
+    	<fo:table-row><fo:table-cell><fo:block font-weight="bold"><xsl:value-of select="@name"/></fo:block></fo:table-cell>
         	<fo:table-cell><fo:block>
             <xsl:choose>
               <xsl:when test="ns:binary">
@@ -471,13 +481,13 @@
               			<xsl:text>scale-to-fit</xsl:text>
               		</xsl:attribute>
               		<xsl:attribute name="content-height">
-              			<xsl:text>100%</xsl:text>
+              			<xsl:text>75%</xsl:text>
               		</xsl:attribute>
               		<xsl:attribute name="scaling">
               			<xsl:text>uniform</xsl:text>
               		</xsl:attribute>
               		<xsl:attribute name="width">
-              			<xsl:text>100%</xsl:text>
+              			<xsl:text>75%</xsl:text>
               		</xsl:attribute>
               	</fo:external-graphic>
               </xsl:when>
