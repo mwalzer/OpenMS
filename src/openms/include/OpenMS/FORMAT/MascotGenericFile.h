@@ -197,8 +197,7 @@ protected:
                 {
                   continue;
                 }
-
-                //line.substitute('\t', ' ');
+                line.substitute('\t', ' ');
                 line.split(' ', split);
                 if (split.size() >= 2)
                 {

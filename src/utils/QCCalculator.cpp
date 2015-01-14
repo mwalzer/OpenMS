@@ -50,6 +50,7 @@
 #include <OpenMS/SYSTEM/File.h>
 #include <OpenMS/FORMAT/MzIdentMLFile.h>
 #include <OpenMS/FORMAT/FileHandler.h>
+#include <OpenMS/FORMAT/FileTypes.h>
 
 
 #include <QFileInfo>
@@ -123,7 +124,7 @@ protected:
   void registerOptionsAndFlags_()
   {
     registerInputFile_("in", "<file>", "", "raw data input file (this is relevant if you want to look at MS1, MS2 and precursor peak information)");
-    setValidFormats_("in", ListUtils::create<String>("mzML"));
+    setValidFormats_("in", ListUtils::create<String>("mzML,mgf"));
     registerOutputFile_("out", "<file>", "", "Your qcML file.");
     setValidFormats_("out", ListUtils::create<String>("qcML"));
     registerInputFile_("id", "<file>", "", "Input idXML file containing the identifications. Your identifications will be exported in an easy-to-read format", false);
@@ -180,12 +181,18 @@ protected:
     // MS  aqiusition
     //------------------------------------------------------------
     String base_name = QFileInfo(QString::fromStdString(inputfile_raw)).baseName();
-
-    cout << "Reading mzML file..." << endl;
-    MzMLFile mz_data_file;
     MSExperiment<Peak1D> exp;
-    MzMLFile().load(inputfile_raw, exp);
-    
+    cout << "Reading spectrum file ..." << endl;
+
+    FileHandler fh;
+    FileTypes::Type in_type = fh.getType(inputfile_raw);
+    if (!fh.loadExperiment(inputfile_raw, exp, in_type))
+    {
+      writeLog_("Unsupported or corrupt input file. Aborting!");
+      printUsage_();
+      return ILLEGAL_PARAMETERS;
+    }
+
     //---prep input
     exp.sortSpectra();
     UInt min_mz = std::numeric_limits<UInt>::max();
