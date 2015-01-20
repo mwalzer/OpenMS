@@ -5,13 +5,13 @@ options(digits=10)
 
 file<-commandArgs(TRUE)[1]
 post<-commandArgs(TRUE)[2]
+png(post)
 ######
 ###setid
 ######
 
 a<-read.table(file=file, header=TRUE, sep="\t", na.strings="NA", dec=".", strip.white=TRUE)
 ######################################
-png(post)
 bxpo=list()
 bxpo$names=a[,1]
 a <- as.matrix(a[,-1])
