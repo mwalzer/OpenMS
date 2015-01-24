@@ -236,6 +236,11 @@ protected:
     qp.cvRef = "MS"; ///< cv reference
     qp.cvAcc = "MS:1000031";
     qp.value = exp.getInstrument().getName();
+    if (qp.value.empty())
+    {
+      qp.value = "Mass Spectrometer Instrument";
+    }
+
     qcmlfile.addRunQualityParameter(base_name, qp);    
 
     qp = QcMLFile::QualityParameter();
