@@ -557,6 +557,43 @@ namespace OpenMS
     return (value >= low) && (value <= high);
   }
 
+  void IDFilter::filterIdentificationsByPassThreshold(const vector<PeptideIdentification>& identifications, vector<PeptideIdentification>& filtered_identifications)
+  {
+    filtered_identifications.clear();
+    Size missing_meta_value = 0;
+
+    for (Size i = 0; i < identifications.size(); ++i)
+    {
+      PeptideIdentification filtered_identification = identifications[i];
+      filtered_identification.setHits(vector<PeptideHit>());
+      vector<PeptideHit> filtered_peptide_hits;
+      for (Size j = 0; j < identifications[i].getHits().size(); ++j)
+      {
+        if (identifications[i].getHits()[j].metaValueExists("passThreshold"))
+        {
+          if (identifications[i].getHits()[j].getMetaValue("passThreshold").toBool())
+          {
+            filtered_peptide_hits.push_back(identifications[i].getHits()[j]);
+          }
+        }
+        else
+        {
+          ++missing_meta_value;
+          filtered_peptide_hits.push_back(identifications[i].getHits()[j]);
+        }
+      }
+      if (missing_meta_value > 0)
+        LOG_WARN << "Filtering identifications by passThreshold with retaining " << missing_meta_value << " peptidehits with missing meta-value ('passThreshold')!\n";
+
+      if (!filtered_peptide_hits.empty())
+      {
+        filtered_identification.setHits(filtered_peptide_hits);
+        filtered_identification.assignRanks();
+        filtered_identifications.push_back(filtered_identification);
+      }
+    }
+  }
+
   void IDFilter::filterIdentificationsByRT(const vector<PeptideIdentification>& identifications, double min_rt, double max_rt, vector<PeptideIdentification>& filtered_identifications)
   {
     filtered_identifications.clear();

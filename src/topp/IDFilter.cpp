@@ -233,6 +233,7 @@ protected:
     registerFlag_("keep_unreferenced_protein_hits", "Proteins not referenced by a peptide are retained in the ids.");
     registerFlag_("remove_decoys", "Remove proteins according to the information in the user parameters. Usually used in combination with 'delete_unreferenced_peptide_hits'.");
     registerFlag_("delete_unreferenced_peptide_hits", "Peptides not referenced by any protein are deleted in the ids. Usually used in combination with 'score:prot' or 'thresh:prot'.");
+    registerFlag_("delete_hits_beneath_file_threshold", "Hits that were annotated by 'passedThreshold = true' in the file - even without elaboratioin on the specifics of the threshold, will be removed. Subsequently also any empty PeptideIdentification.");
 
     //setSectionDescription("RT", "Filters peptides using meta-data annotated by RT predict. The criterion is always the p-value (for having a deviation between observed and predicted RT equal or bigger than allowed).");
 
@@ -323,6 +324,7 @@ protected:
 
     bool remove_decoys = getFlag_("remove_decoys");
 
+    bool remove_unpassed = getFlag_("delete_hits_beneath_file_threshold");
     //-------------------------------------------------------------
     // reading input
     //-------------------------------------------------------------
@@ -357,6 +359,15 @@ protected:
 
     std::set<String> applied_filters;
 
+
+    // Filtering peptide identification according to set criteria
+    if (remove_unpassed)
+    {
+      std::vector<PeptideIdentification> tmp;
+      applied_filters.insert("Filtering by passThreshold ...\n");
+      IDFilter::filterIdentificationsByPassThreshold(identifications, tmp);
+      identifications.swap(tmp);
+    }
 
     // Filtering peptide identification according to set criteria
     if ((rt_high < double_max) || (rt_low > -double_max))

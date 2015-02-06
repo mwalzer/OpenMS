@@ -356,6 +356,10 @@ public:
     /// Peptides with no MZ value will be removed in any case
     static void filterIdentificationsByMZ(const std::vector<PeptideIdentification>& identifications, double min_mz, double max_mz, std::vector<PeptideIdentification>& filtered_identifications);
 
+    /// peptides hits having a meta value passThreshold equaling false will be discarded, empty @p peptide_identifications are not kept
+    /// Peptides with no MZ value will be removed in any case
+    static void filterIdentificationsByPassThreshold(const std::vector<PeptideIdentification>& identifications, std::vector<PeptideIdentification>& filtered_identifications);
+
 	  /**
       @brief Filters the peptide hits according to their predicted RT p-values
 

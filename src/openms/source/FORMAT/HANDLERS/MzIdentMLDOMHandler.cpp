@@ -1258,6 +1258,9 @@ namespace OpenMS
       {
         //build the PeptideHit from a SpectrumIdentificationItem
         PeptideHit hit(score, rank, chargeState, pep_map_[peptide_ref]);
+        //set passThreshold as metavalue in any case, defaulting to false
+        pass ? hit.setMetaValue("passThreshold", "true") : hit.setMetaValue("passThreshold", "false");
+        //set all other cvs as metavalues for compatibility
         for (Map<String, vector<CVTerm> >::ConstIterator cvs = params.first.getCVTerms().begin(); cvs != params.first.getCVTerms().end(); ++cvs)
         {
           for (vector<CVTerm>::const_iterator cv = cvs->second.begin(); cv != cvs->second.end(); ++cv)
