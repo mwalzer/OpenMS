@@ -8,7 +8,7 @@ import logging
 import argparse
 #import pickle
 
-VERSION = "0.1"
+VERSION = "0.2"
 
 #QC:0000044  -> ms2s.csv
 #QC:0000038 -> ids.csv
@@ -61,7 +61,7 @@ def create_qp(qcml, temp_dir, qc_metric):
             raise('no ' + qcml)
 
     except Exception as e:
-        logging.warning("Could not execute QCEembedder successfully for " + str(plot_file) +
+        logging.warning("Could not execute QCEmbedder successfully for " + str(plot_file) +
                         " - no " + str(rscript) + " QC metric" + "(.." + str(e) + ")")
         return None
     return qcml
@@ -78,6 +78,17 @@ def create_qcml(mzid, spectra, directory):
                         " - skipping. (" + str(e) + ")")
     logging.warning("Created qcml for  " + str(mzid) + ', ' + str(spectra) + " - " + qcml)
     return qcml
+
+
+def filter_mzid(mzid, temp_dir):
+    fmzid = str(temp_dir) + '/' + os.path.basename(mzid)
+    exe = "IDFilter -delete_hits_beneath_file_threshold -in {inpu} -out {out}".format(inpu=mzid, out=fmzid)
+    logging.warning("Filtering for passed threshold in " + str(mzid) + " ...")
+    try:
+        o = subprocess.check_output(exe, stderr=subprocess.STDOUT, shell=True)
+    except Exception as e:
+        logging.warning("Could not iltering for passed threshold for  " + str(mzid) + " - skipping. (" + str(e) + ")")
+    return fmzid
 
 
 def __main__():
@@ -104,7 +115,7 @@ def __main__():
     if options.temp_path:
         temp_dir = options.temp_path
     else:
-        options.temp_dir = "/tmp/"
+        temp_dir = "/tmp/"
 
     logging.basicConfig(filename=options.outfiles_directory + str(datetime.now()) + '.log', filemode='w+',
                         level=logging.DEBUG)  #, format='%(levelname)s:%(message)s'
@@ -122,7 +133,8 @@ def __main__():
        EXPMAP_RPLOT
     ]
     for mse in options.spectra_list:
-        qcml = create_qcml(mzid=options.mzid_file, spectra=mse, directory=options.outfiles_directory)
+        fmzid = filter_mzid(mzid=options.mzid_file, temp_dir=temp_dir)
+        qcml = create_qcml(mzid=fmzid, spectra=mse, directory=options.outfiles_directory)
         for metric in metrics_list:
             create_qp(qcml, temp_dir, metric)
 
