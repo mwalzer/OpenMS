@@ -39,6 +39,8 @@
 #include <OpenMS/SYSTEM/File.h>
 #include <OpenMS/APPLICATIONS/TOPPBase.h>
 #include <OpenMS/FORMAT/FileHandler.h>
+#include <OpenMS/FORMAT/MzIdentMLFile.h>
+#include <OpenMS/FORMAT/FileTypes.h>
 
 #include <limits>
 #include <cmath>
@@ -172,9 +174,9 @@ protected:
   void registerOptionsAndFlags_()
   {
     registerInputFile_("in", "<file>", "", "input file ");
-    setValidFormats_("in", ListUtils::create<String>("idXML"));
+    setValidFormats_("in", ListUtils::create<String>("idXML,mzid"));
     registerOutputFile_("out", "<file>", "", "output file ");
-    setValidFormats_("out", ListUtils::create<String>("idXML"));
+    setValidFormats_("out", ListUtils::create<String>("idXML,mzid"));
 
     registerTOPPSubsection_("precursor", "Filtering by precursor RT or m/z");
     registerStringOption_("precursor:rt", "[min]:[max]", ":", "Retention time range to extract.", false);
@@ -247,7 +249,6 @@ protected:
     // variables
     //-------------------------------------------------------------
 
-    IdXMLFile idXML_file;
     vector<ProteinIdentification> protein_identifications;
     vector<PeptideIdentification> identifications;
     vector<PeptideIdentification> identifications_exclusion;
@@ -333,11 +334,23 @@ protected:
       FASTAFile().load(sequences_file_name, sequences);
     }
 
-    // preprocessing
+    // exclusion preprocessing
     if (exclusion_peptides_file_name  != "")
     {
-      String document_id;
-      IdXMLFile().load(exclusion_peptides_file_name, protein_identifications, identifications_exclusion, document_id);
+      FileTypes::Type exclusion_file_type = FileHandler::getTypeByFileName(exclusion_peptides_file_name);
+      if (exclusion_file_type == FileTypes::MZIDENTML)
+      {
+        MzIdentMLFile().load(exclusion_peptides_file_name, protein_identifications, identifications_exclusion);
+      }
+      else if (exclusion_file_type == FileTypes::IDXML)
+      {
+        IdXMLFile().load(exclusion_peptides_file_name, protein_identifications, identifications_exclusion);
+      }
+      else
+      {
+        writeLog_("Error, unknown format in 'in'.");
+        return ILLEGAL_PARAMETERS;
+      }
       for (Size i = 0; i < identifications_exclusion.size(); i++)
       {
         for (vector<PeptideHit>::const_iterator it = identifications_exclusion[i].getHits().begin();
@@ -348,10 +361,21 @@ protected:
         }
       }
     }
-    String document_id;
 
-    IdXMLFile().load(inputfile_name, protein_identifications, identifications, document_id);
-
+    FileTypes::Type file_type = FileHandler::getTypeByFileName(inputfile_name);
+    if (file_type == FileTypes::MZIDENTML)
+    {
+      MzIdentMLFile().load(inputfile_name, protein_identifications, identifications);
+    }
+    else if (file_type == FileTypes::IDXML)
+    {
+      IdXMLFile().load(inputfile_name, protein_identifications, identifications);
+    }
+    else
+    {
+      writeLog_("Error, unknown format in 'in'.");
+      return ILLEGAL_PARAMETERS;
+    }
     //-------------------------------------------------------------
     // calculations
     //-------------------------------------------------------------
@@ -639,8 +663,24 @@ protected:
     //-------------------------------------------------------------
     // writing output
     //-------------------------------------------------------------
-    IdXMLFile().store(outputfile_name, filtered_protein_identifications, filtered_peptide_identifications);
-
+    if (file_type != FileHandler::getTypeByFileName(outputfile_name))
+    {
+      writeLog_("Iput filetype differs from output filetype. For conversion, please use IDFileConverter.");
+      return ILLEGAL_PARAMETERS;
+    }
+    if (file_type == FileTypes::IDXML)
+    {
+      IdXMLFile().store(outputfile_name, filtered_protein_identifications, filtered_peptide_identifications);
+    }
+    else if (file_type == FileTypes::MZIDENTML)
+    {
+      MzIdentMLFile().store(outputfile_name, filtered_protein_identifications, filtered_peptide_identifications);
+    }
+    else
+    {
+      writeLog_("Error, unknown format in 'in'.");
+      return ILLEGAL_PARAMETERS;
+    }
     return EXECUTION_OK;
   }
 
