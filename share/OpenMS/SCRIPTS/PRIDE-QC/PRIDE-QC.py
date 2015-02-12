@@ -13,14 +13,15 @@ VERSION = "0.2"
 #QC:0000044  -> ms2s.csv
 #QC:0000038 -> ids.csv
 
-EXPMAP_RPLOT = {'R': "../ProduceQCFigures_precursormap.R", 'qp_att_acc': 'QC:0000004', 'cv_acc': 'QC:0000055', 'qpcv_export_list': ['QC:0000044']}
-IDMAP_RPLOT = {'R': "../ProduceQCFigures_idmap.R", 'qp_att_acc': 'QC:0000035', 'cv_acc': 'QC:0000052', 'qpcv_export_list': ['QC:0000038', 'QC:0000044']}
-ERRORDISTR_RPLOT = {'R': "../ProduceQCFigures_acc.R", 'qp_att_acc': 'QC:0000041', 'cv_acc': 'QC:0000053', 'qpcv_export_list': ['QC:0000038']}
-ERRORTIME_RPLOT = {'R': "../ProduceQCFigures_acc_time.R", 'qp_att_acc': 'QC:0000041', 'cv_acc': 'QC:0000054', 'qpcv_export_list': ['QC:0000038', 'QC:0000044']}
-TIC_RPLOT = {'R': "../ProduceQCFigures_precursor_histogram.R", 'qp_att_acc': 'QC:0000023', 'cv_acc': 'MS:1000235', 'qpcv_export_list': ['QC:0000044']}
+EXPMAP_RPLOT = {'R': "ProduceQCFigures_precursormap.R", 'qp_att_acc': 'QC:0000004', 'cv_acc': 'QC:0000055', 'qpcv_export_list': ['QC:0000044']}
+IDMAP_RPLOT = {'R': "ProduceQCFigures_idmap.R", 'qp_att_acc': 'QC:0000035', 'cv_acc': 'QC:0000052', 'qpcv_export_list': ['QC:0000038', 'QC:0000044']}
+ERRORDISTR_RPLOT = {'R': "ProduceQCFigures_acc.R", 'qp_att_acc': 'QC:0000041', 'cv_acc': 'QC:0000053', 'qpcv_export_list': ['QC:0000038']}
+ERRORTIME_RPLOT = {'R': "ProduceQCFigures_acc_time.R", 'qp_att_acc': 'QC:0000041', 'cv_acc': 'QC:0000054', 'qpcv_export_list': ['QC:0000038', 'QC:0000044']}
+TIC_RPLOT = {'R': "ProduceQCFigures_precursor_histogram.R", 'qp_att_acc': 'QC:0000023', 'cv_acc': 'MS:1000235', 'qpcv_export_list': ['QC:0000044']}
+CHARGE_RPLOT = {'R': "ProduceQCFigures_charge_histogram.R", 'qp_att_acc': 'QC:0000025', 'cv_acc': 'QC:0000051', 'qpcv_export_list': ['QC:0000038']}
 
 
-def create_qp(qcml, temp_dir, qc_metric):
+def create_qp(qcml, temp_dir, qc_metric, rdir):
     parent_cv = qc_metric['qp_att_acc']
     plot_cv = qc_metric['cv_acc']
     rscript = qc_metric['R']
@@ -29,7 +30,7 @@ def create_qp(qcml, temp_dir, qc_metric):
     try:
         for export_qccv in qpcv_export_list:
             export_path = str(temp_dir) + '/' + str(export_qccv).replace(':', '_') + '.csv'
-            eexe = "QCExtractor -in {inpu} -out_csv {out} -qp {qp}".format(inpu=qcml, out=export_path, qp=str(export_qccv))
+            eexe = "QCExtractor -in '{inpu}' -out_csv '{out}' -qp '{qp}'".format(inpu=qcml, out=export_path, qp=str(export_qccv))
             o = subprocess.check_output(eexe, stderr=subprocess.STDOUT, shell=True)
             # TODO possible to check if output is legit?!
             if o:
@@ -43,7 +44,7 @@ def create_qp(qcml, temp_dir, qc_metric):
 
     plot_file = str(temp_dir) + '/' + str(plot_cv).replace(':', '_') + ".png"
     try:
-        rexe = "Rscript {inpu} {out}".format(inpu=' '.join([rscript] + export_files), out=plot_file)
+        rexe = "Rscript {rdir}/{inpu} {out}".format(inpu=' '.join([rscript] + export_files), out=plot_file, rdir=rdir)
         o = subprocess.check_output(rexe, stderr=subprocess.STDOUT, shell=True)
         if not o:
             raise('no ' + plot_file)
@@ -54,7 +55,7 @@ def create_qp(qcml, temp_dir, qc_metric):
         return None
 
     try:
-        eexe = "QCEmbedder -in {inpu} -out {out} -plot {plot} -qp_att_acc {parent} -cv_acc {type}".format(
+        eexe = "QCEmbedder -in '{inpu}' -out '{out}' -plot '{plot}' -qp_att_acc {parent} -cv_acc {type}".format(
             inpu=qcml, out=qcml, plot=plot_file, parent=parent_cv, type=plot_cv)
         o = subprocess.check_output(eexe, stderr=subprocess.STDOUT, shell=True)
         if not o:
@@ -69,7 +70,7 @@ def create_qp(qcml, temp_dir, qc_metric):
 
 def create_qcml(mzid, spectra, directory):
     qcml = str(directory) + '/' + os.path.splitext(os.path.basename(spectra))[0] + '.qcML'
-    exe = "QCCalculator -in {inpu} -out {out} -id {id}".format(inpu=spectra, out=qcml, id=mzid)
+    exe = "QCCalculator -in '{inpu}' -out '{out}' -id '{id}'".format(inpu=spectra, out=qcml, id=mzid)
     logging.warning("Starting to create qcml for  " + str(mzid) + ', ' + str(spectra) + " ...")
     try:
         o = subprocess.check_output(exe, stderr=subprocess.STDOUT, shell=True)
@@ -82,12 +83,12 @@ def create_qcml(mzid, spectra, directory):
 
 def filter_mzid(mzid, temp_dir):
     fmzid = str(temp_dir) + '/' + os.path.basename(mzid)
-    exe = "IDFilter -delete_hits_beneath_file_threshold -in {inpu} -out {out}".format(inpu=mzid, out=fmzid)
+    exe = "IDFilter -delete_hits_beneath_file_threshold -in '{inpu}' -out '{out}'".format(inpu=mzid, out=fmzid)
     logging.warning("Filtering for passed threshold in " + str(mzid) + " ...")
     try:
         o = subprocess.check_output(exe, stderr=subprocess.STDOUT, shell=True)
     except Exception as e:
-        logging.warning("Could not iltering for passed threshold for  " + str(mzid) + " - skipping. (" + str(e) + ")")
+        logging.warning("Could not do filtering for passed threshold for  " + str(mzid) + " - skipping. (" + str(e) + ")")
     return fmzid
 
 
@@ -97,6 +98,7 @@ def __main__():
     parser.add_argument('-sp', '--spectras', nargs='+', dest="spectra_list",
                         help='<Required> list of the spectra carrying files referenced in the given mzid - each full path', required=True)
     parser.add_argument('-od', "--outdir", dest="outfiles_directory", help="<Required> Outfile for qcml", required=True)
+    parser.add_argument('-rd', "--Rdir", dest="Rscripts_directory", help="<Required> Rscript directory", required=True)
     parser.add_argument('-of', "--outfile", dest="outfile_path", help="Outfile for final qcml.")
     parser.add_argument('-temp', "--tempdir", dest="temp_path", help="Temporary directory for intermediate files.")
 
@@ -117,8 +119,8 @@ def __main__():
     else:
         temp_dir = "/tmp/"
 
-    logging.basicConfig(filename=options.outfiles_directory + str(datetime.now()) + '.log', filemode='w+',
-                        level=logging.DEBUG)  #, format='%(levelname)s:%(message)s'
+    logging.basicConfig(filename=options.outfiles_directory + "/qcml{:%d-%m-%Y_%H-%M-%S}".format(datetime.now()) + '.log',
+                        filemode='w+', level=logging.DEBUG)  #, format='%(levelname)s:%(message)s'
     logging.info("Starting PRIDE-QC for " + options.mzid_file + " at " + str(datetime.now()))
     args = parser.parse_args()
     logging.warning("verbosity turned on")
@@ -128,16 +130,18 @@ def __main__():
     metrics_list = [
        IDMAP_RPLOT,
        ERRORDISTR_RPLOT,
-       ERRORTIME_RPLOT,
+       #ERRORTIME_RPLOT,
        TIC_RPLOT,
-       EXPMAP_RPLOT
+       EXPMAP_RPLOT,
+       CHARGE_RPLOT
     ]
     for mse in options.spectra_list:
         fmzid = filter_mzid(mzid=options.mzid_file, temp_dir=temp_dir)
         qcml = create_qcml(mzid=fmzid, spectra=mse, directory=options.outfiles_directory)
         for metric in metrics_list:
-            create_qp(qcml, temp_dir, metric)
+            create_qp(qcml, temp_dir, metric, options.Rscripts_directory)
 
+    logging.info("Finishing PRIDE-QC for " + options.mzid_file + " at " + str(datetime.now()))
 
 
 if __name__ == '__main__':
