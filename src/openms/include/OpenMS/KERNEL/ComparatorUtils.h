@@ -427,6 +427,21 @@ protected:
     }
 
   };
+
+  /**
+    @brief static function to calculate the delta parts per million of two values
+
+    @param reference_value the reference value ppm delta is calculated against (aka theoretical value)
+    @param experimental_value the measured value from which the delta to a theoretical value is to be calculated
+    @return double dppm value
+  */
+  static double getDeltaPpm(double reference_value, double experimental_value)
+  {
+    double error(experimental_value - reference_value);
+    error = error / (reference_value * (double)1e-6);
+    //~ error = (1-exp_mz/theo_mz) * (double)1e6;
+    return error;
+  }
 }
 
 #endif // OPENMS_KERNEL_COMPARATORUTILS_H

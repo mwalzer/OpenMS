@@ -51,6 +51,7 @@
 #include <OpenMS/FORMAT/MzIdentMLFile.h>
 #include <OpenMS/FORMAT/FileHandler.h>
 #include <OpenMS/FORMAT/FileTypes.h>
+#include <OpenMS/KERNEL/ComparatorUtils.h>
 
 
 #include <QFileInfo>
@@ -136,17 +137,6 @@ protected:
     registerFlag_("remove_duplicate_features", "This flag should be set, if you work with a set of merged features.");
     //~ registerFlag_("MS1", "This flag should be set, if you want to work with MS1 stats.");
     //~ registerFlag_("MS2", "This flag should be set, if you want to work with MS2 stats.");
-  }
-
-  double getMassDifference(double theo_mz, double exp_mz, bool use_ppm)
-  {
-    double error(exp_mz - theo_mz);
-    if (use_ppm)
-    {
-      error = error / (theo_mz * (double)1e-6);
-      //~ error = (1-exp_mz/theo_mz) * (double)1e6;
-    }
-    return error;
   }
 
   ExitCodes main_(int, const char**)
@@ -722,7 +712,7 @@ protected:
           row.push_back(tmp.getSequence().toString().removeWhitespaces());
           row.push_back(tmp.getCharge());
           row.push_back(String((tmp.getSequence().getMonoWeight() + tmp.getCharge() * Constants::PROTON_MASS_U) / tmp.getCharge()));
-          double dppm = /* std::abs */ (getMassDifference(((tmp.getSequence().getMonoWeight() + tmp.getCharge() * Constants::PROTON_MASS_U) / tmp.getCharge()), it->getMZ(), true));
+          double dppm = /* std::abs */ (getDeltaPpm(((tmp.getSequence().getMonoWeight() + tmp.getCharge() * Constants::PROTON_MASS_U) / tmp.getCharge()), it->getMZ()));
           row.push_back(String(dppm));
           deltas.push_back(dppm);
           for (UInt w = 0; w < var_mods.size(); ++w)
