@@ -43,6 +43,7 @@ SemanticValidator
 SequenceCoverageCalculator
 SimpleSearchEngine
 SpecLibCreator
+Spectrum2json
 SvmTheoreticalSpectrumGeneratorTrainer
 TransformationEvaluation
 TopPerc
