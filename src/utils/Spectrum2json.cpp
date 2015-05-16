@@ -65,26 +65,19 @@ using namespace std;
       <table>
         <tr>
         <td ALIGN = "center" BGCOLOR="#EBEBEB"> pot. predecessor tools </td>
-        <td VALIGN="middle" ROWSPAN=3> \f$ \longrightarrow \f$ QCEmbedder \f$ \longrightarrow \f$</td>
+        <td VALIGN="middle" ROWSPAN=3> \f$ \longrightarrow \f$ Spectrum2json \f$ \longrightarrow \f$</td>
         <td ALIGN = "center" BGCOLOR="#EBEBEB"> pot. successor tools </td>
         </tr>
         <tr>
-        <td VALIGN="middle" ALIGN = "center" ROWSPAN=1> @ref UTILS_Spectrum2json </td>
-        <td VALIGN="middle" ALIGN = "center" ROWSPAN=1> @ref UTILS_QCMerger </td>
+        <td VALIGN="middle" ALIGN = "center" ROWSPAN=1> @ref TOPP_FileFilter </td>
         </tr>
         <tr>
-        <td VALIGN="middle" ALIGN = "center" ROWSPAN=1> @ref TOPP_XTandemAdapter </td>
-        <td VALIGN="middle" ALIGN = "center" ROWSPAN=1> @ref UTILS_QCShrinker </td>
+        <td VALIGN="middle" ALIGN = "center" ROWSPAN=1> @ref javascript </td>
         </tr>
       </table>
     </CENTER>
 
-    The data contained as values of the qp of a qcML file at @p in can be exported in tabluar (csv) format.
-
-    - @p names The name of the target runs or sets to be exported from. If empty, from all will be exported.
-    - @p mapping The mapping of the exported table's headers to the according qp cvs. The first row is considered containing the headers as for the exported the table. The second row is considered the according qp cv accessions of the qp to be exported.
-
-    Output is in csv format (see parameter @p out_csv) which can be easily viewed/parsed by many programs.
+    TBA
 
     <B>The command line parameters of this tool are:</B>
     @verbinclude UTILS_Spectrum2json.cli
@@ -130,7 +123,7 @@ protected:
     // reading input
     //------------------------------------------------------------
     IndexedMzMLFile ifile;
-    //ifile.setSkipXMLChecks(true);
+    ifile.setSkipXMLChecks(true);
     ifile.openFile(in);
     if (ifile.getParsingSuccess())
     {
@@ -141,11 +134,46 @@ protected:
       // PRECONDITION
       assert(mz_array.size() == int_array.size());
       assert(mz_array.size() > 2);
+
+//      {
+//              "sequence": null,
+//              "staticMods": [],
+//              "variableMods": [],
+//              "ntermMod": 0, // additional mass to be added to the n-term
+//              "ctermMod": 0, // additional mass to be added to the c-term
+//              "peaks": [],
+//              "massError": 0.5,
+//              "scanNum": null,
+//              "fileName": null,
+//              "charge": null,
+//              "precursorMz": null,
+//              "ms1peaks": null,
+//              "ms1scanLabel": null,
+//              "precursorPeaks": null,
+//              "precursorPeakClickFn": null,
+//              "zoomMs1": false,
+//              "width": 750, 	  // width of the ms/ms plot
+//              "height": 450, 	  // height of the ms/ms plot
+//              "extraPeakSeries": [],
+//              "showIonTable": true,
+//              "showViewingOptions": true,
+//              "showOptionsTable": true,
+//              "showSequenceInfo": true,
+//              "labelImmoniumIons": true,
+//              "labelPrecursorPeak": true,
+//              "labelReporters": false,
+//              "showMassErrorPlot": false,
+//              "massErrorPlotDefaultUnit": 'Da'
+//       }
+
+      std::cout << "{ \"sequence\":" << seq << "," << std::endl;
+      std::cout << "\t \"peaks\":[" << std::endl;
       for (size_t i = 0; i < int_array.size(); ++i)
       {
-        std::cout << "header " << std::endl <<
-        mz_array[i] << " - " << int_array[i] <<  std::endl;
+          std::cout << "\t[" << mz_array[i] << "," << int_array[i] << "]," << std::endl;
       }
+      std::cout << "\t]" << std::endl;
+      std::cout << "}" << std::endl;
     }
     else
     {
