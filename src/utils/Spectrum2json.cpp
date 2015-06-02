@@ -135,38 +135,16 @@ protected:
       assert(mz_array.size() == int_array.size());
       assert(mz_array.size() > 2);
 
-//      {
-//              "sequence": null,
-//              "staticMods": [],
-//              "variableMods": [],
-//              "ntermMod": 0, // additional mass to be added to the n-term
-//              "ctermMod": 0, // additional mass to be added to the c-term
-//              "peaks": [],
-//              "massError": 0.5,
-//              "scanNum": null,
-//              "fileName": null,
-//              "charge": null,
-//              "precursorMz": null,
-//              "ms1peaks": null,
-//              "ms1scanLabel": null,
-//              "precursorPeaks": null,
-//              "precursorPeakClickFn": null,
-//              "zoomMs1": false,
-//              "width": 750, 	  // width of the ms/ms plot
-//              "height": 450, 	  // height of the ms/ms plot
-//              "extraPeakSeries": [],
-//              "showIonTable": true,
-//              "showViewingOptions": true,
-//              "showOptionsTable": true,
-//              "showSequenceInfo": true,
-//              "labelImmoniumIons": true,
-//              "labelPrecursorPeak": true,
-//              "labelReporters": false,
-//              "showMassErrorPlot": false,
-//              "massErrorPlotDefaultUnit": 'Da'
-//       }
-
-      std::cout << "{ \"sequence\":" << seq << "," << std::endl;
+      if (seq.empty())
+      {
+        std::cout << "{ \"sequence\": null," << std::endl;
+      }
+      else
+      {
+        std::cout << "{ \"sequence\": \"" << seq << "\"," << std::endl;
+      }
+      std::cout << "{ \"scanNum\":" << spec+1 << "," << std::endl;
+      std::cout << "{ \"fileName\":" << in << "," << std::endl;
       std::cout << "\t \"peaks\":[" << std::endl;
       for (size_t i = 0; i < int_array.size(); ++i)
       {
