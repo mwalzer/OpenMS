@@ -38,6 +38,7 @@
 #include <OpenMS/FORMAT/IndexedMzMLFile.h>
 #include <OpenMS/FORMAT/MzMLFile.h>
 #include <OpenMS/SYSTEM/File.h>
+#include <OpenMS/FORMAT/CsvFile.h>
 
 #include <QByteArray>
 #include <QFile>
@@ -106,6 +107,7 @@ protected:
     registerStringOption_("sequence", "<aminoacidsequence>", String(), "The name of the target runs or sets to be exported from. If empty, from all will be exported.", false);
     registerOutputFile_("out", "<file>", "", "Output txt file with json of given spectrum.", false);
     setValidFormats_("out", ListUtils::create<String>("txt"));
+    registerFlag_("force_regular_read", "will read teh mzml file in regular fashion (slow), even if it is indexed", true);
   }
 
   ExitCodes main_(int, const char**)
@@ -116,8 +118,11 @@ protected:
     String in = getStringOption_("in");
     int spec = getIntOption_("spectrum");
     String seq = getStringOption_("sequence");
+    bool slow = getFlag_("force_regular_read");
+    String out = getStringOption_("out");
 
     if (spec < 0) return ILLEGAL_PARAMETERS;
+    stringstream ss;
 
     //-------------------------------------------------------------
     // reading input
@@ -125,8 +130,9 @@ protected:
     IndexedMzMLFile ifile;
     ifile.setSkipXMLChecks(true);
     ifile.openFile(in);
-    if (ifile.getParsingSuccess())
+    if (ifile.getParsingSuccess() && !slow)
     {
+      LOG_DEBUG << "Found valid index for the mzML file " << in << std::endl;
       OpenMS::Interfaces::SpectrumPtr p = ifile.getSpectrumById(spec);
       const std::vector<double>& mz_array = p->getMZArray()->data;
       const std::vector<double>& int_array = p->getIntensityArray()->data;
@@ -137,36 +143,73 @@ protected:
 
       if (seq.empty())
       {
-        std::cout << "{ \"sequence\": null," << std::endl;
+        ss << "{ \"sequence\": null," << std::endl;
       }
       else
       {
-        std::cout << "{ \"sequence\": \"" << seq << "\"," << std::endl;
+        ss << "{ \"sequence\": \"" << seq << "\"," << std::endl;
       }
-      std::cout << "{ \"scanNum\":" << spec+1 << "," << std::endl;
-      std::cout << "{ \"fileName\":" << in << "," << std::endl;
-      std::cout << "\t \"peaks\":[" << std::endl;
+      ss << "\t\"scanNum\":" << spec+1 << "," << std::endl;
+      ss << "\t\"fileName\":" << in << "," << std::endl;
+      ss << "\t\"peaks\":[" << std::endl;
       for (size_t i = 0; i < int_array.size(); ++i)
       {
-          std::cout << "\t[" << mz_array[i] << "," << int_array[i] << "]," << std::endl;
+          ss << "\t\t[" << mz_array[i] << "," << int_array[i] << "]," << std::endl;
       }
-      std::cout << "\t]" << std::endl;
-      std::cout << "}" << std::endl;
+      ss << "\t]" << std::endl;
+      ss << "}" << std::endl;
     }
     else
     {
+      LOG_DEBUG << "Could not detect a valid index for the mzML file " << in << "\nEither the index is not present or is not correct." << std::endl;
       MzMLFile file;
       file.setLogType(log_type_);
       //speedup stuff
-      //file.getOptions().setMSLevels(levels);
+      file.getOptions().setSkipXMLChecks(true);
 
       MSExperiment<> exp;
       file.load(in, exp);
-
-      std::cout << "Could not detect a valid index for the mzML file " << in << "\nEither the index is not present or is not correct." << std::endl;
-      //return ILLEGAL_PARAMETERS;
+      if (!exp.empty() && !exp[spec].empty())
+      {
+          if (seq.empty())
+          {
+            ss << "{ \"sequence\": null," << std::endl;
+          }
+          else
+          {
+            ss << "{ \"sequence\": \"" << seq << "\"," << std::endl;
+          }
+          ss << "\t\"scanNum\":" << spec+1 << "," << std::endl;
+          ss << "\t\"fileName\":" << in << "," << std::endl;
+          if (exp[spec].getMSLevel() > 1)
+          {
+            ss << "\t\"precursorMz\":" << exp[spec].getPrecursors().front().getMZ() << "," << std::endl;
+            ss << "\t\"charge\":" << exp[spec].getPrecursors().front().getCharge() << "," << std::endl;
+          }
+          ss << "\t\"peaks\":[" << std::endl;
+          for (size_t i = 0; i < exp[spec].size(); ++i)
+          {
+              ss << "\t\t[" << exp[spec][i].getMZ() << "," << exp[spec][i].getIntensity() << "]," << std::endl;
+          }
+          ss << "\t]" << std::endl;
+          ss << "}" << std::endl;
+      }
+      else
+      {
+        LOG_DEBUG << "Could not extract spectrum " << spec << " from file " << in << std::endl;
+        return ILLEGAL_PARAMETERS;
+      }
+    }    
+    if (out.empty())
+    {
+      std::cout << ss.str() << std::endl;
     }
-
+    else
+    {
+      TextFile txt;
+      txt.addLine(ss.str());
+      txt.store(out);
+    }
     return EXECUTION_OK;
   }
 
