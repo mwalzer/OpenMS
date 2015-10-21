@@ -28,7 +28,7 @@ PILISNeutralLossModel.cpp
 PILISScoring.cpp
 PILISCrossValidation.cpp
 ProtonDistributionModel.cpp
-#TopPerc.cpp
+TopPerc.cpp
 )
 
 ### add path to the filenames
