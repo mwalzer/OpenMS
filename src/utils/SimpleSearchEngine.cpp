@@ -116,6 +116,9 @@ class SimpleSearchEngine :
       registerInputFile_("database", "<file>", "", "input file ");
       setValidFormats_("database", ListUtils::create<String>("fasta"));
 
+      registerInputFile_("annotation", "<file>", "", "input id file to annotate (set top_hits > 100000, cave: memory expensive) ", false, true);
+      setValidFormats_("annotation", ListUtils::create<String>("idXML"));
+
       registerOutputFile_("out", "<file>", "", "output file ");
       setValidFormats_("out", ListUtils::create<String>("idXML"));
 
@@ -466,6 +469,7 @@ class SimpleSearchEngine :
       progresslogger.setLogType(log_type_);
       String in_mzml = getStringOption_("in");
       String in_db = getStringOption_("database");
+      String in_idxml = getStringOption_("annotation");
       String out_idxml = getStringOption_("out");
 
       Int min_precursor_charge = getIntOption_("precursor:min_charge");
@@ -607,7 +611,10 @@ class SimpleSearchEngine :
 #pragma omp critical (processed_peptides_access)
 #endif
           {
-            processed_petides.insert(s);
+            if (getStringOption_("enzyme")!="unspecific cleavage")
+            {
+              processed_petides.insert(s);
+            }
           }
 
           vector<AASequence> all_modified_peptides;
@@ -663,7 +670,7 @@ class SimpleSearchEngine :
               double score = computeHyperScore(fragment_mass_tolerance, fragment_mass_tolerance_unit_ppm, exp_spectrum, theo_spectrum);
 
               // no hit
-              if (score < 1e-16)
+              if (score < 1e-16) //limits retained hits though should not hamper annotation completeness for added db_candidate_hit_statistic
               {
                 continue;
               }
@@ -687,8 +694,61 @@ class SimpleSearchEngine :
       vector<PeptideIdentification> peptide_ids;
       vector<ProteinIdentification> protein_ids;
       progresslogger.startProgress(0, 1, "Post-processing PSMs...");
-      postProcessHits_(spectra, peptide_hits, protein_ids, peptide_ids, report_top_hits);
+      if (getStringOption_("enzyme")=="unspecific cleavage")
+      {
+        //PRE postprocess peptide hits (remove sequence duplicates)
+        for (size_t i = 0; i < peptide_hits.size(); ++i)
+        {
+          LOG_DEBUG << "peptide hits before" << peptide_hits[i].size() << std::endl;
+          set<AASequence> pepseqs;
+          vector<PeptideHit> filtered_hits;
+          for (size_t j = 0; j < peptide_hits[i].size(); ++j)
+          {
+            if(pepseqs.find(peptide_hits[i][j].getSequence())==pepseqs.end())
+            {
+              filtered_hits.push_back(peptide_hits[i][j]);
+              pepseqs.insert(peptide_hits[i][j].getSequence());
+            }
+          }
+          std::swap(peptide_hits[i],filtered_hits);
+          LOG_DEBUG << "peptide hits after" << peptide_hits[i].size() << std::endl;
+        }
+      }
+      postProcessHits_(spectra, peptide_hits, protein_ids, peptide_ids, report_top_hits); //report top hits should be huge for added db_candidate_hit_statistic
       progresslogger.endProgress();
+
+      if (!in_idxml.empty())
+      {
+        vector<PeptideIdentification> add_to_peptide_ids;
+        vector<ProteinIdentification> add_to_protein_ids;
+        IdXMLFile().load(in_idxml, add_to_protein_ids, add_to_peptide_ids);
+        map<String, size_t > ref_to_hitnum;
+        for (size_t i = 0; i < peptide_ids.size(); ++i)
+        {
+          if (peptide_ids[i].metaValueExists("spectrum_reference"))
+          {
+            ref_to_hitnum[peptide_ids[i].getMetaValue("spectrum_reference")] = peptide_ids[i].getHits().size();
+          }
+          else
+          {
+            ref_to_hitnum[String(peptide_ids[i].getMZ())] = peptide_ids[i].getHits().size();
+          }
+        }
+        for (size_t i = 0; i < add_to_peptide_ids.size(); ++i)
+        {
+          if (add_to_peptide_ids[i].metaValueExists("spectrum_reference"))
+          {
+            add_to_peptide_ids[i].setMetaValue("db_candidate_number",
+                                               ref_to_hitnum[add_to_peptide_ids[i].getMetaValue("spectrum_reference")]);
+          }
+          else
+          {
+            add_to_peptide_ids[i].setMetaValue("db_candidate_number",
+                                               ref_to_hitnum[String(add_to_peptide_ids[i].getMZ())]);
+          }
+        }
+        IdXMLFile().store(in_idxml, add_to_protein_ids, add_to_peptide_ids);
+      }
 
       protein_ids[0].setPrimaryMSRunPath(spectra.getPrimaryMSRunPath());
       // write ProteinIdentifications and PeptideIdentifications to IdXML
