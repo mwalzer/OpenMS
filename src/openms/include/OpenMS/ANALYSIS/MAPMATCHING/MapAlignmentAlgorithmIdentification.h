@@ -176,7 +176,7 @@ protected:
                          bool sorted = false);
 
     /// Check if peptide ID contains a hit that passes the significance threshold @p score_threshold_ (list of peptide hits will be sorted)
-    bool hasGoodHit_(PeptideIdentification& peptide);
+    bool hasGoodHit_(SpectrumIdentification& peptide);
 
     /**
       @brief Collect retention time data ("RT" MetaInfo) from peptide IDs
@@ -186,7 +186,7 @@ protected:
       
       @return Are the RTs already sorted? (Here: false)
     */
-    bool getRetentionTimes_(std::vector<PeptideIdentification>& peptides,
+    bool getRetentionTimes_(std::vector<SpectrumIdentification>& peptides,
                             SeqToList& rt_data);
 
     /**
@@ -224,7 +224,7 @@ protected:
           String sequence;
           double rt_distance = std::numeric_limits<double>::max();
           bool any_good_hit = false;
-          for (std::vector<PeptideIdentification>::iterator pep_it =
+          for (std::vector<SpectrumIdentification>::iterator pep_it =
                  feat_it->getPeptideIdentifications().begin(); pep_it !=
                  feat_it->getPeptideIdentifications().end(); ++pep_it)
           {

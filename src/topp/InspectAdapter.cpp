@@ -768,7 +768,7 @@ protected:
       if (wanted_records.empty())
       {
         IdXMLFile idXML_file;
-        idXML_file.store(output_filename, vector<ProteinIdentification>(), vector<PeptideIdentification>());
+        idXML_file.store(output_filename, vector<ProteinIdentification>(), vector<SpectrumIdentification>());
         inspect_out = false;
         writeLog_("No proteins matching criteria for generating minimized database for blind search. Aborting!");
         exit_code = UNKNOWN_ERROR;
@@ -814,7 +814,7 @@ protected:
 
     if (exit_code == EXECUTION_OK && inspect_out)
     {
-      vector<PeptideIdentification> peptide_identifications;
+      vector<SpectrumIdentification> peptide_identifications;
       ProteinIdentification protein_identification;
       IdXMLFile idXML_file;
 
@@ -878,7 +878,7 @@ protected:
         }
         else
         {
-          idXML_file.store(output_filename, vector<ProteinIdentification>(), vector<PeptideIdentification>());
+          idXML_file.store(output_filename, vector<ProteinIdentification>(), vector<SpectrumIdentification>());
           writeLog_("No proteins identified!");
         }
       }

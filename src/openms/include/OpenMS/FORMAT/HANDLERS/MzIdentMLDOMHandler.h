@@ -99,10 +99,10 @@ public:
       /**@name Constructors and destructor */
       //@{
       /// Constructor for a write-only handler for internal identification structures
-      MzIdentMLDOMHandler(const std::vector<ProteinIdentification>& pro_id, const std::vector<PeptideIdentification>& pep_id, const String& version, const ProgressLogger& logger);
+      MzIdentMLDOMHandler(const std::vector<ProteinIdentification>& pro_id, const std::vector<SpectrumIdentification>& pep_id, const String& version, const ProgressLogger& logger);
 
       /// Constructor for a read-only handler for internal identification structures
-      MzIdentMLDOMHandler(std::vector<ProteinIdentification>& pro_id, std::vector<PeptideIdentification>& pep_id, const String& version, const ProgressLogger& logger);
+      MzIdentMLDOMHandler(std::vector<ProteinIdentification>& pro_id, std::vector<SpectrumIdentification>& pep_id, const String& version, const ProgressLogger& logger);
 
       /// Destructor
       virtual ~MzIdentMLDOMHandler();
@@ -125,12 +125,12 @@ protected:
       ///Internal +w Identification Item for proteins
       std::vector<ProteinIdentification>* pro_id_;
       ///Internal +w Identification Item for peptides
-      std::vector<PeptideIdentification>* pep_id_;
+      std::vector<SpectrumIdentification>* pep_id_;
 
       ///Internal -w Identification Item for proteins
       const std::vector<ProteinIdentification>* cpro_id_;
       ///Internal -w Identification Item for peptides
-      const std::vector<PeptideIdentification>* cpep_id_;
+      const std::vector<SpectrumIdentification>* cpep_id_;
 
       ///Internal version keeping
       const String schema_version_;
@@ -152,7 +152,7 @@ protected:
       void parseSpectrumIdentificationProtocolElements_(xercesc::DOMNodeList* spectrumIdentificationProtocolElements);
       void parseInputElements_(xercesc::DOMNodeList* inputElements);
       void parseSpectrumIdentificationListElements_(xercesc::DOMNodeList* spectrumIdentificationListElements);
-      void parseSpectrumIdentificationItemElement_(xercesc::DOMElement* spectrumIdentificationItemElement, PeptideIdentification& spectrum_identification, String& spectrumIdentificationList_ref);
+      void parseSpectrumIdentificationItemElement_(xercesc::DOMElement* spectrumIdentificationItemElement, SpectrumIdentification& spectrum_identification, String& spectrumIdentificationList_ref);
       void parseProteinDetectionHypothesisElement_(xercesc::DOMElement* proteinDetectionHypothesisElement, ProteinIdentification& protein_identification);
       void parseProteinAmbiguityGroupElement_(xercesc::DOMElement* proteinAmbiguityGroupElement, ProteinIdentification& protein_identification);
       void parseProteinDetectionListElements_(xercesc::DOMNodeList* proteinDetectionListElements);
@@ -198,7 +198,7 @@ private:
         String accession;
         CVTermList cvs;
       };
-      struct SpectrumIdentification
+      struct SpectrumIdentification_mzid
       {
         String spectra_data_ref;
         String search_database_ref;
@@ -252,7 +252,7 @@ private:
       std::map<String, DatabaseInput> db_map_; //mapping database id -> DatabaseInput
 
       //mapping from SpectrumIdentification - SpectrumIdentification will be the new IdentificationRuns
-      std::map<String, SpectrumIdentification> si_map_; //mapping SpectrumIdentification id -> SpectrumIdentification (id refs)
+      std::map<String, SpectrumIdentification_mzid> si_map_; //mapping SpectrumIdentification id -> SpectrumIdentification (id refs)
       std::map<String, size_t> si_pro_map_; //mapping SpectrumIdentificationList id -> index to ProteinIdentification in pro_id_
 
       //mapping from SpectrumIdentificationProtocol

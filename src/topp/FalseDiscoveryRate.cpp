@@ -169,7 +169,7 @@ protected:
 
     if (combined) // "in" was given
     {
-      vector<PeptideIdentification> pep_ids;
+      vector<SpectrumIdentification> pep_ids;
       vector<ProteinIdentification> prot_ids;
 
       IdXMLFile().load(in, prot_ids, pep_ids);
@@ -195,7 +195,7 @@ protected:
       {
         it->assignRanks();
       }
-      for (vector<PeptideIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
+      for (vector<SpectrumIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
       {
         it->assignRanks();
       }
@@ -204,7 +204,7 @@ protected:
     }
     else // "in_target" and "in_decoy" given
     {
-      vector<PeptideIdentification> pep_target, pep_decoy;
+      vector<SpectrumIdentification> pep_target, pep_decoy;
       vector<ProteinIdentification> prot_target, prot_decoy;
 
       IdXMLFile().load(in_target, prot_target, pep_target);

@@ -828,7 +828,7 @@ protected:
 
     ProteinIdentification protein_identification;
     protein_identification.setPrimaryMSRunPath(primary_ms_runs);
-    vector<PeptideIdentification> peptide_ids;
+    vector<SpectrumIdentification> peptide_ids;
 
     ProgressLogger pl;
     pl.setLogType(this->log_type_);
@@ -892,7 +892,7 @@ protected:
       // read OMSSA output
       writeDebug_(String("Reading output of OMSSA from ") + file_spectra_chunks_out[i], 10);
       ProteinIdentification protein_identification_chunk;
-      vector<PeptideIdentification> peptide_ids_chunk;
+      vector<SpectrumIdentification> peptide_ids_chunk;
       OMSSAXMLFile omssa_out_file;
       omssa_out_file.setModificationDefinitionsSet(mod_set);
       // do not load empty hits for efficiency and correct stats report (below)
@@ -900,10 +900,10 @@ protected:
 
       // OMSSA does not write fixed modifications so we need to add them to the sequences
       writeDebug_("Assigning modifications to peptides", 1);
-      for (vector<PeptideIdentification>::iterator it = peptide_ids_chunk.begin(); it != peptide_ids_chunk.end(); ++it)
+      for (vector<SpectrumIdentification>::iterator it = peptide_ids_chunk.begin(); it != peptide_ids_chunk.end(); ++it)
       {
-        vector<PeptideHit> hits = it->getHits();
-        for (vector<PeptideHit>::iterator pit = hits.begin(); pit != hits.end(); ++pit)
+        vector<SpectrumMatch> hits = it->getHits();
+        for (vector<SpectrumMatch>::iterator pit = hits.begin(); pit != hits.end(); ++pit)
         {
           AASequence seq = pit->getSequence();
           for (vector<String>::const_iterator mit = fixed_nterm_mods.begin(); mit != fixed_nterm_mods.end(); ++mit)
@@ -942,15 +942,15 @@ protected:
           protein_identification.setHits(std::vector<ProteinHit>()); // remove hits
         }
         // ... and remove any refs from peptides
-        for (vector<PeptideIdentification>::iterator it_pep = peptide_ids_chunk.begin();
+        for (vector<SpectrumIdentification>::iterator it_pep = peptide_ids_chunk.begin();
              it_pep != peptide_ids_chunk.end();
              ++it_pep)
         {
           it_pep->setIdentifier(protein_identification.getIdentifier());
 
           // clear peptide evidences
-          vector<PeptideHit> pep_hits = it_pep->getHits();
-          for (vector<PeptideHit>::iterator it_pep_hit = pep_hits.begin();
+          vector<SpectrumMatch> pep_hits = it_pep->getHits();
+          for (vector<SpectrumMatch>::iterator it_pep_hit = pep_hits.begin();
              it_pep_hit != pep_hits.end();
              ++it_pep_hit)
           {

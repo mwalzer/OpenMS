@@ -83,7 +83,7 @@ public:
     */
     void load(const String& filename,
               std::vector<ProteinIdentification>& proteins,
-              std::vector<PeptideIdentification>& peptides,
+              std::vector<SpectrumIdentification>& peptides,
               const String& experiment_name,
               const SpectrumMetaDataLookup& lookup);
 
@@ -95,7 +95,7 @@ public:
     */
     void load(const String& filename,
               std::vector<ProteinIdentification>& proteins,
-              std::vector<PeptideIdentification>& peptides,
+              std::vector<SpectrumIdentification>& peptides,
               const String& experiment_name = "");
 
     /**
@@ -104,7 +104,7 @@ public:
         @exception Exception::UnableToCreateFile is thrown if the file could not be opened for writing
     */
     void store(const String& filename, std::vector<ProteinIdentification>& protein_ids, 
-               std::vector<PeptideIdentification>& peptide_ids, const String& mz_file = "",
+               std::vector<SpectrumIdentification>& peptide_ids, const String& mz_file = "",
                const String& mz_name = "", bool peptideprophet_analyzed = false);
 
     /**
@@ -198,7 +198,7 @@ private:
     std::vector<ProteinIdentification>* proteins_;
 
     /// Pointer to the list of identified peptides
-    std::vector<PeptideIdentification>* peptides_;
+    std::vector<SpectrumIdentification>* peptides_;
 
     /// Pointer to wrapper for looking up spectrum meta data
     const SpectrumMetaDataLookup* lookup_;
@@ -258,13 +258,13 @@ private:
     String enzyme_;
 
     /// PeptideIdentification instance currently being processed
-    PeptideIdentification current_peptide_;
+    SpectrumIdentification current_peptide_;
 
     /// Analysis result instance currently being processed
-    PeptideHit::PepXMLAnalysisResult current_analysis_result_;
+    SpectrumMatch::PepXMLAnalysisResult current_analysis_result_;
 
     /// PeptideHit instance currently being processed
-    PeptideHit peptide_hit_;
+    SpectrumMatch peptide_hit_;
 
     /// Sequence of the current peptide hit
     String current_sequence_;

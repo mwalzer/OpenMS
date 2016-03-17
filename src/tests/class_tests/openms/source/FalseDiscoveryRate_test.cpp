@@ -63,21 +63,21 @@ START_SECTION(~FalseDiscoveryRate())
 }
 END_SECTION
 
-START_SECTION((void apply(std::vector<PeptideIdentification> &fwd_ids, std::vector<PeptideIdentification> &rev_ids)))
+START_SECTION((void apply(std::vector<SpectrumIdentification> &fwd_ids, std::vector<SpectrumIdentification> &rev_ids)))
 {
   ptr = new FalseDiscoveryRate();
   vector<ProteinIdentification> fwd_prot_ids, rev_prot_ids;
-  vector<PeptideIdentification> fwd_pep_ids, rev_pep_ids;
+  vector<SpectrumIdentification> fwd_pep_ids, rev_pep_ids;
   String document_id;
   IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("XTandem_fwd_ids.idXML"), fwd_prot_ids, fwd_pep_ids, document_id);
   IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("XTandem_rev_ids.idXML"), rev_prot_ids, rev_pep_ids, document_id);
   ptr->apply(fwd_pep_ids, rev_pep_ids);
   TOLERANCE_ABSOLUTE(0.0001)
-  for (vector<PeptideIdentification>::const_iterator it = fwd_pep_ids.begin(); it != fwd_pep_ids.end(); ++it)
+  for (vector<SpectrumIdentification>::const_iterator it = fwd_pep_ids.begin(); it != fwd_pep_ids.end(); ++it)
   {
     if (it->getHits().size() > 0)
     {
-      PeptideHit hit(*it->getHits().begin());
+      SpectrumMatch hit(*it->getHits().begin());
       double fdr(hit.getScore());
       double orig_score((double)hit.getMetaValue("XTandem_score"));
       
@@ -97,7 +97,7 @@ END_SECTION
 START_SECTION((void apply(std::vector<ProteinIdentification> &fwd_ids, std::vector<ProteinIdentification> &rev_ids)))
 {
   vector<ProteinIdentification> fwd_prot_ids, rev_prot_ids;
-  vector<PeptideIdentification> fwd_pep_ids, rev_pep_ids;
+  vector<SpectrumIdentification> fwd_pep_ids, rev_pep_ids;
   String document_id;
   IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("XTandem_fwd_ids_withProtScores.idXML"), fwd_prot_ids, fwd_pep_ids, document_id);
   IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("XTandem_rev_ids_withProtScores.idXML"), rev_prot_ids, rev_pep_ids, document_id);
@@ -132,7 +132,7 @@ END_SECTION
 START_SECTION((void apply(std::vector<PeptideIdentification> &id)))
 {
   vector<ProteinIdentification> prot_ids;
-  vector<PeptideIdentification> pep_ids;
+  vector<SpectrumIdentification> pep_ids;
   IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("FalseDiscoveryRate_OMSSA.idXML"), prot_ids, pep_ids);
 
   ptr->apply(pep_ids);
@@ -140,9 +140,9 @@ START_SECTION((void apply(std::vector<PeptideIdentification> &id)))
 	
   for (Size z = 1; z <= 4; ++z)
   {
-    for (vector<PeptideIdentification>::const_iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
+    for (vector<SpectrumIdentification>::const_iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
   	{
-      for (vector<PeptideHit>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
+      for (vector<SpectrumMatch>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
       {
       	double fdr(pit->getScore());
       	double orig_score((double)pit->getMetaValue("OMSSA_score"));
@@ -159,8 +159,8 @@ START_SECTION((void apply(std::vector<PeptideIdentification> &id)))
     }
 
     // target hit
-    PeptideIdentification pep_id = pep_ids[0];
-    PeptideHit pit = pep_id.getHits()[0];
+    SpectrumIdentification pep_id = pep_ids[0];
+    SpectrumMatch pit = pep_id.getHits()[0];
     double fdr(pit.getScore());
     TEST_REAL_SIMILAR(fdr, 0.0730478589420655);
 
@@ -180,7 +180,7 @@ END_SECTION
 START_SECTION((void apply(std::vector<ProteinIdentification>& ids)))
 {
   vector<ProteinIdentification> fwd_prot_ids, rev_prot_ids, prot_ids;
-  vector<PeptideIdentification> fwd_pep_ids, rev_pep_ids, pep_ids;
+  vector<SpectrumIdentification> fwd_pep_ids, rev_pep_ids, pep_ids;
   String document_id;
   IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("XTandem_fwd_ids.idXML"), fwd_prot_ids, fwd_pep_ids, document_id);
   IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("XTandem_rev_ids.idXML"), rev_prot_ids, rev_pep_ids, document_id);

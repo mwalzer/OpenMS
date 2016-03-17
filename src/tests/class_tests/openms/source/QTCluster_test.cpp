@@ -60,7 +60,7 @@ bf.setRT(1.1);
 bf.setMZ(2.2);
 bf.setCharge(3);
 bf.getPeptideIdentifications().resize(2);
-PeptideHit hit;
+SpectrumMatch hit;
 hit.setSequence(AASequence::fromString("AAA"));
 bf.getPeptideIdentifications()[0].insertHit(hit);
 hit.setSequence(AASequence::fromString("CCC"));

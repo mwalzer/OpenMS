@@ -91,7 +91,7 @@ private:
 
     void mergeConsensusMaps_(ConsensusMap & map, const String & experiment, StringList & file_paths);
 
-    void mergeIDFiles_(std::vector<ProteinIdentification> & proteins, std::vector<PeptideIdentification> & peptides, const String & experiment, StringList & file_paths);
+    void mergeIDFiles_(std::vector<ProteinIdentification> & proteins, std::vector<SpectrumIdentification> & peptides, const String & experiment, StringList & file_paths);
 
     void findRelevantFilePaths_(std::map<String, StringList> & design2FileBaseName, std::map<String, StringList> & design2FilePath, StringList & filePaths);
 

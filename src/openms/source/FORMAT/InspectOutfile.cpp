@@ -78,7 +78,7 @@ namespace OpenMS
     return true;
   }
 
-  vector<Size> InspectOutfile::load(const String& result_filename, vector<PeptideIdentification>& peptide_identifications,
+  vector<Size> InspectOutfile::load(const String& result_filename, vector<SpectrumIdentification>& peptide_identifications,
                                     ProteinIdentification& protein_identification, const double p_value_threshold, const String& database_filename)
   {
     // check whether the p_value is correct
@@ -109,7 +109,7 @@ namespace OpenMS
     vector<String> substrings;
     vector<Size> corrupted_lines;
 
-    PeptideIdentification peptide_identification;
+    SpectrumIdentification peptide_identification;
 
     if (!getline(result_file, line)) // the header is read in a special function, so it can be skipped
     {
@@ -228,7 +228,7 @@ namespace OpenMS
           files_and_peptide_identification_with_scan_number.back().second.push_back(make_pair(peptide_identifications.size(), scan_number));
           peptide_identifications.push_back(peptide_identification);
         }
-        peptide_identification = PeptideIdentification();
+        peptide_identification = SpectrumIdentification();
 
         peptide_identification.setIdentifier(identifier);
         peptide_identification.setSignificanceThreshold(p_value_threshold);
@@ -236,7 +236,7 @@ namespace OpenMS
       }
 
       // get the peptide infos from the new peptide and insert it
-      PeptideHit peptide_hit;
+      SpectrumMatch peptide_hit;
       peptide_hit.setCharge(substrings[charge_column].toInt());
       peptide_hit.setScore(substrings[MQ_score_column].toFloat());
       peptide_hit.setRank(0); // all ranks are set to zero and assigned later
@@ -520,7 +520,7 @@ namespace OpenMS
   void
   InspectOutfile::getPrecursorRTandMZ(
     const vector<pair<String, vector<pair<Size, Size> > > >& files_and_peptide_identification_with_scan_number,
-    vector<PeptideIdentification>& ids)
+    vector<SpectrumIdentification>& ids)
   {
     MSExperiment<> experiment;
     String type;

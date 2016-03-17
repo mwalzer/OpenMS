@@ -165,7 +165,7 @@ protected:
     // reading input
     //-------------------------------------------------------------
 
-    vector<vector<PeptideIdentification> > pep_ids;
+    vector<vector<SpectrumIdentification> > pep_ids;
     vector<vector<ProteinIdentification> > prot_ids;
     pep_ids.resize(id_in.size());
     prot_ids.resize(id_in.size());
@@ -220,11 +220,11 @@ protected:
           {
             continue;
           }
-          for (vector<PeptideIdentification>::const_iterator it = maps_raw[i][j].getPeptideIdentifications().begin(); it != maps_raw[i][j].getPeptideIdentifications().end(); ++it)
+          for (vector<SpectrumIdentification>::const_iterator it = maps_raw[i][j].getPeptideIdentifications().begin(); it != maps_raw[i][j].getPeptideIdentifications().end(); ++it)
           {
             if (it->getHits().size() > 0)
             {
-              PeptideHit hit = *it->getHits().begin();
+              SpectrumMatch hit = *it->getHits().begin();
               MassDifference md;
               Int charge = hit.getCharge();
               if (charge == 0)
@@ -260,11 +260,11 @@ protected:
           {
             continue;
           }
-          for (vector<PeptideIdentification>::const_iterator it = maps_raw[i][j].getPeptideIdentifications().begin(); it != maps_raw[i][j].getPeptideIdentifications().end(); ++it)
+          for (vector<SpectrumIdentification>::const_iterator it = maps_raw[i][j].getPeptideIdentifications().begin(); it != maps_raw[i][j].getPeptideIdentifications().end(); ++it)
           {
             if (it->getHits().size() > 0)
             {
-              PeptideHit hit = *it->getHits().begin();
+              SpectrumMatch hit = *it->getHits().begin();
 
               RichPeakSpectrum theo_spec;
               tsg.addPeaks(theo_spec, hit.getSequence(), Residue::YIon);

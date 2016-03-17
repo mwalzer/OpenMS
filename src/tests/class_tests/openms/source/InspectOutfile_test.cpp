@@ -120,8 +120,8 @@ END_SECTION
 
 InspectOutfile file;
 
-START_SECTION(std::vector< Size > load(const String& result_filename, std::vector< PeptideIdentification >& peptide_identifications, ProteinIdentification& protein_identification, const double p_value_threshold, const String& database_filename = ""))
-	vector< PeptideIdentification > peptide_identifications;
+START_SECTION(std::vector< Size > load(const String& result_filename, std::vector< SpectrumIdentification >& peptide_identifications, ProteinIdentification& protein_identification, const double p_value_threshold, const String& database_filename = ""))
+	vector< SpectrumIdentification > peptide_identifications;
 	ProteinIdentification protein_identification;
 
 	// test exceptions
@@ -357,9 +357,9 @@ START_SECTION(void getACAndACType(String line, String& accession, String& access
 	TEST_STRING_EQUAL(accession_type, "SwissProt")
 END_SECTION
 
-START_SECTION(void getPrecursorRTandMZ(const vector< pair< String, vector< pair < Size, Size > > > >& files_and_peptide_identification_with_scan_number, std::vector< PeptideIdentification >& ids))
+START_SECTION(void getPrecursorRTandMZ(const vector< pair< String, vector< pair < Size, Size > > > >& files_and_peptide_identification_with_scan_number, std::vector< SpectrumIdentification >& ids))
 	vector< pair< String, vector< pair< Size, Size > > > > files_and_peptide_identification_with_scan_number;
-	vector< PeptideIdentification > ids, ids_found;
+	vector< SpectrumIdentification > ids, ids_found;
 
 	// test exceptions
 	files_and_peptide_identification_with_scan_number.push_back(make_pair(spectrum_file1, vector< pair< Size, Size > >(1, make_pair(0, 10))));
@@ -371,13 +371,13 @@ START_SECTION(void getPrecursorRTandMZ(const vector< pair< String, vector< pair 
 
 	files_and_peptide_identification_with_scan_number.push_back(make_pair(spectrum_file1, vector< pair < Size, Size > >(1, make_pair(0, 4))));
 	files_and_peptide_identification_with_scan_number.push_back(make_pair(spectrum_file2, vector< pair < Size, Size > >(1, make_pair(1, 4))));
-	ids_found.push_back(PeptideIdentification());
-	ids_found.push_back(PeptideIdentification());
+	ids_found.push_back(SpectrumIdentification());
+	ids_found.push_back(SpectrumIdentification());
 
-	ids.push_back(PeptideIdentification());
+	ids.push_back(SpectrumIdentification());
 	ids.back().setRT(-1);
 	ids.back().setMZ(123.456);
-	ids.push_back(PeptideIdentification());
+	ids.push_back(SpectrumIdentification());
 	ids.back().setRT(180);
 	ids.back().setMZ(123.456);
 

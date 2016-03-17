@@ -268,7 +268,7 @@ namespace OpenMS
        The raw data is only loaded from @p filename if necessary, i.e. if there are any peptide IDs with missing RTs.
     */
     static bool addMissingRTsToPeptideIDs(
-      std::vector<PeptideIdentification>& peptides, const String& filename,
+      std::vector<SpectrumIdentification>& peptides, const String& filename,
       bool stop_on_error = false);
 
   protected:

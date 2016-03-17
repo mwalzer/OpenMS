@@ -82,7 +82,7 @@ namespace OpenMS
     ConsensusIDAlgorithmSimilarity& operator=(const ConsensusIDAlgorithmSimilarity&);
 
     /// Consensus scoring
-    virtual void apply_(std::vector<PeptideIdentification>& ids,
+    virtual void apply_(std::vector<SpectrumIdentification>& ids,
                         SequenceGrouping& results);
   };
 

@@ -71,20 +71,20 @@ namespace OpenMS
   {
   }
 
-  void IDDecoyProbability::apply(vector<PeptideIdentification> & ids)
+  void IDDecoyProbability::apply(vector<SpectrumIdentification> & ids)
   {
     double lower_score_better_default_value_if_zero(static_cast<double>(param_.getValue("lower_score_better_default_value_if_zero")));
     double lower_score_better_default_value_if_zero_exp = pow(10.0, -lower_score_better_default_value_if_zero);
     vector<double> rev_scores, fwd_scores, all_scores;
 
     // get the forward scores
-    for (vector<PeptideIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
     {
       String score_type = it->getScoreType();
       if (it->getHits().size() > 0)
       {
-        vector<PeptideHit> hits = it->getHits();
-        for (vector<PeptideHit>::iterator pit = hits.begin(); pit != hits.end(); ++pit)
+        vector<SpectrumMatch> hits = it->getHits();
+        for (vector<SpectrumMatch>::iterator pit = hits.begin(); pit != hits.end(); ++pit)
         {
           double score = pit->getScore();
 
@@ -123,21 +123,21 @@ namespace OpenMS
     return;
   }
 
-  void IDDecoyProbability::apply(vector<PeptideIdentification> & prob_ids, const vector<PeptideIdentification> & orig_fwd_ids, const vector<PeptideIdentification> & rev_ids)
+  void IDDecoyProbability::apply(vector<SpectrumIdentification> & prob_ids, const vector<SpectrumIdentification> & orig_fwd_ids, const vector<SpectrumIdentification> & rev_ids)
   {
     double lower_score_better_default_value_if_zero((double)param_.getValue("lower_score_better_default_value_if_zero"));
     double lower_score_better_default_value_if_zero_exp = pow((double)10.0, -lower_score_better_default_value_if_zero);
-    vector<PeptideIdentification> fwd_ids = orig_fwd_ids;
+    vector<SpectrumIdentification> fwd_ids = orig_fwd_ids;
     vector<double> rev_scores, fwd_scores, all_scores;
 
     // get the forward scores
-    for (vector<PeptideIdentification>::iterator it = fwd_ids.begin(); it != fwd_ids.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = fwd_ids.begin(); it != fwd_ids.end(); ++it)
     {
       String score_type = it->getScoreType();
       if (it->getHits().size() > 0)
       {
-        vector<PeptideHit> hits = it->getHits();
-        for (vector<PeptideHit>::iterator pit = hits.begin(); pit != hits.end(); ++pit)
+        vector<SpectrumMatch> hits = it->getHits();
+        for (vector<SpectrumMatch>::iterator pit = hits.begin(); pit != hits.end(); ++pit)
         {
           double score = pit->getScore();
 
@@ -162,11 +162,11 @@ namespace OpenMS
     }
 
     // get the reverse scores
-    for (vector<PeptideIdentification>::const_iterator it = rev_ids.begin(); it != rev_ids.end(); ++it)
+    for (vector<SpectrumIdentification>::const_iterator it = rev_ids.begin(); it != rev_ids.end(); ++it)
     {
       if (it->getHits().size() > 0)
       {
-        for (vector<PeptideHit>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
+        for (vector<SpectrumMatch>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
         {
           double score = pit->getScore();
           if (!it->isHigherScoreBetter())
@@ -192,7 +192,7 @@ namespace OpenMS
     return;
   }
 
-  void IDDecoyProbability::apply_(vector<PeptideIdentification> & ids, const vector<double> & rev_scores, const vector<double> & fwd_scores, const vector<double> & all_scores)
+  void IDDecoyProbability::apply_(vector<SpectrumIdentification> & ids, const vector<double> & rev_scores, const vector<double> & fwd_scores, const vector<double> & all_scores)
   {
     Size number_of_bins(param_.getValue("number_of_bins"));
 
@@ -375,17 +375,17 @@ namespace OpenMS
     generateDistributionImage_(all_scores_normalized, all_trafo, gauss_formula, gamma_formula, (String)param_.getValue("fwd_filename"));
 #endif
 
-    vector<PeptideIdentification> new_prob_ids;
+    vector<SpectrumIdentification> new_prob_ids;
     // calculate the probabilities and write them to the IDs
-    for (vector<PeptideIdentification>::const_iterator it = ids.begin(); it != ids.end(); ++it)
+    for (vector<SpectrumIdentification>::const_iterator it = ids.begin(); it != ids.end(); ++it)
     {
       if (it->getHits().size() > 0)
       {
-        vector<PeptideHit> hits;
+        vector<SpectrumMatch> hits;
         String score_type = it->getScoreType() + "_score";
-        for (vector<PeptideHit>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
+        for (vector<SpectrumMatch>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
         {
-          PeptideHit hit = *pit;
+          SpectrumMatch hit = *pit;
           double score = hit.getScore();
           if (!it->isHigherScoreBetter())
           {
@@ -395,7 +395,7 @@ namespace OpenMS
           hit.setScore(getProbability_(result_gamma, rev_trafo, result_gauss, fwd_trafo, score));
           hits.push_back(hit);
         }
-        PeptideIdentification id = *it;
+        SpectrumIdentification id = *it;
         id.setHigherScoreBetter(true);
         id.setScoreType(id.getScoreType() + "_DecoyProbability");
         id.setHits(hits);

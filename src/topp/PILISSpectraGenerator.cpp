@@ -229,7 +229,7 @@ protected:
     // read spectra file (if available)
     vector<RichPeakMap> exp;
     vector<vector<ProteinIdentification> > prot_ids;
-    vector<vector<PeptideIdentification> > pep_ids;
+    vector<vector<SpectrumIdentification> > pep_ids;
 
     if (!in.empty())
     {
@@ -305,7 +305,7 @@ protected:
           continue;
         }
 
-        PeptideHit hit;
+        SpectrumMatch hit;
 
         if (it2->getPeptideIdentifications().begin()->getHits().size() > 0)
         {
@@ -352,15 +352,15 @@ protected:
     //model.writeToFile("pilis_tmp.dat");
 
     //RichPeakMap exp;
-    for (vector<vector<PeptideIdentification> >::const_iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
+    for (vector<vector<SpectrumIdentification> >::const_iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
     {
-      for (vector<PeptideIdentification>::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2)
+      for (vector<SpectrumIdentification>::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2)
       {
         if (it2->getHits().empty())
         {
           continue;
         }
-        PeptideHit hit = *it2->getHits().begin();
+        SpectrumMatch hit = *it2->getHits().begin();
         Int charge = hit.getCharge();
         if (charge != 0)
         {
@@ -376,8 +376,8 @@ protected:
             RichPeakSpectrum spec;
             model.getSpectrum(spec, hit.getSequence(), z);
 
-            PeptideIdentification id = *it2;
-            vector<PeptideHit> hits = it2->getHits();
+            SpectrumIdentification id = *it2;
+            vector<SpectrumMatch> hits = it2->getHits();
             hits.begin()->setCharge(z);
             id.setHits(hits);
             spec.getPeptideIdentifications().push_back(id);

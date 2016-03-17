@@ -385,7 +385,7 @@ protected:
     vector<ProteinIdentification> protein_ids;
     ProteinIdentification protein_id;
     protein_id.setPrimaryMSRunPath(exp.getPrimaryMSRunPath());
-    vector<PeptideIdentification> peptide_ids;
+    vector<SpectrumIdentification> peptide_ids;
 
     // read the output of X! Tandem and write it to idXML
     XTandemXMLFile tandem_output;
@@ -400,7 +400,7 @@ protected:
     tandem_output.load(temp_directory + files[0], protein_id, peptide_ids);
 
     // now put the RTs into the peptide_ids from the spectrum ids
-    for (vector<PeptideIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
     {
       UInt id = (Int)it->getMetaValue("spectrum_id");
       --id; // native IDs were written 1-based

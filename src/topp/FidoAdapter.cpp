@@ -160,12 +160,12 @@ protected:
   
   // write a PSM graph file for Fido based on the given peptide identifications;
   // optionally only use IDs with given identifier (filter by protein ID run):
-  void writePSMGraph_(vector<PeptideIdentification>& peptides,
+  void writePSMGraph_(vector<SpectrumIdentification>& peptides,
                       const String& out_path, const String& identifier = "")
   {
     ofstream graph_out(out_path.c_str());
     bool warned_once = false;
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       if ((!identifier.empty() && (pep_it->getIdentifier() != identifier)) ||
@@ -174,7 +174,7 @@ protected:
         continue;
       }
       pep_it->sort();
-      const PeptideHit& hit = pep_it->getHits()[0];
+      const SpectrumMatch& hit = pep_it->getHits()[0];
       if (hit.getSequence().empty() || hit.extractProteinAccessions().empty())
       {
         continue;
@@ -313,7 +313,7 @@ protected:
   
   // run Fido(ChooseParameters) and read output:
   bool runFido_(ProteinIdentification& protein,
-                vector<PeptideIdentification>& peptides, bool choose_params,
+                vector<SpectrumIdentification>& peptides, bool choose_params,
                 const String& exe, QStringList& fido_params,
                 double& prob_protein, double& prob_peptide,
                 double& prob_spurious, const String& temp_dir,
@@ -520,7 +520,7 @@ protected:
     
     // input data:
     vector<ProteinIdentification> proteins;
-    vector<PeptideIdentification> peptides;
+    vector<SpectrumIdentification> peptides;
     
     LOG_INFO << "Reading input data..." << endl;
     IdXMLFile().load(in, proteins, peptides);
@@ -622,7 +622,7 @@ protected:
       
       // make sure identifiers match (otherwise "IdXMLFile::store" complains):
       all_proteins.setIdentifier("");
-      for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+      for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
            pep_it != peptides.end(); ++pep_it)
       {
         pep_it->setIdentifier("");

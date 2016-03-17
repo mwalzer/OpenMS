@@ -55,7 +55,7 @@ namespace OpenMS
   {
   }
 
-  void ProtXMLFile::load(const String& filename, ProteinIdentification& protein_ids, PeptideIdentification& peptide_ids)
+  void ProtXMLFile::load(const String& filename, ProteinIdentification& protein_ids, SpectrumIdentification& peptide_ids)
   {
     //Filename for error messages in XMLHandler
     file_ = filename;
@@ -64,7 +64,7 @@ namespace OpenMS
 
     // reset incoming data
     protein_ids = ProteinIdentification();
-    peptide_ids = PeptideIdentification();
+    peptide_ids = SpectrumIdentification();
 
     // remember data link while parsing
     prot_id_ = &protein_ids;
@@ -73,7 +73,7 @@ namespace OpenMS
     parse_(filename, this);
   }
 
-  void ProtXMLFile::store(const String& /*filename*/, const ProteinIdentification& /*protein_ids*/, const PeptideIdentification& /*peptide_ids*/, const String& /*document_id*/)
+  void ProtXMLFile::store(const String& /*filename*/, const ProteinIdentification& /*protein_ids*/, const SpectrumIdentification& /*peptide_ids*/, const String& /*document_id*/)
   {
     throw Exception::NotImplemented(__FILE__, __LINE__, __PRETTY_FUNCTION__);
     // resetMembers_();
@@ -174,7 +174,7 @@ namespace OpenMS
       // If a peptide is degenerate it will show in multiple groups, but have different statistics (e.g. 'nsp_adjusted_probability')
       // We thus treat each instance as a separate peptide
       // todo/improvement: link them by a group in PeptideIdentification?!
-      pep_hit_ = new PeptideHit;
+      pep_hit_ = new SpectrumMatch;
       pep_hit_->setSequence(AASequence::fromString(String(attributeAsString_(attributes, "peptide_sequence"))));
       pep_hit_->setScore(attributeAsDouble_(attributes, "nsp_adjusted_probability"));
 

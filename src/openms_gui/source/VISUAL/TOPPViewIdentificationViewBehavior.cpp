@@ -96,12 +96,12 @@ namespace OpenMS
       tv_->showSpectrumWidgetInWindow(w, caption);
 
       // special behavior
-      const vector<PeptideIdentification>& pi = w->canvas()->getCurrentLayer().getCurrentSpectrum().getPeptideIdentifications();
+      const vector<SpectrumIdentification>& pi = w->canvas()->getCurrentLayer().getCurrentSpectrum().getPeptideIdentifications();
       if (!pi.empty())
       {
         // mass fingerprint annotation of name etc 
         if (ms_level == 1) addPeakAnnotations_(pi);
-        PeptideHit hit;
+        SpectrumMatch hit;
         if (IDFilter().getBestHit(pi, false, hit))
         {
           addTheoreticalSpectrumLayer_(hit);
@@ -124,7 +124,7 @@ namespace OpenMS
 
   }
 
-  void TOPPViewIdentificationViewBehavior::addPeakAnnotations_(const std::vector<PeptideIdentification>& ph)
+  void TOPPViewIdentificationViewBehavior::addPeakAnnotations_(const std::vector<SpectrumIdentification>& ph)
   {
     // called anew for every click on a spectrum
     LayerData& current_layer = tv_->getActive1DWidget()->canvas()->getCurrentLayer();
@@ -151,7 +151,7 @@ namespace OpenMS
       QMessageBox::warning(tv_, "Error", "The spectrum is not sorted! Aborting!");
       return;
     }
-    for (std::vector<PeptideIdentification>::const_iterator it = ph.begin();
+    for (std::vector<SpectrumIdentification>::const_iterator it = ph.begin();
                                                             it!= ph.end();
                                                             ++it)
     {
@@ -167,7 +167,7 @@ namespace OpenMS
       Annotation1DCaret* first_dit(0);
       // we could have many many hits for different compounds which have the exact same sum formula... so first group by sum formula
       std::map<String, StringList> formula_to_names;
-      for (std::vector< PeptideHit >::const_iterator ith = it->getHits().begin();
+      for (std::vector< SpectrumMatch >::const_iterator ith = it->getHits().begin();
                                                       ith!= it->getHits().end();
                                                       ++ith)
       {
@@ -250,17 +250,17 @@ namespace OpenMS
 
       if (ms_level == 2) // show theoretical spectrum with automatic alignment
       {
-        vector<PeptideIdentification> pi = current_layer.getCurrentSpectrum().getPeptideIdentifications();
+        vector<SpectrumIdentification> pi = current_layer.getCurrentSpectrum().getPeptideIdentifications();
         if (!pi.empty())
         {
-          PeptideHit hit;
+          SpectrumMatch hit;
           if (IDFilter().getBestHit(pi, false, hit)) addTheoreticalSpectrumLayer_(hit);
           else LOG_ERROR << "Spectrum has no hits\n";
         }
       }
       else if (ms_level == 1)   // show precursor locations
       {
-        const vector<PeptideIdentification>& pi = current_layer.getCurrentSpectrum().getPeptideIdentifications();
+        const vector<SpectrumIdentification>& pi = current_layer.getCurrentSpectrum().getPeptideIdentifications();
         addPeakAnnotations_(pi);
 
         vector<Precursor> precursors;
@@ -363,7 +363,7 @@ namespace OpenMS
     temporary_annotations_.clear();
   }
 
-  void TOPPViewIdentificationViewBehavior::addTheoreticalSpectrumLayer_(const PeptideHit & ph)
+  void TOPPViewIdentificationViewBehavior::addTheoreticalSpectrumLayer_(const SpectrumMatch & ph)
   {
     SpectrumCanvas * current_canvas = tv_->getActive1DWidget()->canvas();
     LayerData & current_layer = current_canvas->getCurrentLayer();
@@ -455,7 +455,7 @@ namespace OpenMS
     ExperimentSharedPtrType new_exp_sptr(new PeakMap(new_exp));
     FeatureMapSharedPtrType f_dummy(new FeatureMapType());
     ConsensusMapSharedPtrType c_dummy(new ConsensusMapType());
-    vector<PeptideIdentification> p_dummy;
+    vector<SpectrumIdentification> p_dummy;
 
     // Block update events for identification widget
     tv_->getSpectraIdentificationViewWidget()->ignore_update = true;
@@ -636,7 +636,7 @@ namespace OpenMS
       for (Size i = 0; i < current_layer.getPeakData()->size(); ++i)
       {
         UInt ms_level = (*current_layer.getPeakData())[i].getMSLevel();
-        const vector<PeptideIdentification> peptide_ids = (*current_layer.getPeakData())[i].getPeptideIdentifications();
+        const vector<SpectrumIdentification> peptide_ids = (*current_layer.getPeakData())[i].getPeptideIdentifications();
         Size peptide_ids_count = peptide_ids.size();
 
         if (ms_level != 2 || peptide_ids_count == 0)  // skip non ms2 spectra and spectra with no identification

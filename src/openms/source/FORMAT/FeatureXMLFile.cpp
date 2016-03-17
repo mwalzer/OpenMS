@@ -72,9 +72,9 @@ namespace OpenMS
     subordinate_feature_level_ = 0;
     last_meta_ = 0;
     prot_id_ = ProteinIdentification();
-    pep_id_ = PeptideIdentification();
+    pep_id_ = SpectrumIdentification();
     prot_hit_ = ProteinHit();
-    pep_hit_ = PeptideHit();
+    pep_hit_ = SpectrumMatch();
     proteinid_to_accession_.clear();
     accession_to_id_.clear();
     identifier_id_.clear();
@@ -643,7 +643,7 @@ namespace OpenMS
     }
     else if (tag == "PeptideHit")
     {
-      pep_hit_ = PeptideHit();
+      pep_hit_ = SpectrumMatch();
       vector<PeptideEvidence> peptide_evidences_;
 
       pep_hit_.setCharge(attributeAsInt_(attributes, "charge"));
@@ -863,13 +863,13 @@ namespace OpenMS
     else if (tag == "PeptideIdentification")
     {
       current_feature_->getPeptideIdentifications().push_back(pep_id_);
-      pep_id_ = PeptideIdentification();
+      pep_id_ = SpectrumIdentification();
       last_meta_  = &map_->back();
     }
     else if (tag == "UnassignedPeptideIdentification")
     {
       map_->getUnassignedPeptideIdentifications().push_back(pep_id_);
-      pep_id_ = PeptideIdentification();
+      pep_id_ = SpectrumIdentification();
       last_meta_  = 0;
     }
     else if (tag == "PeptideHit")
@@ -996,7 +996,7 @@ namespace OpenMS
     os << indent << "\t\t</feature>\n";
   }
 
-  void FeatureXMLFile::writePeptideIdentification_(const String& filename, std::ostream& os, const PeptideIdentification& id, const String& tag_name, UInt indentation_level)
+  void FeatureXMLFile::writePeptideIdentification_(const String& filename, std::ostream& os, const SpectrumIdentification& id, const String& tag_name, UInt indentation_level)
   {
     String indent = String(indentation_level, '\t');
 

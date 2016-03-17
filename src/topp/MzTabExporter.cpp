@@ -346,10 +346,10 @@ protected:
         f.getKeys(keys); //TODO: why not just return it?
         feature_user_value_keys.insert(keys.begin(), keys.end());
 
-        const vector<PeptideIdentification>& pep_ids = f.getPeptideIdentifications();
-        for (vector<PeptideIdentification>::const_iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
+        const vector<SpectrumIdentification>& pep_ids = f.getPeptideIdentifications();
+        for (vector<SpectrumIdentification>::const_iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
         {
-          for (vector<PeptideHit>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
+          for (vector<SpectrumMatch>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
           {
             vector<String> ph_keys;
             hit->getKeys(ph_keys);
@@ -396,7 +396,7 @@ protected:
         // create and fill opt_ columns for feature (peptide) user values
         addMetaInfoToOptionalColumns(feature_user_value_keys, row.opt_, String("global"), f);
 
-        vector<PeptideIdentification> pep_ids = f.getPeptideIdentifications();
+        vector<SpectrumIdentification> pep_ids = f.getPeptideIdentifications();
         if (pep_ids.empty())
         {
           rows.push_back(row);
@@ -404,8 +404,8 @@ protected:
         }
 
         // TODO: here we assume that all have the same score type etc.
-        vector<PeptideHit> all_hits;
-        for (vector<PeptideIdentification>::const_iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
+        vector<SpectrumMatch> all_hits;
+        for (vector<SpectrumIdentification>::const_iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
         {
           all_hits.insert(all_hits.end(), it->getHits().begin(), it->getHits().end());
         }
@@ -417,11 +417,11 @@ protected:
         }
 
         // create new peptide id object to assist in sorting
-        PeptideIdentification new_pep_id = pep_ids[0];
+        SpectrumIdentification new_pep_id = pep_ids[0];
         new_pep_id.setHits(all_hits);
         new_pep_id.assignRanks();
 
-        const PeptideHit& best_ph = new_pep_id.getHits()[0];
+        const SpectrumMatch& best_ph = new_pep_id.getHits()[0];
         const AASequence& aas = best_ph.getSequence();
         row.sequence = MzTabString(aas.toUnmodifiedString());
 
@@ -456,10 +456,10 @@ protected:
       return mztab;
     }
 
-    static MzTab exportIdentificationsToMzTab(const vector<ProteinIdentification>& prot_ids, const vector<PeptideIdentification>& peptide_ids, const String& filename)
+    static MzTab exportIdentificationsToMzTab(const vector<ProteinIdentification>& prot_ids, const vector<SpectrumIdentification>& peptide_ids, const String& filename)
     {
       LOG_INFO << "exporting identifications: \"" << filename << "\" to mzTab: " << std::endl;
-      vector<PeptideIdentification> pep_ids = peptide_ids;
+      vector<SpectrumIdentification> pep_ids = peptide_ids;
       MzTab mztab;
       MzTabMetaData meta_data;
       vector<String> var_mods, fixed_mods;
@@ -632,7 +632,7 @@ protected:
 
       MzTabPSMSectionRows rows;
       Size psm_id(0);
-      for (vector<PeptideIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it, ++psm_id)
+      for (vector<SpectrumIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it, ++psm_id)
       {
         // skip empty peptide identification objects
         if (it->getHits().empty())
@@ -646,7 +646,7 @@ protected:
         MzTabPSMSectionRow row;
 
         // only consider best peptide hit for export
-        const PeptideHit& best_ph = it->getHits()[0];
+        const SpectrumMatch& best_ph = it->getHits()[0];
         const AASequence& aas = best_ph.getSequence();
         row.sequence = MzTabString(aas.toUnmodifiedString());
 
@@ -820,10 +820,10 @@ protected:
         c.getKeys(keys);
         consensus_feature_user_value_keys.insert(keys.begin(), keys.end());
 
-        const vector<PeptideIdentification>& pep_ids = c.getPeptideIdentifications();
-        for (vector<PeptideIdentification>::const_iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
+        const vector<SpectrumIdentification>& pep_ids = c.getPeptideIdentifications();
+        for (vector<SpectrumIdentification>::const_iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
         {
-          for (vector<PeptideHit>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
+          for (vector<SpectrumMatch>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
           {
             vector<String> ph_keys;
             hit->getKeys(ph_keys);
@@ -896,7 +896,7 @@ protected:
           row.peptide_abundance_study_variable[study_variable] = MzTabDouble(fit->getIntensity());
         }
 
-        vector<PeptideIdentification> pep_ids = c.getPeptideIdentifications();
+        vector<SpectrumIdentification> pep_ids = c.getPeptideIdentifications();
         if (!pep_ids.empty())
         {
           if (pep_ids.size() != 1)
@@ -905,7 +905,7 @@ protected:
           }
 
           pep_ids[0].assignRanks();
-          const PeptideHit& best_ph = pep_ids[0].getHits()[0];
+          const SpectrumMatch& best_ph = pep_ids[0].getHits()[0];
           const AASequence& aas = best_ph.getSequence();
           row.sequence = MzTabString(aas.toUnmodifiedString());
 
@@ -981,12 +981,12 @@ protected:
         f.load(in, feature_map);
 
         // calculate coverage
-        vector<PeptideIdentification> pep_ids;
+        vector<SpectrumIdentification> pep_ids;
         vector<ProteinIdentification> prot_ids = feature_map.getProteinIdentifications();        
 
         for (Size i = 0; i < feature_map.size(); ++i) // collect all (assigned and unassigned to a feature) peptide ids
         {
-          vector<PeptideIdentification> pep_ids_bf = feature_map[i].getPeptideIdentifications();
+          vector<SpectrumIdentification> pep_ids_bf = feature_map[i].getPeptideIdentifications();
           pep_ids.insert(pep_ids.end(), pep_ids_bf.begin(), pep_ids_bf.end());
         }
 
@@ -1013,7 +1013,7 @@ protected:
       {
         String document_id;
         vector<ProteinIdentification> prot_ids;
-        vector<PeptideIdentification> pep_ids;
+        vector<SpectrumIdentification> pep_ids;
         IdXMLFile().load(in, prot_ids, pep_ids, document_id);
         mztab = exportIdentificationsToMzTab(prot_ids, pep_ids, in); 
       }
@@ -1023,7 +1023,7 @@ protected:
       {
         String document_id;
         vector<ProteinIdentification> prot_ids;
-        vector<PeptideIdentification> pep_ids;
+        vector<SpectrumIdentification> pep_ids;
         MzIdentMLFile().load(in, prot_ids, pep_ids);
         mztab = exportIdentificationsToMzTab(prot_ids, pep_ids, in); 
       }

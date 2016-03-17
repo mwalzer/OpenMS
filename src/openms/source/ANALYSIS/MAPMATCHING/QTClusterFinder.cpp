@@ -224,7 +224,7 @@ namespace OpenMS
         GridFeature& gfeat = grid_features.back();
         // sort peptide hits once now, instead of multiple times later:
         BaseFeature& bfeat = const_cast<BaseFeature&>(gfeat.getFeature());
-        for (vector<PeptideIdentification>::iterator pep_it =
+        for (vector<SpectrumIdentification>::iterator pep_it =
                bfeat.getPeptideIdentifications().begin(); pep_it !=
                bfeat.getPeptideIdentifications().end(); ++pep_it)
         {

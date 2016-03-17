@@ -147,7 +147,7 @@ protected:
     //-------------------------------------------------------------
 
     vector<ProteinIdentification> proteins;
-    vector<PeptideIdentification> peptides;
+    vector<SpectrumIdentification> peptides;
     IdXMLFile().load(file_name, proteins, peptides);
 
     //ensure protein and peptide identifications are presented, otherwise we don't have to rip anything anyhow
@@ -156,7 +156,7 @@ protected:
       throw Exception::Precondition(__FILE__, __LINE__, __PRETTY_FUNCTION__, "idXML file has to store protein and peptide identifications!");
     }
 
-    map<String, pair<vector<ProteinIdentification>, vector<PeptideIdentification> > > ripped;
+    map<String, pair<vector<ProteinIdentification>, vector<SpectrumIdentification> > > ripped;
 
     // rip the idXML-file into several idXML according to the annotated file origin
     IDRipper ripper;
@@ -166,7 +166,7 @@ protected:
     // writing output
     //-------------------------------------------------------------
 
-    map<String, pair<vector<ProteinIdentification>, vector<PeptideIdentification> > >::iterator it;
+    map<String, pair<vector<ProteinIdentification>, vector<SpectrumIdentification> > >::iterator it;
     for (it = ripped.begin(); it != ripped.end(); ++it)
     {
       QString output = output_directory.toQString();

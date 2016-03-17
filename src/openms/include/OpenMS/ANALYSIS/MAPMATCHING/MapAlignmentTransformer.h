@@ -47,7 +47,7 @@ namespace OpenMS
 {
   class TransformationDescription;
   class ConsensusMap;
-  class PeptideIdentification;
+  class SpectrumIdentification;
   class ConsensusFeature;
 
   /**
@@ -74,7 +74,7 @@ namespace OpenMS
 
     /// Applies the given transformation to peptide identifications
     static void transformRetentionTimes(
-      std::vector<PeptideIdentification>& pep_ids,
+      std::vector<SpectrumIdentification>& pep_ids,
       const TransformationDescription& trafo, bool store_original_rt = false);
 
   private:

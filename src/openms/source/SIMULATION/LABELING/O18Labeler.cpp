@@ -116,7 +116,7 @@ namespace OpenMS
       AASequence unmodified_sequence = (*lf_iter).getPeptideIdentifications()[0].getHits()[0].getSequence();
 
       // check if feature has tryptic c-terminus
-      PeptideHit ph = (*lf_iter).getPeptideIdentifications()[0].getHits()[0];
+      SpectrumMatch ph = (*lf_iter).getPeptideIdentifications()[0].getHits()[0];
       if (ph.getSequence().getResidue(ph.getSequence().size() - 1) == 'R'
          ||
           ph.getSequence().getResidue(ph.getSequence().size() - 1) == 'K')
@@ -250,7 +250,7 @@ namespace OpenMS
 
   void O18Labeler::addModificationToPeptideHit_(Feature& feature, const String& modification) const
   {
-    vector<PeptideHit> pep_hits(feature.getPeptideIdentifications()[0].getHits());
+    vector<SpectrumMatch> pep_hits(feature.getPeptideIdentifications()[0].getHits());
     AASequence modified_sequence(pep_hits[0].getSequence());
     modified_sequence.setCTerminalModification(modification);
     pep_hits[0].setSequence(modified_sequence);

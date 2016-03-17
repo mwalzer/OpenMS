@@ -94,13 +94,13 @@ public:
       @exception Exception::MissingInformation is thrown if entries of @p peptide_ids do not contain 'MZ' and 'RT' information.
     */
     template <typename PeakType>
-    void annotate(MSExperiment<PeakType>& map, const std::vector<PeptideIdentification>& peptide_ids, const std::vector<ProteinIdentification>& protein_ids, const bool clear_ids = false, const bool mapMS1 = false)
+    void annotate(MSExperiment<PeakType>& map, const std::vector<SpectrumIdentification>& peptide_ids, const std::vector<ProteinIdentification>& protein_ids, const bool clear_ids = false, const bool mapMS1 = false)
     {
       checkHits_(peptide_ids);
 
       if (clear_ids)
       { // start with empty IDs
-        std::vector<PeptideIdentification> empty_ids;
+        std::vector<SpectrumIdentification> empty_ids;
         for (typename MSExperiment<PeakType>::iterator it = map.begin(); it != map.end(); ++it)
         {
           it->setPeptideIdentifications(empty_ids);
@@ -212,12 +212,12 @@ public:
     void annotate(MSExperiment<PeakType>& map, FeatureMap fmap, const bool clear_ids = false, const bool mapMS1 = false)
     {
       const std::vector<ProteinIdentification>& protein_ids = fmap.getProteinIdentifications();
-      std::vector<PeptideIdentification> peptide_ids;
+      std::vector<SpectrumIdentification> peptide_ids;
 
       for (FeatureMap::const_iterator it = fmap.begin(); it != fmap.end(); ++it)
       {
-        const std::vector<PeptideIdentification>& pi = it->getPeptideIdentifications();
-        for (std::vector<PeptideIdentification>::const_iterator itp = pi.begin(); itp != pi.end(); ++itp)
+        const std::vector<SpectrumIdentification>& pi = it->getPeptideIdentifications();
+        for (std::vector<SpectrumIdentification>::const_iterator itp = pi.begin(); itp != pi.end(); ++itp)
         {
           peptide_ids.push_back(*itp);
           // if pepID has no m/z or RT, use the values of the feature
@@ -246,7 +246,7 @@ public:
 
       @exception Exception::MissingInformation is thrown if entries of @p ids do not contain 'MZ' and 'RT' information.
     */
-    void annotate(FeatureMap& map, const std::vector<PeptideIdentification>& ids, const std::vector<ProteinIdentification>& protein_ids, bool use_centroid_rt = false, bool use_centroid_mz = false);
+    void annotate(FeatureMap& map, const std::vector<SpectrumIdentification>& ids, const std::vector<ProteinIdentification>& protein_ids, bool use_centroid_rt = false, bool use_centroid_mz = false);
 
     /**
       @brief Mapping method for consensus maps
@@ -262,7 +262,7 @@ public:
 
       @exception Exception::MissingInformation is thrown if the MetaInfoInterface of @p ids does not contain 'MZ' and 'RT'
     */
-    void annotate(ConsensusMap& map, const std::vector<PeptideIdentification>& ids, const std::vector<ProteinIdentification>& protein_ids, bool measure_from_subelements = false, bool annotate_ids_with_subelements = false);
+    void annotate(ConsensusMap& map, const std::vector<SpectrumIdentification>& ids, const std::vector<ProteinIdentification>& protein_ids, bool measure_from_subelements = false, bool annotate_ids_with_subelements = false);
 
 protected:
     void updateMembers_();
@@ -285,12 +285,12 @@ protected:
     bool isMatch_(const double rt_distance, const double mz_theoretical, const double mz_observed) const;
 
     /// helper function that checks if all peptide hits are annotated with RT and MZ meta values
-    void checkHits_(const std::vector<PeptideIdentification>& ids) const;
+    void checkHits_(const std::vector<SpectrumIdentification>& ids) const;
 
     /// get RT, m/z and charge value(s) of a PeptideIdentification
     /// - multiple m/z values are returned if "mz_reference" is set to "peptide" (one for each PeptideHit)
     /// - one m/z value is returned if "mz_reference" is set to "precursor"
-    void getIDDetails_(const PeptideIdentification& id, double& rt_pep, DoubleList& mz_values, IntList& charges, bool use_avg_mass = false) const;
+    void getIDDetails_(const SpectrumIdentification& id, double& rt_pep, DoubleList& mz_values, IntList& charges, bool use_avg_mass = false) const;
 
     /// increase a bounding box by the given RT and m/z tolerances
     void increaseBoundingBox_(DBoundingBox<2>& box);

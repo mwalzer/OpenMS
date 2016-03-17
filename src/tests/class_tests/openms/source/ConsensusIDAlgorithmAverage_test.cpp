@@ -64,11 +64,11 @@ START_SECTION(~ConsensusIDAlgorithmAverage())
 END_SECTION
 
 // create 3 ID runs:
-PeptideIdentification temp;
+SpectrumIdentification temp;
 temp.setScoreType("Posterior Error Probability");
 temp.setHigherScoreBetter(false);
-vector<PeptideIdentification> ids(3, temp);
-vector<PeptideHit> hits;
+vector<SpectrumIdentification> ids(3, temp);
+vector<SpectrumMatch> hits;
 // the first ID has 5 hits
 hits.resize(5);
 hits[0].setSequence(AASequence::fromString("A"));
@@ -115,7 +115,7 @@ hits[9].setSequence(AASequence::fromString("K"));
 hits[9].setScore(0.9);
 ids[2].setHits(hits);
 
-START_SECTION(void apply(std::vector<PeptideIdentification>& ids))
+START_SECTION(void apply(std::vector<SpectrumIdentification>& ids))
 {
   TOLERANCE_ABSOLUTE(0.01)
 
@@ -125,7 +125,7 @@ START_SECTION(void apply(std::vector<PeptideIdentification>& ids))
   param.setValue("filter:considered_hits", 5);
   consensus.setParameters(param);
   // apply:
-  vector<PeptideIdentification> f = ids;
+  vector<SpectrumIdentification> f = ids;
   consensus.apply(f);
 
   TEST_EQUAL(f.size(), 1);

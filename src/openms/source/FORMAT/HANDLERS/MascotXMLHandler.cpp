@@ -43,7 +43,7 @@ namespace OpenMS
 {
   namespace Internal
   {
-    MascotXMLHandler::MascotXMLHandler(ProteinIdentification& protein_identification, vector<PeptideIdentification>& id_data, const String& filename, map<String, vector<AASequence> >& modified_peptides, const SpectrumMetaDataLookup& lookup):
+    MascotXMLHandler::MascotXMLHandler(ProteinIdentification& protein_identification, vector<SpectrumIdentification>& id_data, const String& filename, map<String, vector<AASequence> >& modified_peptides, const SpectrumMetaDataLookup& lookup):
       XMLHandler(filename, ""), protein_identification_(protein_identification),
       id_data_(id_data), peptide_identification_index_(0), actual_title_(""),
       modified_peptides_(modified_peptides), lookup_(lookup),
@@ -352,7 +352,7 @@ namespace OpenMS
         if (modified_peptides_.find(title) != modified_peptides_.end())
         {
           vector<AASequence>& temp_hits = modified_peptides_[title];
-          vector<PeptideHit> temp_peptide_hits = id_data_[actual_query_ - 1].getHits();
+          vector<SpectrumMatch> temp_peptide_hits = id_data_[actual_query_ - 1].getHits();
 
           if (temp_hits.size() != temp_peptide_hits.size())
           {
@@ -502,9 +502,9 @@ namespace OpenMS
       {
         bool already_stored(false);
 
-        vector<PeptideHit> temp_peptide_hits = id_data_[peptide_identification_index_].getHits();
+        vector<SpectrumMatch> temp_peptide_hits = id_data_[peptide_identification_index_].getHits();
 
-        vector<PeptideHit>::iterator it = temp_peptide_hits.begin();
+        vector<SpectrumMatch>::iterator it = temp_peptide_hits.begin();
         while (it != temp_peptide_hits.end())
         {
           if (it->getSequence() == actual_peptide_hit_.getSequence())
@@ -530,7 +530,7 @@ namespace OpenMS
           id_data_[peptide_identification_index_].setHits(temp_peptide_hits);
         }
         actual_peptide_evidence_ = PeptideEvidence();
-        actual_peptide_hit_ = PeptideHit();
+        actual_peptide_hit_ = SpectrumMatch();
       }
       else if (tag_ == "u_peptide" || tag_ == "q_peptide")
       {
@@ -538,7 +538,7 @@ namespace OpenMS
         id_data_[peptide_identification_index_].setScoreType("Mascot");
         id_data_[peptide_identification_index_].insertHit(actual_peptide_hit_);
         actual_peptide_evidence_ = PeptideEvidence();
-        actual_peptide_hit_ = PeptideHit();
+        actual_peptide_hit_ = SpectrumMatch();
       }
       else if (tag_ == "mascot_search_results")
       {

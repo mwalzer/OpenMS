@@ -381,7 +381,7 @@ public:
 
         @return If a new layer was created
     */
-    bool addLayer(std::vector<PeptideIdentification> & peptides,
+    bool addLayer(std::vector<SpectrumIdentification> & peptides,
                   const String & filename = "");
 
     /// Returns the minimum intensity of the active layer
@@ -595,7 +595,7 @@ public slots:
 
         If the current layer is not an identification data layer, @p peptides is cleared only.
     */
-    void getVisibleIdentifications(std::vector<PeptideIdentification> & peptides) const;
+    void getVisibleIdentifications(std::vector<SpectrumIdentification> & peptides) const;
 
     ///Updates layer @p i when the data in the corresponding file changes
     virtual void updateLayer(Size i) = 0;
@@ -655,7 +655,7 @@ protected:
 
     /// Returns the m/z value of an identification depending on the m/z source of the layer (precursor mass/theoretical peptide mass)
     double getIdentificationMZ_(const Size layer_index,
-                                    const PeptideIdentification & peptide) const;
+                                    const SpectrumIdentification & peptide) const;
 
     ///Method that is called when a new layer has been added
     virtual bool finishAdding_() = 0;

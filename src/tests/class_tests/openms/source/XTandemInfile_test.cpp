@@ -59,11 +59,11 @@ XTandemInfile xml_file;
 XTandemInfile* ptr;
 XTandemInfile* nullPointer = 0;
 ProteinIdentification protein_identification;
-vector<PeptideIdentification> peptide_identifications;
-vector<PeptideIdentification> peptide_identifications2;
+vector<SpectrumIdentification> peptide_identifications;
+vector<SpectrumIdentification> peptide_identifications2;
 String date_string_1;
 String date_string_2;
-PeptideHit peptide_hit;
+SpectrumMatch peptide_hit;
 
 START_SECTION((XTandemInfile()))
 	ptr = new XTandemInfile();

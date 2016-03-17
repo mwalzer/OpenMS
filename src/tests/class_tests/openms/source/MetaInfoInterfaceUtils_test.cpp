@@ -50,10 +50,10 @@ START_TEST(MetaInfoInterfaceUtils, "$Id$")
 
 START_SECTION((template<typename T_In, T_Out> static T_Out findCommonMetaKeys(const T::const_iterator& start, const T::const_iterator& end, const float min_frequency = 100.0)))
 {
-  vector<PeptideHit> hits; // some class derived from MetaInfoInterface
+  vector<SpectrumMatch> hits; // some class derived from MetaInfoInterface
   for (Size i = 0; i < 10; ++i)
   {
-    PeptideHit h;
+    SpectrumMatch h;
     h.setMetaValue("commonMeta1", i);
     h.setMetaValue("commonMeta2", i);
     if (i % 2 == 0) 
@@ -66,20 +66,20 @@ START_SECTION((template<typename T_In, T_Out> static T_Out findCommonMetaKeys(co
   
   // common keys for ALL entries (i.e. 100% min_frequency)
   {
-    std::vector<String> common = MetaInfoInterfaceUtils::findCommonMetaKeys<std::vector<PeptideHit>, std::vector<String> >(hits.begin(), hits.end(), 100.0);
+    std::vector<String> common = MetaInfoInterfaceUtils::findCommonMetaKeys<std::vector<SpectrumMatch>, std::vector<String> >(hits.begin(), hits.end(), 100.0);
     TEST_EQUAL(common.size(), 2);
     ABORT_IF(common.size() != 2);
     TEST_EQUAL(common[0], "commonMeta1");
     TEST_EQUAL(common[1], "commonMeta2");
     
     // exceeds 100% --> should be corrected to 100% internally
-    std::vector<String> common2 = MetaInfoInterfaceUtils::findCommonMetaKeys<std::vector<PeptideHit>, std::vector<String> >(hits.begin(), hits.end(), 1110.0);
+    std::vector<String> common2 = MetaInfoInterfaceUtils::findCommonMetaKeys<std::vector<SpectrumMatch>, std::vector<String> >(hits.begin(), hits.end(), 1110.0);
     TEST_EQUAL(common==common2, true);
   }
   
   // occurrence of at least 50 (i.e. 50% min_frequency)
   {
-    std::set<String> set50 = MetaInfoInterfaceUtils::findCommonMetaKeys<std::vector<PeptideHit>, std::set<String> >(hits.begin(), hits.end(), 50.0);
+    std::set<String> set50 = MetaInfoInterfaceUtils::findCommonMetaKeys<std::vector<SpectrumMatch>, std::set<String> >(hits.begin(), hits.end(), 50.0);
     TEST_EQUAL(set50.size(), 3);
     ABORT_IF(set50.size() != 3);
     std::set<String> set50_expected;
@@ -91,7 +91,7 @@ START_SECTION((template<typename T_In, T_Out> static T_Out findCommonMetaKeys(co
 
   // ALL keys (i.e. 0% min_frequency)
   {
-    std::set<String> set0 = MetaInfoInterfaceUtils::findCommonMetaKeys<std::vector<PeptideHit>, std::set<String> >(hits.begin(), hits.end(), 0.0);
+    std::set<String> set0 = MetaInfoInterfaceUtils::findCommonMetaKeys<std::vector<SpectrumMatch>, std::set<String> >(hits.begin(), hits.end(), 0.0);
     TEST_EQUAL(set0.size(), 4);
     ABORT_IF(set0.size() != 4);
     std::set<String> set0_expected;
@@ -102,7 +102,7 @@ START_SECTION((template<typename T_In, T_Out> static T_Out findCommonMetaKeys(co
     TEST_EQUAL(set0==set0_expected, true);
 
     // exceeds 0% --> should be corrected to 0% internally
-    std::set<String> set0_2 = MetaInfoInterfaceUtils::findCommonMetaKeys<std::vector<PeptideHit>, std::set<String> >(hits.begin(), hits.end(), -10.0);
+    std::set<String> set0_2 = MetaInfoInterfaceUtils::findCommonMetaKeys<std::vector<SpectrumMatch>, std::set<String> >(hits.begin(), hits.end(), -10.0);
     TEST_EQUAL(set0==set0_2, true);
   }
   

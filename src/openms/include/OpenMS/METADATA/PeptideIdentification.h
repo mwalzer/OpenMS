@@ -60,28 +60,28 @@ namespace OpenMS
 
         @ingroup Metadata
   */
-  class OPENMS_DLLAPI PeptideIdentification :
+  class OPENMS_DLLAPI SpectrumIdentification :
     public MetaInfoInterface
   {
 public:
 
     ///Hit type definition
-    typedef PeptideHit HitType;
+    typedef SpectrumMatch HitType;
 
     /// @name Constructors, destructor, operators
     //@{
     /// default constructor
-    PeptideIdentification();
+    SpectrumIdentification();
     /// destructor
-    virtual ~PeptideIdentification();
+    virtual ~SpectrumIdentification();
     /// copy constructor
-    PeptideIdentification(const PeptideIdentification& source);
+    SpectrumIdentification(const SpectrumIdentification& source);
     /// assignment operator
-    PeptideIdentification& operator=(const PeptideIdentification& source);
+    SpectrumIdentification& operator=(const SpectrumIdentification& source);
     /// Equality operator
-    bool operator==(const PeptideIdentification& rhs) const;
+    bool operator==(const SpectrumIdentification& rhs) const;
     /// Inequality operator
-    bool operator!=(const PeptideIdentification& rhs) const;
+    bool operator!=(const SpectrumIdentification& rhs) const;
     //@}
 
     /// returns the RT of the MS2 spectrum where the identification occurred
@@ -99,13 +99,13 @@ public:
     bool hasMZ() const;
 
     /// returns the peptide hits as const
-    const std::vector<PeptideHit>& getHits() const;
+    const std::vector<SpectrumMatch>& getHits() const;
     /// returns the peptide hits
-    std::vector<PeptideHit>& getHits();
-    /// Appends a peptide hit
-    void insertHit(const PeptideHit& hit);
-    /// Sets the peptide hits
-    void setHits(const std::vector<PeptideHit>& hits);
+    std::vector<SpectrumMatch>& getHits();
+    /// Appends a SpectrumMatch identification (searchdatabase hit)
+    void insertHit(const SpectrumMatch& hit);
+    /// Sets the SpectrumMatches (aka searchdatabase hits)
+    void setHits(const std::vector<SpectrumMatch>& hits);
 
     /// returns the peptide significance threshold value
     double getSignificanceThreshold() const;
@@ -158,7 +158,7 @@ public:
     bool empty() const;
 
     /// returns all peptide hits which reference to a given protein accession (i.e. filter by protein accession)
-    static std::vector<PeptideHit> getReferencingHits(const std::vector<PeptideHit>&, const std::set<String>& accession);
+    static std::vector<SpectrumMatch> getReferencingHits(const std::vector<SpectrumMatch>&, const std::set<String>& accession);
 
     /// remove the two helper functions below a some point, when we are sure that we did not miss or merge in deprecated code!
     /// re-implemented from MetaValueInterface as a precaution against deprecated usage of "RT" and "MZ" values
@@ -170,7 +170,7 @@ public:
 protected:
 
     String id_; ///< Identifier by which ProteinIdentification and PeptideIdentification are matched
-    std::vector<PeptideHit> hits_; ///< A list containing the peptide hits
+    std::vector<SpectrumMatch> hits_; ///< A list containing the peptide hits
     double significance_threshold_; ///< the peptide significance threshold
     String score_type_; ///< The score type (Mascot, Sequest, e-value, p-value)
     bool higher_score_better_; ///< The score orientation

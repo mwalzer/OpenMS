@@ -53,7 +53,7 @@
 namespace OpenMS
 {
   class ProteinIdentification;
-  class PeptideIdentification;
+  class SpectrumIdentification;
   class DataProcessing;
 
   /// summary of the peptide identification assigned to each feature of this map.
@@ -229,13 +229,13 @@ public:
     OPENMS_DLLAPI void setProteinIdentifications(const std::vector<ProteinIdentification>& protein_identifications);
 
     /// non-mutable access to the unassigned peptide identifications
-    OPENMS_DLLAPI const std::vector<PeptideIdentification>& getUnassignedPeptideIdentifications() const;
+    OPENMS_DLLAPI const std::vector<SpectrumIdentification>& getUnassignedPeptideIdentifications() const;
 
     /// mutable access to the unassigned peptide identifications
-    OPENMS_DLLAPI std::vector<PeptideIdentification>& getUnassignedPeptideIdentifications();
+    OPENMS_DLLAPI std::vector<SpectrumIdentification>& getUnassignedPeptideIdentifications();
 
     /// sets the unassigned peptide identifications
-    OPENMS_DLLAPI void setUnassignedPeptideIdentifications(const std::vector<PeptideIdentification>& unassigned_peptide_identifications);
+    OPENMS_DLLAPI void setUnassignedPeptideIdentifications(const std::vector<SpectrumIdentification>& unassigned_peptide_identifications);
 
     /// returns a const reference to the description of the applied data processing
     OPENMS_DLLAPI const std::vector<DataProcessing>& getDataProcessing() const;
@@ -304,7 +304,7 @@ protected:
     std::vector<ProteinIdentification> protein_identifications_;
 
     /// peptide identifications not matched to a specific feature
-    std::vector<PeptideIdentification> unassigned_peptide_identifications_;
+    std::vector<SpectrumIdentification> unassigned_peptide_identifications_;
 
     /// applied data processing
     std::vector<DataProcessing> data_processing_;

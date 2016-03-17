@@ -263,7 +263,7 @@ namespace OpenMS
     writeToFile_(out_path, result);
   }
 
-  void InclusionExclusionList::writeTargets(const std::vector<PeptideIdentification>& pep_ids,
+  void InclusionExclusionList::writeTargets(const std::vector<SpectrumIdentification>& pep_ids,
                                             const String& out_path,
                                             const IntList& charges)
   {
@@ -276,7 +276,7 @@ namespace OpenMS
     double rel_rt_window_size = param_.getValue("RT:window_relative");
     double abs_rt_window_size = param_.getValue("RT:window_absolute");
 
-    std::vector<PeptideIdentification>::const_iterator pep_id_iter = pep_ids.begin();
+    std::vector<SpectrumIdentification>::const_iterator pep_id_iter = pep_ids.begin();
     for (; pep_id_iter != pep_ids.end(); ++pep_id_iter)
     {
       if (pep_id_iter->getHits().size() > 1)
@@ -295,7 +295,7 @@ namespace OpenMS
       rt_start *= min_to_s_factor;
       rt_stop *= min_to_s_factor;
 
-      std::vector<PeptideHit>::const_iterator pep_hit_iter = pep_id_iter->getHits().begin();
+      std::vector<SpectrumMatch>::const_iterator pep_hit_iter = pep_id_iter->getHits().begin();
       for (; pep_hit_iter != pep_id_iter->getHits().end(); ++pep_hit_iter)
       {
         Int charge = pep_hit_iter->getCharge();

@@ -401,10 +401,10 @@ START_SECTION((SimTypes::MSSimExperiment const& getPeakMap() const ))
 }
 END_SECTION
 
-START_SECTION((void getMS2Identifications(vector<ProteinIdentification>& proteins, vector<PeptideIdentification>& peptides) const))
+START_SECTION((void getMS2Identifications(vector<ProteinIdentification>& proteins, vector<SpectrumIdentification>& peptides) const))
 {
   vector<ProteinIdentification> proteins;
-  vector<PeptideIdentification> peptides;
+  vector<SpectrumIdentification> peptides;
 
   mssim.getMS2Identifications(proteins, peptides);
 
@@ -423,7 +423,7 @@ START_SECTION((void getMS2Identifications(vector<ProteinIdentification>& protein
   // we assume that there is at least ms2 spectrum that is a mixture of two peptides
   bool is_mixture = false;
 
-  for(vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+  for(vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
       pep_it != peptides.end();
       ++pep_it)
   {
@@ -444,7 +444,7 @@ START_SECTION((void getMS2Identifications(vector<ProteinIdentification>& protein
   // test empty case when no simulation was performed
   MSSim no_sim;
   vector<ProteinIdentification> no_proteins;
-  vector<PeptideIdentification> no_peptides;
+  vector<SpectrumIdentification> no_peptides;
   no_sim.getMS2Identifications(no_proteins, no_peptides);
 
   TEST_EQUAL(no_proteins.empty(), true)

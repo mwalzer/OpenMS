@@ -146,7 +146,7 @@ protected:
     return p;
   }
 
-  double getScore_(String& engine, const PeptideHit& hit)
+  double getScore_(String& engine, const SpectrumMatch& hit)
   {
     if (engine == "OMSSA")
     {
@@ -248,7 +248,7 @@ protected:
     //-------------------------------------------------------------
     IdXMLFile file;
     vector<ProteinIdentification> protein_ids;
-    vector<PeptideIdentification> peptide_ids;
+    vector<SpectrumIdentification> peptide_ids;
     file.load(inputfile_name, protein_ids, peptide_ids);
     vector<double> scores;
     vector<double> decoy;
@@ -262,10 +262,10 @@ protected:
     //-------------------------------------------------------------
     if (split_charge)
     {
-      for (vector<PeptideIdentification>::iterator pep_it = peptide_ids.begin(); pep_it != peptide_ids.end(); ++pep_it)
+      for (vector<SpectrumIdentification>::iterator pep_it = peptide_ids.begin(); pep_it != peptide_ids.end(); ++pep_it)
       {
-        vector<PeptideHit>& hits = pep_it->getHits();
-        for (std::vector<PeptideHit>::iterator hit_it = hits.begin(); hit_it != hits.end(); ++hit_it)
+        vector<SpectrumMatch>& hits = pep_it->getHits();
+        for (std::vector<SpectrumMatch>::iterator hit_it = hits.begin(); hit_it != hits.end(); ++hit_it)
         {
           charges.insert(hit_it->getCharge());
         }
@@ -275,7 +275,7 @@ protected:
         throw Exception::ElementNotFound(__FILE__, __LINE__, __PRETTY_FUNCTION__, "no charges found!");
       }
     }
-    for (vector<PeptideIdentification>::iterator pep_it = peptide_ids.begin(); pep_it != peptide_ids.end(); ++pep_it)
+    for (vector<SpectrumIdentification>::iterator pep_it = peptide_ids.begin(); pep_it != peptide_ids.end(); ++pep_it)
     {
       if (!pep_it->getHits().empty())
       {
@@ -300,11 +300,11 @@ protected:
           String searchengine = prot_it->getSearchEngine();
           if ((*engine_it == searchengine) || (*engine_it == searchengine.toUpper()))
           {
-            for (vector<PeptideIdentification>::iterator pep_it = peptide_ids.begin(); pep_it != peptide_ids.end(); ++pep_it)
+            for (vector<SpectrumIdentification>::iterator pep_it = peptide_ids.begin(); pep_it != peptide_ids.end(); ++pep_it)
             {
               if (prot_it->getIdentifier() == pep_it->getIdentifier())
               {
-                vector<PeptideHit>& hits = pep_it->getHits();
+                vector<SpectrumMatch>& hits = pep_it->getHits();
                 if (top_hits_only)
                 {
                   pep_it->sort();
@@ -331,7 +331,7 @@ protected:
                 }
                 else
                 {
-                  for (std::vector<PeptideHit>::iterator hit_it = hits.begin(); hit_it != hits.end(); ++hit_it)
+                  for (std::vector<SpectrumMatch>::iterator hit_it = hits.begin(); hit_it != hits.end(); ++hit_it)
                   {
                     if (!split_charge || (hit_it->getCharge() == *charge_it))
                     {
@@ -417,13 +417,13 @@ protected:
           String searchengine = prot_it->getSearchEngine();
           if ((engine == searchengine) || (engine == searchengine.toUpper()))
           {
-            for (vector<PeptideIdentification>::iterator pep_it = peptide_ids.begin(); pep_it != peptide_ids.end(); ++pep_it)
+            for (vector<SpectrumIdentification>::iterator pep_it = peptide_ids.begin(); pep_it != peptide_ids.end(); ++pep_it)
             {
               if (prot_it->getIdentifier() == pep_it->getIdentifier())
               {
                 String score_type = pep_it->getScoreType() + "_score";
-                vector<PeptideHit> hits = pep_it->getHits();
-                for (std::vector<PeptideHit>::iterator hit_it = hits.begin(); hit_it != hits.end(); ++hit_it)
+                vector<SpectrumMatch> hits = pep_it->getHits();
+                for (std::vector<SpectrumMatch>::iterator hit_it = hits.begin(); hit_it != hits.end(); ++hit_it)
                 {
                   if (!split_charge || (hit_it->getCharge() == charge))
                   {

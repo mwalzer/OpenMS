@@ -90,10 +90,10 @@ public:
     void setModel(PILISModel * hmm_model);
 
     /// performs an ProteinIdentification run on a RichPeakMap
-    void getIdentifications(const std::vector<std::map<String, UInt> > & candidates, std::vector<PeptideIdentification> & ids, const RichPeakMap & exp);
+    void getIdentifications(const std::vector<std::map<String, UInt> > & candidates, std::vector<SpectrumIdentification> & ids, const RichPeakMap & exp);
 
     /// performs an ProteinIdentification run on a PeakSpectrum
-    void getIdentification(const std::map<String, UInt> & candidates, PeptideIdentification & id, const RichPeakSpectrum & spectrum);
+    void getIdentification(const std::map<String, UInt> & candidates, SpectrumIdentification & id, const RichPeakSpectrum & spectrum);
     //@}
 
 protected:
@@ -102,10 +102,10 @@ protected:
     void getSpectrum_(RichPeakSpectrum & spec, const String & sequence, int charge);
 
     /// performs a pre-scoring of the given spec with very simple spectra from the candidate peptides
-    void getPreIdentification_(PeptideIdentification & id, const RichPeakSpectrum & spec, const std::map<String, UInt> & cand_peptides);
+    void getPreIdentification_(SpectrumIdentification & id, const RichPeakSpectrum & spec, const std::map<String, UInt> & cand_peptides);
 
     /// performs a ProteinIdentification via spectra comparison with the PILISModel spectrum generator
-    void getFinalIdentification_(PeptideIdentification & id, const RichPeakSpectrum & spec, const PeptideIdentification & pre_id);
+    void getFinalIdentification_(SpectrumIdentification & id, const RichPeakSpectrum & spec, const SpectrumIdentification & pre_id);
 
     /// returns the model pointer
     PILISModel * getPILISModel_();

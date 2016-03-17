@@ -102,14 +102,14 @@ protected:
   ExitCodes main_(int, const char**)
   {
     vector<ProteinIdentification> protein_identifications;
-    vector<PeptideIdentification> identifications;
+    vector<SpectrumIdentification> identifications;
     std::vector<FASTAFile::FASTAEntry> protein_data;
     FASTAFile file;
     EnzymaticDigestion digestor;
     vector<AASequence> temp_peptides;
-    PeptideIdentification peptide_identification;
+    SpectrumIdentification peptide_identification;
     ProteinIdentification protein_identification;
-    PeptideHit temp_peptide_hit;
+    SpectrumMatch temp_peptide_hit;
     ProteinHit temp_protein_hit;
     vector<String> protein_accessions;
     String inputfile_name;

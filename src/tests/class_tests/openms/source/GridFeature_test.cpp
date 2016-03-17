@@ -110,7 +110,7 @@ START_SECTION((const std::set<AASequence>& getAnnotations() const))
   GridFeature gf(bf, 0, 0);
   TEST_EQUAL(gf.getAnnotations().size(), 0);
   bf.getPeptideIdentifications().resize(2);
-  PeptideHit hit;
+  SpectrumMatch hit;
   hit.setSequence(AASequence::fromString("AAA"));
   bf.getPeptideIdentifications()[0].insertHit(hit);
   hit.setSequence(AASequence::fromString("CCC"));

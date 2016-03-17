@@ -152,7 +152,7 @@ protected:
   ExitCodes main_(int, const char**)
   {
     vector<ProteinIdentification> prot_ids;
-    vector<PeptideIdentification> pep_ids;
+    vector<SpectrumIdentification> pep_ids;
 
     //-------------------------------------------------------------
     // parsing parameters
@@ -567,7 +567,7 @@ protected:
         {
           ++spectrum_count;
           peptide_hit_count += pep_ids[i].getHits().size();
-          const vector<PeptideHit>& temp_hits = pep_ids[i].getHits();
+          const vector<SpectrumMatch>& temp_hits = pep_ids[i].getHits();
           for (Size j = 0; j < temp_hits.size(); ++j)
           {
             peptides.insert(temp_hits[j].getSequence().toString());
@@ -727,14 +727,14 @@ protected:
 
       std::vector<double> deltas;
       //~ prot_ids[0].getSearchParameters();
-      for (vector<PeptideIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
+      for (vector<SpectrumIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
       {
         if (!it->getHits().empty())
         {
           std::vector<String> row;
           row.push_back(it->getRT());
           row.push_back(it->getMZ());
-          PeptideHit tmp = it->getHits().front(); //TODO depends on score & sort
+          SpectrumMatch tmp = it->getHits().front(); //TODO depends on score & sort
           vector<UInt> pep_mods;
           for (UInt w = 0; w < var_mods.size(); ++w)
           {

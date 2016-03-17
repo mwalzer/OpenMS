@@ -494,9 +494,9 @@ START_SECTION((Size computeCoverage(const std::vector<PeptideIdentification>& pe
   id.insertHit(hit);
 
   // prep peptides
-  std::vector<PeptideIdentification> pep_ids;
-  PeptideIdentification pid;
-  PeptideHit phit(0, 0, 1, AASequence::fromString(""));
+  std::vector<SpectrumIdentification> pep_ids;
+  SpectrumIdentification pid;
+  SpectrumMatch phit(0, 0, 1, AASequence::fromString(""));
   PeptideEvidence pe;
   pe.setProteinAccession("P1");
   phit.addPeptideEvidence(pe);
@@ -508,8 +508,8 @@ START_SECTION((Size computeCoverage(const std::vector<PeptideIdentification>& pe
   pid.insertHit(phit);
   pep_ids.push_back(pid);
 
-  PeptideIdentification pid2;
-  PeptideHit phit2(0, 0, 1, AASequence::fromString(""));
+  SpectrumIdentification pid2;
+  SpectrumMatch phit2(0, 0, 1, AASequence::fromString(""));
   phit2.addPeptideEvidence(pe);
   phit2.setSequence(AASequence::fromString("MKQSTIALALLPLLFTPVTKARTPEMPVLENRAAQGDITAPGGARRLTGDQTAALRDSLS"));
   pid2.insertHit(phit2); // should not count
@@ -530,8 +530,8 @@ START_SECTION((Size computeCoverage(const std::vector<PeptideIdentification>& pe
   TEST_REAL_SIMILAR(id.getHits()[1].getCoverage(), 0.0);
 
   pep_ids.clear();
-  PeptideIdentification pid3;
-  PeptideHit phit3(0, 0, 1, AASequence::fromString(""));
+  SpectrumIdentification pid3;
+  SpectrumMatch phit3(0, 0, 1, AASequence::fromString(""));
   PeptideEvidence pe2;
   pe2.setProteinAccession("P2");
   phit3.addPeptideEvidence(pe2);

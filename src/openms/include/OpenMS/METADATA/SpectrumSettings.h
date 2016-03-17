@@ -147,11 +147,11 @@ public:
     void setProducts(const std::vector<Product> & products);
 
     /// returns a const reference to the PeptideIdentification vector
-    const std::vector<PeptideIdentification> & getPeptideIdentifications() const;
+    const std::vector<SpectrumIdentification> & getPeptideIdentifications() const;
     /// returns a mutable reference to the PeptideIdentification vector
-    std::vector<PeptideIdentification> & getPeptideIdentifications();
+    std::vector<SpectrumIdentification> & getPeptideIdentifications();
     /// sets the PeptideIdentification vector
-    void setPeptideIdentifications(const std::vector<PeptideIdentification> & identifications);
+    void setPeptideIdentifications(const std::vector<SpectrumIdentification> & identifications);
 
     /// sets the description of the applied processing
     void setDataProcessing(const std::vector< DataProcessingPtr > & data_processing);
@@ -172,7 +172,7 @@ protected:
     AcquisitionInfo acquisition_info_;
     std::vector<Precursor> precursors_;
     std::vector<Product> products_;
-    std::vector<PeptideIdentification> identification_;
+    std::vector<SpectrumIdentification> identification_;
     std::vector< DataProcessingPtr > data_processing_;
   };
 

@@ -69,7 +69,7 @@ namespace OpenMS
         @param ids Peptide identifications (input: more than one, output: one)
         @param number_of_runs Number of ID runs (default: size of "ids")
     */
-    void apply(std::vector<PeptideIdentification>& ids, 
+    void apply(std::vector<SpectrumIdentification>& ids, 
                Size number_of_runs = 0);
 
     /// Virtual destructor
@@ -101,7 +101,7 @@ namespace OpenMS
        @param ids Peptide identifications (input)
        @param results Algorithm results (output). For each peptide sequence, two scores are expected: the actual consensus score and the "support" value, in this order.
     */
-    virtual void apply_(std::vector<PeptideIdentification>& ids,
+    virtual void apply_(std::vector<SpectrumIdentification>& ids,
                         SequenceGrouping& results) = 0;
 
     /// Docu in base class

@@ -140,7 +140,7 @@ delete sequence_db_;
     return hmm_model_;
   }
 
-  void PILISIdentification::getIdentifications(const vector<map<String, UInt> > & candidates, vector<PeptideIdentification> & ids, const RichPeakMap & exp)
+  void PILISIdentification::getIdentifications(const vector<map<String, UInt> > & candidates, vector<SpectrumIdentification> & ids, const RichPeakMap & exp)
   {
     UInt max_candidates = (UInt)param_.getValue("max_candidates");
     UInt count(0);
@@ -152,7 +152,7 @@ delete sequence_db_;
       }
 
       //cerr << count << "/" << exp.size() << endl;
-      PeptideIdentification id;
+      SpectrumIdentification id;
       getIdentification(candidates[count], id, *it);
 
       //if (id.getHits().size() > max_candidates)
@@ -169,11 +169,11 @@ delete sequence_db_;
       scoring.getScores(ids);
     }
 
-    for (vector<PeptideIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
     {
       if (it->getHits().size() > max_candidates)
       {
-        vector<PeptideHit> tmp_hits = it->getHits();
+        vector<SpectrumMatch> tmp_hits = it->getHits();
         tmp_hits.resize(max_candidates);
         it->setHits(tmp_hits);
       }
@@ -182,7 +182,7 @@ delete sequence_db_;
     return;
   }
 
-  void PILISIdentification::getIdentification(const map<String, UInt> & candidates, PeptideIdentification & id, const RichPeakSpectrum & spec)
+  void PILISIdentification::getIdentification(const map<String, UInt> & candidates, SpectrumIdentification & id, const RichPeakSpectrum & spec)
   {
     if (spec.getMSLevel() != 2)
     {
@@ -217,7 +217,7 @@ delete sequence_db_;
 
     //cerr << "#cand peptides: " << cand_peptides.size() << ", " << pre_pos << ", +/- " << pre_tol << endl;
 
-    PeptideIdentification pre_id;
+    SpectrumIdentification pre_id;
     getPreIdentification_(pre_id, spec_copy, candidates);
 
     getFinalIdentification_(id, spec_copy, pre_id);
@@ -252,7 +252,7 @@ delete sequence_db_;
     UInt max_candidates = (UInt)param_.getValue("max_candidates");
     if (id.getHits().size() > max_candidates)
     {
-      vector<PeptideHit> tmp_hits = id.getHits();
+      vector<SpectrumMatch> tmp_hits = id.getHits();
       tmp_hits.resize(max_candidates);
       id.setHits(tmp_hits);
     }
@@ -262,7 +262,7 @@ delete sequence_db_;
     return;
   }
 
-  void PILISIdentification::getPreIdentification_(PeptideIdentification & id, const RichPeakSpectrum & spec, const map<String, UInt> & cand_peptides)
+  void PILISIdentification::getPreIdentification_(SpectrumIdentification & id, const RichPeakSpectrum & spec, const map<String, UInt> & cand_peptides)
   {
     // get simple spectra to pre-eliminate most of the candidates
     for (map<String, UInt>::const_iterator it1 = cand_peptides.begin(); it1 != cand_peptides.end(); ++it1)
@@ -295,7 +295,7 @@ delete sequence_db_;
       }
       double score = (*scorer_)(s1, s2);
       //cerr << "Pre: " << it1->first << " " << it1->second << " " << score << endl;
-      PeptideHit peptide_hit(score, 0, it1->second, AASequence::fromString(it1->first));
+      SpectrumMatch peptide_hit(score, 0, it1->second, AASequence::fromString(it1->first));
       id.insertHit(peptide_hit);
     }
 
@@ -303,7 +303,7 @@ delete sequence_db_;
     return;
   }
 
-  void PILISIdentification::getFinalIdentification_(PeptideIdentification & id, const RichPeakSpectrum & spec, const PeptideIdentification & pre_id)
+  void PILISIdentification::getFinalIdentification_(SpectrumIdentification & id, const RichPeakSpectrum & spec, const SpectrumIdentification & pre_id)
   {
     UInt max_candidates = (UInt)param_.getValue("max_candidates");
     sim_specs_.clear();
@@ -329,7 +329,7 @@ delete sequence_db_;
       }
       double score = (*scorer_)(s1, s2);
       //cerr << "Final: " << peptide_sequence << " " << pre_id.getHits()[i].getCharge() << " " << score << endl;
-      PeptideHit peptide_hit(score, 0, pre_id.getHits()[i].getCharge(), peptide_sequence);
+      SpectrumMatch peptide_hit(score, 0, pre_id.getHits()[i].getCharge(), peptide_sequence);
       id.insertHit(peptide_hit);
     }
 

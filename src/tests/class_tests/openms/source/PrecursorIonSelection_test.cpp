@@ -80,7 +80,7 @@ START_SECTION(void setMaxScore(const double& max_score))
 END_SECTION
 
 std::vector<ProteinIdentification> prot_ids;
-std::vector<PeptideIdentification> pep_ids;
+std::vector<SpectrumIdentification> pep_ids;
 String document_id;
 IdXMLFile file;
 file.load(OPENMS_GET_TEST_DATA_PATH("PrecursorIonSelection_ids.idXML"),prot_ids,pep_ids, document_id);
@@ -119,13 +119,13 @@ param2.setValue("MIPFormulation:thresholds:use_peptide_rule","true");
 ptr->setParameters(param2);
 next_features.clear(true);
 
-START_SECTION(void rescore(FeatureMap& features,std::vector<PeptideIdentification>& new_pep_ids,std::vector<ProteinIdentification>& prot_ids,PrecursorIonSelectionPreprocessing& preprocessed_db, bool check_meta_values=true))
+START_SECTION(void rescore(FeatureMap& features,std::vector<SpectrumIdentification>& new_pep_ids,std::vector<ProteinIdentification>& prot_ids,PrecursorIonSelectionPreprocessing& preprocessed_db, bool check_meta_values=true))
   ptr->rescore(features,pep_ids,prot_ids,preprocessing,false);
   ptr->getNextPrecursors(features,next_features,1);
   TEST_REAL_SIMILAR(next_features[0].getMetaValue("msms_score"),46365.5)
 END_SECTION
 
-  START_SECTION( void simulateRun(FeatureMap& features,std::vector<PeptideIdentification>& pep_ids,std::vector<ProteinIdentification>& prot_ids,PrecursorIonSelectionPreprocessing& preprocessed_db, String path,MSExperiment<> & experiment, String precursor_path=""))
+  START_SECTION( void simulateRun(FeatureMap& features,std::vector<SpectrumIdentification>& pep_ids,std::vector<ProteinIdentification>& prot_ids,PrecursorIonSelectionPreprocessing& preprocessed_db, String path,MSExperiment<> & experiment, String precursor_path=""))
   ptr->reset();
 	features.clear(true);
   f_file.load(OPENMS_GET_TEST_DATA_PATH("PrecursorIonSelection_features.featureXML"),features);

@@ -81,7 +81,7 @@ public:
      */
     //@{
     /// performs an ProteinIdentification run on a PeakMap
-    virtual void getIdentifications(std::vector<PeptideIdentification> & ids, const PeakMap & exp) = 0;
+    virtual void getIdentifications(std::vector<SpectrumIdentification> & ids, const PeakMap & exp) = 0;
     //@}
 
     typedef CompNovoIonScoringBase::IonScore IonScore;

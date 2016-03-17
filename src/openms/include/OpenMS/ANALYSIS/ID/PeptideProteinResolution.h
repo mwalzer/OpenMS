@@ -115,7 +115,7 @@ namespace OpenMS
     /// @param protein ProteinIdentification object storing IDs and groups
     /// @param peptides vector of ProteinIdentifications with links to the proteins
     void buildGraph(const ProteinIdentification& protein,
-                    const std::vector<PeptideIdentification>& peptides);
+                    const std::vector<SpectrumIdentification>& peptides);
       
     /// Applies resolveConnectedComponent to every component of the graph and
     /// is able to write statistics when specified. Parameters will
@@ -123,7 +123,7 @@ namespace OpenMS
     /// @param protein ProteinIdentification object storing IDs and groups
     /// @param peptides vector of ProteinIdentifications with links to the proteins
     void resolveGraph(ProteinIdentification& protein,
-                      std::vector<PeptideIdentification>& peptides);
+                      std::vector<SpectrumIdentification>& peptides);
     
     /// Does a BFS on the two maps (= two parts of the graph; indist. prot. groups
     /// and peptides), switching from one to the other in each step.
@@ -147,7 +147,7 @@ namespace OpenMS
      */
     void resolveConnectedComponent(ConnectedComponent& conn_comp,
                                     ProteinIdentification& protein,
-                                    std::vector<PeptideIdentification>& peptides);
+                                    std::vector<SpectrumIdentification>& peptides);
 };
   
 } //namespace OpenMS

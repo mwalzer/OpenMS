@@ -75,7 +75,7 @@ public:
     */
     void load(const String& filename,
               ProteinIdentification& protein_identification,
-              std::vector<PeptideIdentification>& id_data,
+              std::vector<SpectrumIdentification>& id_data,
               const SpectrumMetaDataLookup& lookup);
 
     /**
@@ -92,7 +92,7 @@ public:
     */
     void load(const String& filename,
               ProteinIdentification& protein_identification,
-              std::vector<PeptideIdentification>& id_data, 
+              std::vector<SpectrumIdentification>& id_data, 
               std::map<String, std::vector<AASequence> >& peptides, 
               const SpectrumMetaDataLookup& lookup);
 

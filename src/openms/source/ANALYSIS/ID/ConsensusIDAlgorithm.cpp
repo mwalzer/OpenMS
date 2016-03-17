@@ -72,7 +72,7 @@ namespace OpenMS
   }
 
 
-  void ConsensusIDAlgorithm::apply(vector<PeptideIdentification>& ids,
+  void ConsensusIDAlgorithm::apply(vector<SpectrumIdentification>& ids,
                                    Size number_of_runs)
   {
     // abort if no IDs present
@@ -84,7 +84,7 @@ namespace OpenMS
     number_of_runs_ = (number_of_runs != 0) ? number_of_runs : ids.size();
 
     // prepare data here, so that it doesn't have to happen in each algorithm:
-    for (vector<PeptideIdentification>::iterator pep_it = ids.begin(); 
+    for (vector<SpectrumIdentification>::iterator pep_it = ids.begin(); 
          pep_it != ids.end(); ++pep_it)
     {
       pep_it->sort();
@@ -109,7 +109,7 @@ namespace OpenMS
     {
       OPENMS_PRECONDITION(!res_it->second.second.empty(),
                           "Consensus score for peptide required");
-      PeptideHit hit;
+      SpectrumMatch hit;
 
       if (res_it->second.second.size() == 2)
       {

@@ -77,7 +77,7 @@ public:
       Int charge;
       RichPeakSpectrum spec;
 
-      std::vector<PeptideHit> hits;
+      std::vector<SpectrumMatch> hits;
 
       bool operator<(const Peptide & peptide) const;
 

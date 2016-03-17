@@ -431,7 +431,7 @@ namespace OpenMS
 
   void ICPLLabeler::addModificationToPeptideHit_(Feature& feature, const String& modification) const
   {
-    vector<PeptideHit> pep_hits(feature.getPeptideIdentifications()[0].getHits());
+    vector<SpectrumMatch> pep_hits(feature.getPeptideIdentifications()[0].getHits());
     AASequence modified_sequence(pep_hits[0].getSequence());
     if (modified_sequence.getNTerminalModification() == "")
     {

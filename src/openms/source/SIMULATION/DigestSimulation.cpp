@@ -108,13 +108,13 @@ namespace OpenMS
            ++protein_hit)
       {
         // generate a PeptideHit hit with the correct link to the protein
-        PeptideHit pep_hit(1.0, 1, 0, AASequence::fromString(protein_hit->getSequence()));
+        SpectrumMatch pep_hit(1.0, 1, 0, AASequence::fromString(protein_hit->getSequence()));
         PeptideEvidence pe;
         pe.setProteinAccession(protein_hit->getAccession());
         pep_hit.addPeptideEvidence(pe);
 
         // add the PeptideHit to the PeptideIdentification
-        PeptideIdentification pep_id;
+        SpectrumIdentification pep_id;
         pep_id.insertHit(pep_hit);
 
         // generate Feature with correct Intensity and corresponding PeptideIdentification
@@ -235,9 +235,9 @@ namespace OpenMS
         // If we see this Peptide the first time -> generate corresponding feature
         if (generated_features.count(*dp_it) == 0)
         {
-          PeptideHit pep_hit(1.0, 1, 0, *dp_it);
+          SpectrumMatch pep_hit(1.0, 1, 0, *dp_it);
 
-          PeptideIdentification pep_id;
+          SpectrumIdentification pep_id;
           pep_id.insertHit(pep_hit);
 
           // create feature
@@ -283,8 +283,8 @@ namespace OpenMS
         // ... add accession of current protein
         protein_accessions.insert(protein_hit->getAccession());
 
-        std::vector<PeptideIdentification> pep_idents = generated_features[*dp_it].getPeptideIdentifications();
-        std::vector<PeptideHit> pep_hits = pep_idents[0].getHits();
+        std::vector<SpectrumIdentification> pep_idents = generated_features[*dp_it].getPeptideIdentifications();
+        std::vector<SpectrumMatch> pep_hits = pep_idents[0].getHits();
 
         for (std::set<String>::const_iterator s_it = protein_accessions.begin(); s_it != protein_accessions.end(); ++s_it)
         {

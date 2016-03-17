@@ -82,14 +82,14 @@ namespace OpenMS
   {
   }
 
-  void CompNovoIdentification::getIdentifications(vector<PeptideIdentification> & pep_ids, const PeakMap & exp)
+  void CompNovoIdentification::getIdentifications(vector<SpectrumIdentification> & pep_ids, const PeakMap & exp)
   {
     Size count(1);
     for (PeakMap::ConstIterator it = exp.begin(); it != exp.end(); ++it, ++count)
     {
       //cerr << count << "/" << exp.size() / 2 << endl;
 
-      PeptideIdentification id;
+      SpectrumIdentification id;
       PeakSpectrum CID_spec(*it);
       double cid_rt(it->getRT());
       double cid_mz(0);
@@ -128,7 +128,7 @@ namespace OpenMS
     return;
   }
 
-  void CompNovoIdentification::getIdentification(PeptideIdentification & id, const PeakSpectrum & CID_spec, const PeakSpectrum & ETD_spec)
+  void CompNovoIdentification::getIdentification(SpectrumIdentification & id, const PeakSpectrum & CID_spec, const PeakSpectrum & ETD_spec)
   {
     PeakSpectrum new_CID_spec(CID_spec), new_ETD_spec(ETD_spec);
     windowMower_(new_CID_spec, 0.3, 1);
@@ -451,7 +451,7 @@ namespace OpenMS
     SpectrumAlignmentScore spectra_zhang;
     spectra_zhang.setParameters(zhang_param);
 
-    vector<PeptideHit> hits;
+    vector<SpectrumMatch> hits;
     Size missed_cleavages = param_.getValue("missed_cleavages");
     for (set<String>::const_iterator it = sequences.begin(); it != sequences.end(); ++it)
     {
@@ -472,7 +472,7 @@ namespace OpenMS
       double cid_score = zhang_(CID_sim_spec, CID_spec);
       double etd_score = zhang_(ETD_sim_spec, ETD_spec);
 
-      PeptideHit hit;
+      SpectrumMatch hit;
       hit.setScore(cid_score + etd_score);
 
       hit.setSequence(getModifiedAASequence_(*it));
@@ -506,7 +506,7 @@ namespace OpenMS
       hits.resize(number_of_prescoring_hits);
     }
 
-    for (vector<PeptideHit>::iterator it = hits.begin(); it != hits.end(); ++it)
+    for (vector<SpectrumMatch>::iterator it = hits.begin(); it != hits.end(); ++it)
     {
       PeakSpectrum ETD_sim_spec, CID_sim_spec;
       String mod_string = getModifiedStringFromAASequence_(it->getSequence());

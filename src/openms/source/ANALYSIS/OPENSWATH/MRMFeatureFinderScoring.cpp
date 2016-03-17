@@ -561,8 +561,8 @@ namespace OpenMS
       ///////////////////////////////////////////////////////////////////////////
       // add the peptide hit information to the feature
       ///////////////////////////////////////////////////////////////////////////
-      PeptideIdentification pep_id_ = PeptideIdentification();
-      PeptideHit pep_hit_ = PeptideHit();
+      SpectrumIdentification pep_id_ = SpectrumIdentification();
+      SpectrumMatch pep_hit_ = SpectrumMatch();
 
       if (pep->getChargeState() != -1)
       {

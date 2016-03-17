@@ -101,7 +101,7 @@ protected:
   }
 
 
-  String describeHit_(const PeptideHit& hit)
+  String describeHit_(const SpectrumMatch& hit)
   {
     return "peptide hit with sequence '" + hit.getSequence().toString() +
       "', charge " + String(hit.getCharge()) + ", score " + 
@@ -168,7 +168,7 @@ protected:
     if (new_score_type_.empty()) new_score_type_ = new_score_;
 
     vector<ProteinIdentification> proteins;
-    vector<PeptideIdentification> peptides;
+    vector<SpectrumIdentification> peptides;
 
     IdXMLFile().load(in, proteins, peptides);
 
@@ -183,10 +183,10 @@ protected:
     }
     else
     {
-      for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+      for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
            pep_it != peptides.end(); ++pep_it)
       {
-        switchScores_<PeptideIdentification>(*pep_it, counter);
+        switchScores_<SpectrumIdentification>(*pep_it, counter);
       }
     }
 

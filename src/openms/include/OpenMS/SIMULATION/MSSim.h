@@ -114,7 +114,7 @@ public:
       @param proteins Will be filled with a single ProteinIdentification holding all ProteinHits used in the simulated MS2 spectra.
       @param peptides Will be filled with PeptideIdentifications for each simulated MS2 spectra holding all contributing peptides scored by their intensity contribution.
     */
-    void getMS2Identifications(std::vector<ProteinIdentification>& proteins, std::vector<PeptideIdentification>& peptides) const;
+    void getMS2Identifications(std::vector<ProteinIdentification>& proteins, std::vector<SpectrumIdentification>& peptides) const;
 
     /// Returns the default parameters for simulation including the labeling technique with name @p labeling_name
     Param getParameters() const;

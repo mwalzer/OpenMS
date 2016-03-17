@@ -82,8 +82,8 @@ END_SECTION
 
 SequestOutfile file;
 
-START_SECTION(void load(const String& result_filename, std::vector< PeptideIdentification >& peptide_identifications, ProteinIdentification& protein_identification, const double p_value_threshold, std::vector< double >& pvalues, const String& database="", const bool ignore_proteins_per_peptide=false))
-	vector< PeptideIdentification > peptide_identifications;
+START_SECTION(void load(const String& result_filename, std::vector< SpectrumIdentification >& peptide_identifications, ProteinIdentification& protein_identification, const double p_value_threshold, std::vector< double >& pvalues, const String& database="", const bool ignore_proteins_per_peptide=false))
+	vector< SpectrumIdentification > peptide_identifications;
 	ProteinIdentification protein_identification;
 	vector< double > pvalues;
 

@@ -48,9 +48,9 @@ namespace OpenMS
     feature_index_(feature_index),
     annotations_()
   {
-    const vector<PeptideIdentification>& peptides =
+    const vector<SpectrumIdentification>& peptides =
       feature.getPeptideIdentifications();
-    for (vector<PeptideIdentification>::const_iterator pep_it =
+    for (vector<SpectrumIdentification>::const_iterator pep_it =
            peptides.begin(); pep_it != peptides.end(); ++pep_it)
     {
       if (pep_it->getHits().empty())

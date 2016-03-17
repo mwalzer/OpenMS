@@ -129,19 +129,19 @@ namespace OpenMS
     charge_ = charge;
   }
 
-  const vector<PeptideIdentification>& BaseFeature::getPeptideIdentifications()
+  const vector<SpectrumIdentification>& BaseFeature::getPeptideIdentifications()
   const
   {
     return peptides_;
   }
 
-  vector<PeptideIdentification>& BaseFeature::getPeptideIdentifications()
+  vector<SpectrumIdentification>& BaseFeature::getPeptideIdentifications()
   {
     return peptides_;
   }
 
   void BaseFeature::setPeptideIdentifications(
-    const vector<PeptideIdentification>& peptides)
+    const vector<SpectrumIdentification>& peptides)
   {
     peptides_ = peptides;
   }
@@ -158,7 +158,7 @@ namespace OpenMS
       {
         if (peptides_[i].getHits().size() > 0)
         {
-          PeptideIdentification id_tmp = peptides_[i];
+          SpectrumIdentification id_tmp = peptides_[i];
           id_tmp.sort();  // look at best hit only - requires sorting
           seqs.insert(id_tmp.getHits()[0].getSequence().toString());
         }

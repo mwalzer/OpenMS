@@ -290,17 +290,17 @@ namespace OpenMS
       for (Size i = 0; i < layer_->getPeakData()->size(); ++i)
       {
         UInt ms_level = (*layer_->getPeakData())[i].getMSLevel();
-        const vector<PeptideIdentification>& peptide_ids = (*layer_->getPeakData())[i].getPeptideIdentifications();
+        const vector<SpectrumIdentification>& peptide_ids = (*layer_->getPeakData())[i].getPeptideIdentifications();
 
         if (ms_level != 2 || peptide_ids.size() == 0) // skip non ms2 spectra and spectra with no identification
         {
           continue;
         }
 
-        for (vector<PeptideIdentification>::const_iterator pids_it = peptide_ids.begin(); pids_it != peptide_ids.end(); ++pids_it)
+        for (vector<SpectrumIdentification>::const_iterator pids_it = peptide_ids.begin(); pids_it != peptide_ids.end(); ++pids_it)
         {
-          const vector<PeptideHit>& phits = pids_it->getHits();
-          set<String> current_keys = MetaInfoInterfaceUtils::findCommonMetaKeys<vector<PeptideHit>, set<String> >(phits.begin(), phits.end(), 100.0);
+          const vector<SpectrumMatch>& phits = pids_it->getHits();
+          set<String> current_keys = MetaInfoInterfaceUtils::findCommonMetaKeys<vector<SpectrumMatch>, set<String> >(phits.begin(), phits.end(), 100.0);
           if (common_keys.empty()) // first MS2 peptide hit found. Now insert keys.
           {
             swap(current_keys, common_keys);
@@ -367,7 +367,7 @@ namespace OpenMS
     for (Size i = 0; i < layer_->getPeakData()->size(); ++i)
     {
       UInt ms_level = (*layer_->getPeakData())[i].getMSLevel();
-      const vector<PeptideIdentification>& pi = (*layer_->getPeakData())[i].getPeptideIdentifications();
+      const vector<SpectrumIdentification>& pi = (*layer_->getPeakData())[i].getPeptideIdentifications();
       Size id_count = pi.size();
 
       // allow only MS2    OR  MS1 with peptideIDs (from Mass Fingerprinting)
@@ -426,7 +426,7 @@ namespace OpenMS
         cout << "  peptide hits found: " << ph.size() << endl;
 #endif
 
-        PeptideHit best_ph;
+        SpectrumMatch best_ph;
         if (IDFilter().getBestHit(pi, false, best_ph))
         {
           // score
@@ -722,11 +722,11 @@ namespace OpenMS
 
     QString filename = QFileDialog::getSaveFileName(this, "Save File", "", "idXML file (*.idXML)");
     vector<ProteinIdentification> prot_id = (*layer_->getPeakData()).getProteinIdentifications();
-    vector<PeptideIdentification> all_pep_ids;
+    vector<SpectrumIdentification> all_pep_ids;
     for (int r = 0; r < table_widget_->rowCount(); ++r)
     {
       int spectrum_index = table_widget_->item(r, 1)->data(Qt::DisplayRole).toInt();
-      vector<PeptideIdentification> pep_id = (*layer_->getPeakData())[spectrum_index].getPeptideIdentifications();
+      vector<SpectrumIdentification> pep_id = (*layer_->getPeakData())[spectrum_index].getPeptideIdentifications();
       copy(pep_id.begin(), pep_id.end(), back_inserter(all_pep_ids));
     }
     IdXMLFile().store(filename, prot_id, all_pep_ids);

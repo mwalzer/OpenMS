@@ -91,7 +91,7 @@ public:
     void mergeIntoLayer(Size i, ConsensusMapSharedPtrType map);
 
     /// Merges the peptide identifications in @p peptides into the peptide layer @p i
-    void mergeIntoLayer(Size i, std::vector<PeptideIdentification>& peptides);
+    void mergeIntoLayer(Size i, std::vector<SpectrumIdentification>& peptides);
 
     /// recalculates the dot gradient of the active layer
     void recalculateCurrentLayerDotGradient();

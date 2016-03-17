@@ -58,11 +58,11 @@ OMSSAXMLFile xml_file;
 OMSSAXMLFile* ptr;
 OMSSAXMLFile* nullPointer = 0;
 ProteinIdentification protein_identification;
-vector<PeptideIdentification> peptide_identifications;
-vector<PeptideIdentification> peptide_identifications2;
+vector<SpectrumIdentification> peptide_identifications;
+vector<SpectrumIdentification> peptide_identifications2;
 String date_string_1;
 String date_string_2;
-PeptideHit peptide_hit;
+SpectrumMatch peptide_hit;
 
 START_SECTION((OMSSAXMLFile()))
 	ptr = new OMSSAXMLFile();
@@ -81,7 +81,7 @@ START_SECTION(void setModificationDefinitionsSet(const ModificationDefinitionsSe
 	NOT_TESTABLE
 END_SECTION
 
-START_SECTION(void load(const String& filename, ProteinIdentification& protein_identification, std::vector<PeptideIdentification>& id_data, bool load_proteins=true, bool load_empty_hits = true))
+START_SECTION(void load(const String& filename, ProteinIdentification& protein_identification, std::vector<SpectrumIdentification>& id_data, bool load_proteins=true, bool load_empty_hits = true))
   // two spectra, first with some hits (mapping to 4 proteins), second is empty
 	xml_file.load(OPENMS_GET_TEST_DATA_PATH("OMSSAXMLFile_test_1.xml"),	protein_identification, peptide_identifications);
 

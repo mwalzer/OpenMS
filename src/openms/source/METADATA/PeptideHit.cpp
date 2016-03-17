@@ -41,7 +41,7 @@ using namespace std;
 namespace OpenMS
 {
   // default constructor
-  PeptideHit::PeptideHit() :
+  SpectrumMatch::SpectrumMatch() :
     MetaInfoInterface(),
     sequence_(),
     score_(0),
@@ -53,7 +53,7 @@ namespace OpenMS
   }
 
   // values constructor
-  PeptideHit::PeptideHit(double score, UInt rank, Int charge, const AASequence& sequence) :
+  SpectrumMatch::SpectrumMatch(double score, UInt rank, Int charge, const AASequence& sequence) :
     MetaInfoInterface(),
     sequence_(sequence),
     score_(score),
@@ -65,7 +65,7 @@ namespace OpenMS
   }
 
   // copy constructor
-  PeptideHit::PeptideHit(const PeptideHit& source) :
+  SpectrumMatch::SpectrumMatch(const SpectrumMatch& source) :
     MetaInfoInterface(source),
     sequence_(source.sequence_),
     score_(source.score_),
@@ -81,7 +81,7 @@ namespace OpenMS
   }
 
   // destructor
-  PeptideHit::~PeptideHit()
+  SpectrumMatch::~SpectrumMatch()
   {
     if (analysis_results_ != NULL)
     {
@@ -90,7 +90,7 @@ namespace OpenMS
     }
   }
 
-  PeptideHit& PeptideHit::operator=(const PeptideHit& source)
+  SpectrumMatch& SpectrumMatch::operator=(const SpectrumMatch& source)
   {
     if (this == &source)
     {
@@ -116,7 +116,7 @@ namespace OpenMS
     return *this;
   }
 
-  bool PeptideHit::operator==(const PeptideHit& rhs) const
+  bool SpectrumMatch::operator==(const SpectrumMatch& rhs) const
   {
     bool ar_equal = false;
     if (analysis_results_ == NULL && rhs.analysis_results_ == NULL) ar_equal = true;
@@ -135,84 +135,84 @@ namespace OpenMS
            && peptide_evidences_ == rhs.peptide_evidences_;
   }
 
-  bool PeptideHit::operator!=(const PeptideHit& rhs) const
+  bool SpectrumMatch::operator!=(const SpectrumMatch& rhs) const
   {
     return !operator==(rhs);
   }
 
   // returns the score of the peptide hit
-  double PeptideHit::getScore() const
+  double SpectrumMatch::getScore() const
   {
     return score_;
   }
 
   // returns the rank of the peptide hit
-  UInt PeptideHit::getRank() const
+  UInt SpectrumMatch::getRank() const
   {
     return rank_;
   }
 
   // returns the peptide sequence without trailing or following spaces
-  const AASequence& PeptideHit::getSequence() const
+  const AASequence& SpectrumMatch::getSequence() const
   {
     return sequence_;
   }
 
-  void PeptideHit::setSequence(const AASequence& sequence)
+  void SpectrumMatch::setSequence(const AASequence& sequence)
   {
     sequence_ = sequence;
   }
 
-  Int PeptideHit::getCharge() const
+  Int SpectrumMatch::getCharge() const
   {
     return charge_;
   }
 
-  void PeptideHit::setCharge(Int charge)
+  void SpectrumMatch::setCharge(Int charge)
   {
     charge_ = charge;
   }
 
-  const std::vector<PeptideEvidence>& PeptideHit::getPeptideEvidences() const
+  const std::vector<PeptideEvidence>& SpectrumMatch::getPeptideEvidences() const
   {
     return peptide_evidences_;
   }
 
-  void PeptideHit::setPeptideEvidences(const std::vector<PeptideEvidence>& peptide_evidences)
+  void SpectrumMatch::setPeptideEvidences(const std::vector<PeptideEvidence>& peptide_evidences)
   {
     peptide_evidences_ = peptide_evidences;
   }
 
-  void PeptideHit::addPeptideEvidence(const PeptideEvidence& peptide_evidence)
+  void SpectrumMatch::addPeptideEvidence(const PeptideEvidence& peptide_evidence)
   {
     peptide_evidences_.push_back(peptide_evidence);
   }
 
   // sets the score of the peptide hit
-  void PeptideHit::setScore(double score)
+  void SpectrumMatch::setScore(double score)
   {
     score_ = score;
   }
 
-  void PeptideHit::setAnalysisResults(std::vector<PeptideHit::PepXMLAnalysisResult> aresult)
+  void SpectrumMatch::setAnalysisResults(std::vector<SpectrumMatch::PepXMLAnalysisResult> aresult)
   {
     // delete old results first
     if (analysis_results_ != NULL) delete analysis_results_;
-    analysis_results_ = new std::vector< PeptideHit::PepXMLAnalysisResult> (aresult);
+    analysis_results_ = new std::vector< SpectrumMatch::PepXMLAnalysisResult> (aresult);
   }
 
-  void PeptideHit::addAnalysisResults(PeptideHit::PepXMLAnalysisResult aresult)
+  void SpectrumMatch::addAnalysisResults(SpectrumMatch::PepXMLAnalysisResult aresult)
   {
     if (analysis_results_ == NULL)
     {
-      analysis_results_ = new std::vector< PeptideHit::PepXMLAnalysisResult>();
+      analysis_results_ = new std::vector< SpectrumMatch::PepXMLAnalysisResult>();
     }
     analysis_results_->push_back(aresult);
   }
   
-  const std::vector<PeptideHit::PepXMLAnalysisResult>& PeptideHit::getAnalysisResults() const
+  const std::vector<SpectrumMatch::PepXMLAnalysisResult>& SpectrumMatch::getAnalysisResults() const
   {
-    static std::vector<PeptideHit::PepXMLAnalysisResult> empty;
+    static std::vector<SpectrumMatch::PepXMLAnalysisResult> empty;
     if (analysis_results_ == NULL)
     {
       return empty;
@@ -221,12 +221,12 @@ namespace OpenMS
   }
 
   // sets the rank
-  void PeptideHit::setRank(UInt newrank)
+  void SpectrumMatch::setRank(UInt newrank)
   {
     rank_ = newrank;
   }
 
-  std::set<String> PeptideHit::extractProteinAccessions() const
+  std::set<String> SpectrumMatch::extractProteinAccessions() const
   {
     set<String> accessions;
     for (vector<PeptideEvidence>::const_iterator it = peptide_evidences_.begin(); it != peptide_evidences_.end(); ++it)

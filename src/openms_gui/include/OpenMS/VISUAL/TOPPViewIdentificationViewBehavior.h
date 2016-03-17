@@ -104,13 +104,13 @@ private:
     void removeTemporaryAnnotations_(Size spectrum_index);
 
     /// Adds a theoretical spectrum as set from the preferences dialog for the peptide hit.
-    void addTheoreticalSpectrumLayer_(const PeptideHit & ph);
+    void addTheoreticalSpectrumLayer_(const SpectrumMatch & ph);
 
     /// removes all layer with theoretical spectrum generated in identification view
     void removeTheoreticalSpectrumLayer_();
 
     /// Adds annotation (compound name, adducts, ppm error) to a peak in 1D spectra
-    void addPeakAnnotations_(const std::vector<PeptideIdentification> & ph);
+    void addPeakAnnotations_(const std::vector<SpectrumIdentification> & ph);
 
 private:
     TOPPViewBase * tv_;

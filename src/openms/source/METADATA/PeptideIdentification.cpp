@@ -45,7 +45,7 @@ using namespace std;
 namespace OpenMS
 {
 
-  PeptideIdentification::PeptideIdentification() :
+  SpectrumIdentification::SpectrumIdentification() :
     MetaInfoInterface(),
     id_(),
     hits_(),
@@ -58,7 +58,7 @@ namespace OpenMS
   {
   }
 
-  PeptideIdentification::PeptideIdentification(const PeptideIdentification& rhs) :
+  SpectrumIdentification::SpectrumIdentification(const SpectrumIdentification& rhs) :
     MetaInfoInterface(rhs),
     id_(rhs.id_),
     hits_(rhs.hits_),
@@ -72,11 +72,11 @@ namespace OpenMS
     setExperimentLabel( rhs.getExperimentLabel() );
   }
 
-  PeptideIdentification::~PeptideIdentification()
+  SpectrumIdentification::~SpectrumIdentification()
   {
   }
 
-  PeptideIdentification& PeptideIdentification::operator=(const PeptideIdentification& rhs)
+  SpectrumIdentification& SpectrumIdentification::operator=(const SpectrumIdentification& rhs)
   {
     if (this == &rhs)
     {
@@ -98,7 +98,7 @@ namespace OpenMS
   }
 
   // Equality operator
-  bool PeptideIdentification::operator==(const PeptideIdentification& rhs) const
+  bool SpectrumIdentification::operator==(const SpectrumIdentification& rhs) const
   {
     return MetaInfoInterface::operator==(rhs)
            && id_ == rhs.id_
@@ -113,112 +113,112 @@ namespace OpenMS
   }
 
   // Inequality operator
-  bool PeptideIdentification::operator!=(const PeptideIdentification& rhs) const
+  bool SpectrumIdentification::operator!=(const SpectrumIdentification& rhs) const
   {
     return !(*this == rhs);
   }
 
-  double PeptideIdentification::getRT() const
+  double SpectrumIdentification::getRT() const
   {
     return rt_;
   }
 
-  void PeptideIdentification::setRT(double rt)
+  void SpectrumIdentification::setRT(double rt)
   {
     rt_ = rt;
   }
 
-  bool PeptideIdentification::hasRT() const
+  bool SpectrumIdentification::hasRT() const
   {
     return !boost::math::isnan(rt_);
   }
 
-  double PeptideIdentification::getMZ() const
+  double SpectrumIdentification::getMZ() const
   {
     return mz_;
   }
 
-  void PeptideIdentification::setMZ(double mz)
+  void SpectrumIdentification::setMZ(double mz)
   {
     mz_ = mz;
   }
 
-  bool PeptideIdentification::hasMZ() const
+  bool SpectrumIdentification::hasMZ() const
   {
     return !boost::math::isnan(mz_);
   }
 
-  const std::vector<PeptideHit>& PeptideIdentification::getHits() const
+  const std::vector<SpectrumMatch>& SpectrumIdentification::getHits() const
   {
     return hits_;
   }
 
-  std::vector<PeptideHit>& PeptideIdentification::getHits()
+  std::vector<SpectrumMatch>& SpectrumIdentification::getHits()
   {
     return hits_;
   }
 
-  void PeptideIdentification::insertHit(const PeptideHit& hit)
+  void SpectrumIdentification::insertHit(const SpectrumMatch& hit)
   {
     hits_.push_back(hit);
   }
 
-  void PeptideIdentification::setHits(const std::vector<PeptideHit>& hits)
+  void SpectrumIdentification::setHits(const std::vector<SpectrumMatch>& hits)
   {
     hits_ = hits;
   }
 
-  double PeptideIdentification::getSignificanceThreshold() const
+  double SpectrumIdentification::getSignificanceThreshold() const
   {
     return significance_threshold_;
   }
 
-  void PeptideIdentification::setSignificanceThreshold(double value)
+  void SpectrumIdentification::setSignificanceThreshold(double value)
   {
     significance_threshold_ = value;
   }
 
-  const String& PeptideIdentification::getScoreType() const
+  const String& SpectrumIdentification::getScoreType() const
   {
     return score_type_;
   }
 
-  void PeptideIdentification::setScoreType(const String& type)
+  void SpectrumIdentification::setScoreType(const String& type)
   {
     score_type_ = type;
   }
 
-  bool PeptideIdentification::isHigherScoreBetter() const
+  bool SpectrumIdentification::isHigherScoreBetter() const
   {
     return higher_score_better_;
   }
 
-  void PeptideIdentification::setHigherScoreBetter(bool value)
+  void SpectrumIdentification::setHigherScoreBetter(bool value)
   {
     higher_score_better_ = value;
   }
 
-  const String& PeptideIdentification::getIdentifier() const
+  const String& SpectrumIdentification::getIdentifier() const
   {
     return id_;
   }
 
-  void PeptideIdentification::setIdentifier(const String& id)
+  void SpectrumIdentification::setIdentifier(const String& id)
   {
     id_ = id;
   }
 
-  const String& PeptideIdentification::getBaseName() const
+  const String& SpectrumIdentification::getBaseName() const
   {
     return base_name_;
   }
 
-  void PeptideIdentification::setBaseName(const String& base_name)
+  void SpectrumIdentification::setBaseName(const String& base_name)
   {
     base_name_ = base_name;
   }
 
-  const String PeptideIdentification::getExperimentLabel() const
+  const String SpectrumIdentification::getExperimentLabel() const
   {
     // implement as meta value in order to reduce bloat of PeptideIdentification object
     //  -> this is mostly used for pepxml at the moment which allows each peptide id to belong to a different experiment
@@ -232,7 +232,7 @@ namespace OpenMS
     }
   }
 
-  void PeptideIdentification::setExperimentLabel(const String& label)
+  void SpectrumIdentification::setExperimentLabel(const String& label)
   {
     // do not store empty label (default value)
     if (!label.empty())
@@ -241,7 +241,7 @@ namespace OpenMS
     }
   }
 
-  void PeptideIdentification::assignRanks()
+  void SpectrumIdentification::assignRanks()
   {
     if (hits_.empty())
     {
@@ -249,7 +249,7 @@ namespace OpenMS
     }
     UInt rank = 1;
     sort();
-    vector<PeptideHit>::iterator lit = hits_.begin();
+    vector<SpectrumMatch>::iterator lit = hits_.begin();
     double last_score = lit->getScore();
     while (lit != hits_.end())
     {
@@ -263,24 +263,24 @@ namespace OpenMS
     }
   }
 
-  void PeptideIdentification::sort()
+  void SpectrumIdentification::sort()
   {
     if (higher_score_better_)
     {
-      std::stable_sort(hits_.begin(), hits_.end(), PeptideHit::ScoreMore());
+      std::stable_sort(hits_.begin(), hits_.end(), SpectrumMatch::ScoreMore());
     }
     else
     {
-      std::stable_sort(hits_.begin(), hits_.end(), PeptideHit::ScoreLess());
+      std::stable_sort(hits_.begin(), hits_.end(), SpectrumMatch::ScoreLess());
     }
   }
 
-  void PeptideIdentification::sortByRank()
+  void SpectrumIdentification::sortByRank()
   {
-    std::sort(hits_.begin(), hits_.end(), PeptideHit::RankLess());
+    std::sort(hits_.begin(), hits_.end(), SpectrumMatch::RankLess());
   }
 
-  bool PeptideIdentification::empty() const
+  bool SpectrumIdentification::empty() const
   {
     return id_ == ""
            && hits_.empty()
@@ -290,10 +290,10 @@ namespace OpenMS
            && base_name_ == "";
   }
 
-  std::vector<PeptideHit> PeptideIdentification::getReferencingHits(const std::vector<PeptideHit>& hits, const std::set<String>& accession)
+  std::vector<SpectrumMatch> SpectrumIdentification::getReferencingHits(const std::vector<SpectrumMatch>& hits, const std::set<String>& accession)
   {
-    std::vector<PeptideHit> filtered;
-    for (std::vector<PeptideHit>::const_iterator h_it = hits.begin(); h_it != hits.end(); ++h_it)
+    std::vector<SpectrumMatch> filtered;
+    for (std::vector<SpectrumMatch>::const_iterator h_it = hits.begin(); h_it != hits.end(); ++h_it)
     {
       set<String> hit_accessions = h_it->extractProteinAccessions();
       set<String> intersect;
@@ -307,7 +307,7 @@ namespace OpenMS
   }
 
   /// re-implemented from MetaValueInterface as a precaution against deprecated usage of "RT" and "MZ" values
-  const DataValue& PeptideIdentification::getMetaValue(const String& name) const
+  const DataValue& SpectrumIdentification::getMetaValue(const String& name) const
   {
     if (name == "RT" || name == "MZ")
     { // this line should never the triggered. Set a breakpoint, find out who called getMetaValue() and replace with PeptideIdentification.getRT()/.getMZ() !!!!
@@ -318,7 +318,7 @@ namespace OpenMS
   }
 
   /// re-implemented from MetaValueInterface as a precaution against deprecated usage of "RT" and "MZ" values
-  void PeptideIdentification::setMetaValue(const String& name, const DataValue& value)
+  void SpectrumIdentification::setMetaValue(const String& name, const DataValue& value)
   {
     if (name == "RT" || name == "MZ")
     { // this line should never the triggered. Set a breakpoint, find out who called getMetaValue() and replace with PeptideIdentification.getRT()/.getMZ() !!!!

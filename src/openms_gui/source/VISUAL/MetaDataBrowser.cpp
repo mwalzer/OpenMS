@@ -379,7 +379,7 @@ namespace OpenMS
   }
 
   //Visualizing PeptideIdentification object
-  void MetaDataBrowser::visualize_(PeptideIdentification & meta, QTreeWidgetItem * parent)
+  void MetaDataBrowser::visualize_(SpectrumIdentification & meta, QTreeWidgetItem * parent)
   {
     PeptideIdentificationVisualizer * visualizer = new PeptideIdentificationVisualizer(isEditable(), this, this);
 
@@ -405,7 +405,7 @@ namespace OpenMS
     //list all peptides hits in the tree
     for (Size i = 0; i < meta.getHits().size(); ++i)
     {
-      visualize_(const_cast<PeptideHit &>(meta.getHits()[i]), item);
+      visualize_(const_cast<SpectrumMatch &>(meta.getHits()[i]), item);
     }
 
     visualize_(dynamic_cast<MetaInfoInterface &>(meta), item);
@@ -655,7 +655,7 @@ namespace OpenMS
   }
 
   //Visualizing PeptideHit object
-  void MetaDataBrowser::visualize_(PeptideHit & meta, QTreeWidgetItem * parent)
+  void MetaDataBrowser::visualize_(SpectrumMatch & meta, QTreeWidgetItem * parent)
   {
     PeptideHitVisualizer * visualizer = new PeptideHitVisualizer(isEditable(), this);
     visualizer->load(meta);
@@ -1035,7 +1035,7 @@ namespace OpenMS
   void MetaDataBrowser::add(Feature & feature)
   {
     //peptide ids
-    for (std::vector<PeptideIdentification>::iterator it = feature.getPeptideIdentifications().begin(); it != feature.getPeptideIdentifications().end(); ++it)
+    for (std::vector<SpectrumIdentification>::iterator it = feature.getPeptideIdentifications().begin(); it != feature.getPeptideIdentifications().end(); ++it)
     {
       add(*it);
     }
@@ -1048,7 +1048,7 @@ namespace OpenMS
   void MetaDataBrowser::add(ConsensusFeature & feature)
   {
     //peptide ids
-    for (std::vector<PeptideIdentification>::iterator it = feature.getPeptideIdentifications().begin(); it != feature.getPeptideIdentifications().end(); ++it)
+    for (std::vector<SpectrumIdentification>::iterator it = feature.getPeptideIdentifications().begin(); it != feature.getPeptideIdentifications().end(); ++it)
     {
       add(*it);
     }

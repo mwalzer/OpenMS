@@ -81,7 +81,7 @@ public:
         @exception Exception::FileNotFound is thrown if the file could not be opened
         @exception Exception::ParseError is thrown if an error occurs during parsing
     */
-    void load(const String& filename, std::vector<ProteinIdentification>& protein_ids, std::vector<PeptideIdentification>& peptide_ids);
+    void load(const String& filename, std::vector<ProteinIdentification>& protein_ids, std::vector<SpectrumIdentification>& peptide_ids);
 
     /**
         @brief Loads the identifications of an idXML file
@@ -92,7 +92,7 @@ public:
         @exception Exception::FileNotFound is thrown if the file could not be opened
         @exception Exception::ParseError is thrown if an error occurs during parsing
     */
-    void load(const String& filename, std::vector<ProteinIdentification>& protein_ids, std::vector<PeptideIdentification>& peptide_ids, String& document_id);
+    void load(const String& filename, std::vector<ProteinIdentification>& protein_ids, std::vector<SpectrumIdentification>& peptide_ids, String& document_id);
 
     /**
         @brief Stores the data in an idXML file
@@ -101,7 +101,7 @@ public:
 
         @exception Exception::UnableToCreateFile is thrown if the file could not be created
     */
-    void store(String filename, const std::vector<ProteinIdentification>& protein_ids, const std::vector<PeptideIdentification>& peptide_ids, const String& document_id = "");
+    void store(String filename, const std::vector<ProteinIdentification>& protein_ids, const std::vector<SpectrumIdentification>& peptide_ids, const String& document_id = "");
   
 
 protected:
@@ -134,7 +134,7 @@ protected:
     /// Pointer to fill in protein identifications
     std::vector<ProteinIdentification>* prot_ids_;
     /// Pointer to fill in peptide identifications
-    std::vector<PeptideIdentification>* pep_ids_;
+    std::vector<SpectrumIdentification>* pep_ids_;
     /// Pointer to last read object with MetaInfoInterface
     MetaInfoInterface* last_meta_;
     /// Search parameters map (key is the "id")
@@ -146,11 +146,11 @@ protected:
     /// Temporary protein ProteinIdentification
     ProteinIdentification prot_id_;
     /// Temporary peptide ProteinIdentification
-    PeptideIdentification pep_id_;
+    SpectrumIdentification pep_id_;
     /// Temporary protein hit
     ProteinHit prot_hit_;
     /// Temporary peptide hit
-    PeptideHit pep_hit_;
+    SpectrumMatch pep_hit_;
     /// Temporary peptide evidences
     std::vector<PeptideEvidence> peptide_evidences_;
     /// Map from protein id to accession

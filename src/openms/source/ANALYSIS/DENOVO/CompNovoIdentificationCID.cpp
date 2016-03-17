@@ -85,13 +85,13 @@ namespace OpenMS
   {
   }
 
-  void CompNovoIdentificationCID::getIdentifications(vector<PeptideIdentification> & pep_ids, const PeakMap & exp)
+  void CompNovoIdentificationCID::getIdentifications(vector<SpectrumIdentification> & pep_ids, const PeakMap & exp)
   {
     Size count(1);
     for (PeakMap::ConstIterator it = exp.begin(); it != exp.end(); ++it, ++count)
     {
       //cerr << count << "/" << exp.size() << endl;
-      PeptideIdentification id;
+      SpectrumIdentification id;
       // TODO check if both CID and ETD is present;
       PeakSpectrum CID_spec(*it);
       id.setRT(it->getRT());
@@ -116,7 +116,7 @@ namespace OpenMS
     return;
   }
 
-  void CompNovoIdentificationCID::getIdentification(PeptideIdentification & id, const PeakSpectrum & CID_spec)
+  void CompNovoIdentificationCID::getIdentification(SpectrumIdentification & id, const PeakSpectrum & CID_spec)
   {
     //if (CID_spec.getPrecursors().begin()->getMZ() > 1000.0)
     //{
@@ -356,7 +356,7 @@ for (PeakSpectrum::ConstIterator it1 = CID_spec.begin(); it1 != CID_spec.end(); 
     SpectrumAlignmentScore spectra_zhang;
     spectra_zhang.setParameters(zhang_param);
 
-    vector<PeptideHit> hits;
+    vector<SpectrumMatch> hits;
     Size missed_cleavages = param_.getValue("missed_cleavages");
     for (set<String>::const_iterator it = sequences.begin(); it != sequences.end(); ++it)
     {
@@ -374,7 +374,7 @@ for (PeakSpectrum::ConstIterator it1 = CID_spec.begin(); it1 != CID_spec.end(); 
 
       double cid_score = zhang_(CID_sim_spec, CID_spec);
 
-      PeptideHit hit;
+      SpectrumMatch hit;
       hit.setScore(cid_score);
 
       hit.setSequence(getModifiedAASequence_(*it));
@@ -395,7 +395,7 @@ for (PeakSpectrum::ConstIterator it1 = CID_spec.begin(); it1 != CID_spec.end(); 
     align_param.setValue("use_linear_factor", "true");
     alignment_score.setParameters(align_param);
 
-    for (vector<PeptideHit>::iterator it = hits.begin(); it != hits.end(); ++it)
+    for (vector<SpectrumMatch>::iterator it = hits.begin(); it != hits.end(); ++it)
     {
       //cerr << "Pre: " << it->getRank() << " " << it->getSequence() << " " << it->getScore() << " " << endl;
     }
@@ -406,7 +406,7 @@ for (PeakSpectrum::ConstIterator it1 = CID_spec.begin(); it1 != CID_spec.end(); 
       hits.resize(number_of_prescoring_hits);
     }
 
-    for (vector<PeptideHit>::iterator it = hits.begin(); it != hits.end(); ++it)
+    for (vector<SpectrumMatch>::iterator it = hits.begin(); it != hits.end(); ++it)
     {
       PeakSpectrum CID_sim_spec;
       getCIDSpectrum_(CID_sim_spec, getModifiedStringFromAASequence_(it->getSequence()), charge);
@@ -427,7 +427,7 @@ for (PeakSpectrum::ConstIterator it1 = CID_spec.begin(); it1 != CID_spec.end(); 
     id.assignRanks();
     hits = id.getHits();
 
-    for (vector<PeptideHit>::iterator it = hits.begin(); it != hits.end(); ++it)
+    for (vector<SpectrumMatch>::iterator it = hits.begin(); it != hits.end(); ++it)
     {
       //cerr << "Fin: " << it->getRank() << " " << it->getSequence() << " " << it->getScore() << " " << endl;
     }

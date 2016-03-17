@@ -93,7 +93,7 @@ END_SECTION
 
 START_SECTION((void setUnassignedPeptideIdentifications(const std::vector<PeptideIdentification>& unassigned_peptide_identifications)))
 	FeatureMap tmp;
-	tmp.setUnassignedPeptideIdentifications(std::vector<PeptideIdentification>(2));
+	tmp.setUnassignedPeptideIdentifications(std::vector<SpectrumIdentification>(2));
 	TEST_EQUAL(tmp.getUnassignedPeptideIdentifications().size(),2)
 END_SECTION
 

@@ -213,12 +213,12 @@ protected:
   ExitCodes main_(Int, const char**)
   {
     vector<ProteinIdentification> protein_identifications;
-    vector<PeptideIdentification> identifications;
+    vector<SpectrumIdentification> identifications;
     vector<ProteinIdentification> protein_identifications_negative;
-    vector<PeptideIdentification> identifications_negative;
+    vector<SpectrumIdentification> identifications_negative;
     vector<String> training_peptides;
     vector<double> training_labels;
-    PeptideHit temp_peptide_hit;
+    SpectrumMatch temp_peptide_hit;
     SVMWrapper svm;
     LibSVMEncoder encoder;
     svm_problem* encoded_training_sample = 0;
@@ -427,7 +427,7 @@ protected:
     //-------------------------------------------------------------
     for (Size i = 0; i < identifications.size(); i++)
     {
-      const vector<PeptideHit>& temp_peptide_hits = identifications[i].getHits();
+      const vector<SpectrumMatch>& temp_peptide_hits = identifications[i].getHits();
       Size temp_size = temp_peptide_hits.size();
       if (temp_size > 0)
       {
@@ -461,7 +461,7 @@ protected:
     vector<String> temp_training_peptides;
     for (Size i = 0; i < identifications_negative.size(); i++)
     {
-      const vector<PeptideHit>& temp_peptide_hits = identifications_negative[i].getHits();
+      const vector<SpectrumMatch>& temp_peptide_hits = identifications_negative[i].getHits();
       Size temp_size = temp_peptide_hits.size();
       if (temp_size > 0)
       {

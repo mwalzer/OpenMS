@@ -2862,11 +2862,11 @@ protected:
     // if also unassigned ids are used create a pseudo feature
     if (use_unassigned_ids)
     {
-      const vector<PeptideIdentification> unassigned_ids = feature_map.getUnassignedPeptideIdentifications();
+      const vector<SpectrumIdentification> unassigned_ids = feature_map.getUnassignedPeptideIdentifications();
       Size unassigned_id_features = 0;
-      for (vector<PeptideIdentification>::const_iterator it = unassigned_ids.begin(); it != unassigned_ids.end(); ++it)
+      for (vector<SpectrumIdentification>::const_iterator it = unassigned_ids.begin(); it != unassigned_ids.end(); ++it)
       {
-        vector<PeptideHit> hits = it->getHits();
+        vector<SpectrumMatch> hits = it->getHits();
         if (!hits.empty())
         {
           Feature f;
@@ -2882,7 +2882,7 @@ protected:
           double mz = charged_weight / charge;
           f.setMZ(mz);
           // add id to pseudo feature
-          vector<PeptideIdentification> id;
+          vector<SpectrumIdentification> id;
           id.push_back(*it);
           f.setPeptideIdentifications(id);
           feature_map.push_back(f);
@@ -2910,8 +2910,8 @@ protected:
       // in features
       for (FeatureMap::iterator feature_it = feature_map.begin(); feature_it != feature_map.end(); ++feature_it) // for each peptide feature
       {
-        const vector<PeptideIdentification>& f_ids = feature_it->getPeptideIdentifications();
-        for (vector<PeptideIdentification>::const_iterator id_it = f_ids.begin(); id_it != f_ids.end(); ++id_it)
+        const vector<SpectrumIdentification>& f_ids = feature_it->getPeptideIdentifications();
+        for (vector<SpectrumIdentification>::const_iterator id_it = f_ids.begin(); id_it != f_ids.end(); ++id_it)
         {
           if (!id_it->getHits().empty())
           {
@@ -2925,10 +2925,10 @@ protected:
       }
 
       // and in unassigned ids
-      const vector<PeptideIdentification> unassigned_ids = feature_map.getUnassignedPeptideIdentifications();
-      for (vector<PeptideIdentification>::const_iterator it = unassigned_ids.begin(); it != unassigned_ids.end(); ++it)
+      const vector<SpectrumIdentification> unassigned_ids = feature_map.getUnassignedPeptideIdentifications();
+      for (vector<SpectrumIdentification>::const_iterator it = unassigned_ids.begin(); it != unassigned_ids.end(); ++it)
       {
-        const vector<PeptideHit> hits = it->getHits();
+        const vector<SpectrumMatch> hits = it->getHits();
         if (!hits.empty())
         {
           Peak2D p;
@@ -2962,16 +2962,16 @@ protected:
           //double precursor_mass = (double)precursor_charge * precursor_mz - (double)precursor_charge * Constants::PROTON_MASS_U;
 
           // add averagine id to pseudo feature
-          PeptideHit pseudo_hit;
+          SpectrumMatch pseudo_hit;
 
           // set peptide with lowest deviation from averagine
           pseudo_hit.setSequence(AASequence()); // set empty sequence
           pseudo_hit.setCharge(precursor_charge);
-          PeptideIdentification pseudo_id;
-          vector<PeptideHit> pseudo_hits;
+          SpectrumIdentification pseudo_id;
+          vector<SpectrumMatch> pseudo_hits;
           pseudo_hits.push_back(pseudo_hit);
           pseudo_id.setHits(pseudo_hits);
-          vector<PeptideIdentification> id;
+          vector<SpectrumIdentification> id;
           id.push_back(pseudo_id);
           f.setPeptideIdentifications(id);
           f.setRT(peak_map[i].getRT());
@@ -3022,7 +3022,7 @@ protected:
       }
 
       // Extract 1 or more MS/MS with identifications assigned to the feature by IDMapper
-      vector<PeptideIdentification> pep_ids = feature_it->getPeptideIdentifications();
+      vector<SpectrumIdentification> pep_ids = feature_it->getPeptideIdentifications();
 
       nPSMs += pep_ids.size();
 
@@ -3033,12 +3033,12 @@ protected:
       }
 
       // add best scoring PeptideHit of all PeptideIdentifications mapping to the current feature to tmp_pepid
-      PeptideIdentification tmp_pepid;
+      SpectrumIdentification tmp_pepid;
       tmp_pepid.setHigherScoreBetter(pep_ids[0].isHigherScoreBetter());
       for (Size i = 0; i != pep_ids.size(); ++i)
       {
         pep_ids[i].assignRanks();
-        const vector<PeptideHit>& hits = pep_ids[i].getHits();
+        const vector<SpectrumMatch>& hits = pep_ids[i].getHits();
         if (!hits.empty())
         {
           tmp_pepid.insertHit(hits[0]);
@@ -3055,7 +3055,7 @@ protected:
       sip_peptide.feature_type = feature_it->getMetaValue("feature_type"); // used to annotate feature type in reporting
 
       // retrieve identification information
-      const PeptideHit& feature_hit = tmp_pepid.getHits()[0];
+      const SpectrumMatch& feature_hit = tmp_pepid.getHits()[0];
       const double feature_hit_score = feature_hit.getScore();
       const double feature_hit_center_mz = feature_it->getMZ();
       const double feature_hit_charge = feature_hit.getCharge();

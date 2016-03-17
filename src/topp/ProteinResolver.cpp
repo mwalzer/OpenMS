@@ -352,15 +352,15 @@ protected:
         //peptide sequence
         if (res.input_type == ProteinResolver::ResolverResult::PeptideIdent)
         {
-          const vector<PeptideIdentification>& identifications =  *res.peptide_identification;
-          const PeptideIdentification& pi = ProteinResolver::getPeptideIdentification(identifications, peptide_entry);
+          const vector<SpectrumIdentification>& identifications =  *res.peptide_identification;
+          const SpectrumIdentification& pi = ProteinResolver::getPeptideIdentification(identifications, peptide_entry);
           if (pi.getHits().size() == 0)
           {
             // this should not happen...
             std::cerr << "PeptideEntry " << peptide_entry->sequence << " from " << peptide_entry->origin << " with  " << peptide_entry->intensity << " has no hits!\n";
             exit(1);
           }
-          const PeptideHit& ph = ProteinResolver::getPeptideHit(identifications, peptide_entry);
+          const SpectrumMatch& ph = ProteinResolver::getPeptideHit(identifications, peptide_entry);
           const AASequence& seq = ph.getSequence();
           out << seq.toUnmodifiedString();
           //var mods TODO
@@ -380,8 +380,8 @@ protected:
         else
         {
           const ConsensusMap& consensus = *res.consensus_map;
-          const PeptideIdentification& pi = ProteinResolver::getPeptideIdentification(consensus, peptide_entry);
-          const PeptideHit& ph = ProteinResolver::getPeptideHit(consensus, peptide_entry);
+          const SpectrumIdentification& pi = ProteinResolver::getPeptideIdentification(consensus, peptide_entry);
+          const SpectrumMatch& ph = ProteinResolver::getPeptideHit(consensus, peptide_entry);
           const AASequence& seq = ph.getSequence();
           out << seq.toUnmodifiedString();
           //var mods TODO
@@ -549,7 +549,7 @@ protected:
     ConsensusXMLFile consensusXML_file;
     ConsensusMap consensus;
     vector<ProteinIdentification> protein_identifications;
-    vector<PeptideIdentification> peptide_identifications;
+    vector<SpectrumIdentification> peptide_identifications;
 
 
     //-------------------------------------------------------------

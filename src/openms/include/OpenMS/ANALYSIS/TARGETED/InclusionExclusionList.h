@@ -191,7 +191,7 @@ public:
       @exception Exception::InvalidSize is thrown if a peptide id contains more than one hit
       @exception Exception::MissingInformation is thrown if a peptide id contains no RT information
      */
-    void writeTargets(const std::vector<PeptideIdentification>& pep_ids,
+    void writeTargets(const std::vector<SpectrumIdentification>& pep_ids,
                       const String& out_path,
                       const IntList& charges);
 

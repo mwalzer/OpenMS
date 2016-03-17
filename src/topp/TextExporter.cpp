@@ -362,7 +362,7 @@ namespace OpenMS
 
   // stream output operator for a PeptideHit
   // TODO: output of multiple peptide evidences
-  SVOutStream& operator<<(SVOutStream& out, const PeptideHit& hit)
+  SVOutStream& operator<<(SVOutStream& out, const SpectrumMatch& hit)
   {
     vector<PeptideEvidence> pes = hit.getPeptideEvidences();
 
@@ -380,11 +380,11 @@ namespace OpenMS
   }
 
   // write a peptide identification to the output stream
-  void writePeptideId(SVOutStream& out, const PeptideIdentification& pid,
+  void writePeptideId(SVOutStream& out, const SpectrumIdentification& pid,
                       const String& what = "PEPTIDE", bool incl_pred_rt = false, bool incl_pred_pt = false,
                       bool incl_first_dim = false, const StringList& peptide_id_meta_keys = StringList(), const StringList& peptide_hit_meta_keys = StringList())
   {
-    for (vector<PeptideHit>::const_iterator hit_it = pid.getHits().begin();
+    for (vector<SpectrumMatch>::const_iterator hit_it = pid.getHits().begin();
          hit_it != pid.getHits().end(); ++hit_it)
     {
       if (!what.empty())
@@ -568,11 +568,11 @@ protected:
 
         // compute protein coverage
         vector<ProteinIdentification> prot_ids = feature_map.getProteinIdentifications();
-        vector<PeptideIdentification> pep_ids;
+        vector<SpectrumIdentification> pep_ids;
         // collect all peptide ids:
         for (Size i = 0; i < feature_map.size(); ++i)
         {
-          vector<PeptideIdentification> pep_ids_bf = feature_map[i].getPeptideIdentifications();
+          vector<SpectrumIdentification> pep_ids_bf = feature_map[i].getPeptideIdentifications();
           pep_ids.insert(pep_ids.end(), pep_ids_bf.begin(), pep_ids_bf.end());
         }
         pep_ids.insert(pep_ids.end(), feature_map.getUnassignedPeptideIdentifications().begin(), feature_map.getUnassignedPeptideIdentifications().end());
@@ -631,7 +631,7 @@ protected:
           {
             writeProteinId(output, *it);
           }
-          for (vector<PeptideIdentification>::const_iterator pit =
+          for (vector<SpectrumIdentification>::const_iterator pit =
                  feature_map.getUnassignedPeptideIdentifications().begin();
                pit != feature_map.getUnassignedPeptideIdentifications().end();
                ++pit)
@@ -671,7 +671,7 @@ protected:
           // peptide ids
           if (!no_ids)
           {
-            for (vector<PeptideIdentification>::const_iterator pit =
+            for (vector<SpectrumIdentification>::const_iterator pit =
                    citer->getPeptideIdentifications().begin(); pit !=
                  citer->getPeptideIdentifications().end(); ++pit)
             {
@@ -697,10 +697,10 @@ protected:
 
         // compute protein coverage
         vector<ProteinIdentification> prot_ids = consensus_map.getProteinIdentifications();
-        vector<PeptideIdentification> pep_ids;
+        vector<SpectrumIdentification> pep_ids;
         for (Size i = 0; i < consensus_map.size(); ++i) // collect all peptide ids
         {
-          vector<PeptideIdentification> pep_ids_bf = consensus_map[i].getPeptideIdentifications();
+          vector<SpectrumIdentification> pep_ids_bf = consensus_map[i].getPeptideIdentifications();
           pep_ids.insert(pep_ids.end(), pep_ids_bf.begin(), pep_ids_bf.end());
         }
         pep_ids.insert(pep_ids.end(), consensus_map.getUnassignedPeptideIdentifications().begin(), consensus_map.getUnassignedPeptideIdentifications().end());
@@ -927,12 +927,12 @@ protected:
             {
               vector<set<String> > peptides_by_source(max_prot_run + 1),
               proteins_by_source(max_prot_run + 1);
-              for (vector<PeptideIdentification>::const_iterator pep_it =
+              for (vector<SpectrumIdentification>::const_iterator pep_it =
                      cmit->getPeptideIdentifications().begin(); pep_it !=
                    cmit->getPeptideIdentifications().end(); ++pep_it)
               {
                 Size index = prot_runs[pep_it->getIdentifier()];
-                for (vector<PeptideHit>::const_iterator hit_it = pep_it->
+                for (vector<SpectrumMatch>::const_iterator hit_it = pep_it->
                                                                  getHits().begin(); hit_it != pep_it->getHits().end();
                      ++hit_it)
                 {
@@ -1074,7 +1074,7 @@ protected:
             }
 
             // unassigned peptides
-            for (vector<PeptideIdentification>::const_iterator pit = consensus_map.getUnassignedPeptideIdentifications().begin(); pit != consensus_map.getUnassignedPeptideIdentifications().end(); ++pit)
+            for (vector<SpectrumIdentification>::const_iterator pit = consensus_map.getUnassignedPeptideIdentifications().begin(); pit != consensus_map.getUnassignedPeptideIdentifications().end(); ++pit)
             {
               writePeptideId(output, *pit, "UNASSIGNEDPEPTIDE");
               // first_dim_... stuff not supported for now
@@ -1102,7 +1102,7 @@ protected:
             // peptide ids
             if (!no_ids)
             {
-              for (vector<PeptideIdentification>::const_iterator pit =
+              for (vector<SpectrumIdentification>::const_iterator pit =
                      cmit->getPeptideIdentifications().begin(); pit !=
                    cmit->getPeptideIdentifications().end(); ++pit)
               {
@@ -1116,7 +1116,7 @@ protected:
       else if (in_type == FileTypes::IDXML)
       {
         vector<ProteinIdentification> prot_ids;
-        vector<PeptideIdentification> pep_ids;
+        vector<SpectrumIdentification> pep_ids;
         String document_id;
         IdXMLFile().load(in, prot_ids, pep_ids, document_id);
         StringList peptide_id_meta_keys;
@@ -1124,7 +1124,7 @@ protected:
 
         if (add_id_metavalues >= 0) 
         {
-          peptide_id_meta_keys = MetaInfoInterfaceUtils::findCommonMetaKeys<vector<PeptideIdentification>, StringList>(pep_ids.begin(), pep_ids.end(), add_id_metavalues);
+          peptide_id_meta_keys = MetaInfoInterfaceUtils::findCommonMetaKeys<vector<SpectrumIdentification>, StringList>(pep_ids.begin(), pep_ids.end(), add_id_metavalues);
           // currently there is some hardcoded logic to create extra columns for these meta values so remove them to prevent duplication 
           peptide_id_meta_keys.erase(std::remove(peptide_id_meta_keys.begin(), peptide_id_meta_keys.end(), "predicted_RT"), peptide_id_meta_keys.end());
           peptide_id_meta_keys.erase(std::remove(peptide_id_meta_keys.begin(), peptide_id_meta_keys.end(), "predicted_RT_first_dim"), peptide_id_meta_keys.end());
@@ -1134,14 +1134,14 @@ protected:
 
         if (add_hit_metavalues >= 0)
         {
-          vector<PeptideHit> temp_hits;
+          vector<SpectrumMatch> temp_hits;
           for (Size i = 0; i != pep_ids.size(); ++i)
           {
-            const vector<PeptideHit>& hits = pep_ids[i].getHits();
+            const vector<SpectrumMatch>& hits = pep_ids[i].getHits();
             temp_hits.insert(temp_hits.end(), hits.begin(), hits.end());  
           }
 
-          peptide_hit_meta_keys = MetaInfoInterfaceUtils::findCommonMetaKeys<vector<PeptideHit>, StringList>(temp_hits.begin(), temp_hits.end(), add_hit_metavalues);
+          peptide_hit_meta_keys = MetaInfoInterfaceUtils::findCommonMetaKeys<vector<SpectrumMatch>, StringList>(temp_hits.begin(), temp_hits.end(), add_hit_metavalues);
         }
 
         try // might throw Exception::MissingInformation()
@@ -1192,7 +1192,7 @@ protected:
             // slight improvement on big idXML files with many different runs:
             // index the identifiers and peptide ids to avoid running over
             // them again and again (TODO)
-            for (vector<PeptideIdentification>::const_iterator pit =
+            for (vector<SpectrumIdentification>::const_iterator pit =
                    pep_ids.begin(); pit != pep_ids.end(); ++pit)
             {
               if (pit->getIdentifier() == actual_id)

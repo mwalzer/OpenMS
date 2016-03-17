@@ -64,7 +64,7 @@ START_SECTION((virtual ~PSProteinInference()))
 }
 END_SECTION
 
-vector<PeptideIdentification> pep_ids;
+vector<SpectrumIdentification> pep_ids;
 vector<ProteinIdentification> prot_ids;
 String document_id;
 IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("PSProteinInference_test_input.iDXML"),prot_ids,pep_ids,document_id);

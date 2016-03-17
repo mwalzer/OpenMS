@@ -160,7 +160,7 @@ public:
       @param preprocessed_db Information from preprocessed database
       @param check_meta_values True if the FeatureMap should be checked for the presence of required meta values
     */
-    void rescore(FeatureMap & features, std::vector<PeptideIdentification> & new_pep_ids,
+    void rescore(FeatureMap & features, std::vector<SpectrumIdentification> & new_pep_ids,
                  std::vector<ProteinIdentification> & prot_ids,
                  PrecursorIonSelectionPreprocessing & preprocessed_db, bool check_meta_values = true);
 
@@ -175,7 +175,7 @@ public:
       @param step_size Number of MS/MS spectra considered per iteration
       @param path Path to output file
     */
-    void simulateRun(FeatureMap & features, std::vector<PeptideIdentification> & pep_ids,
+    void simulateRun(FeatureMap & features, std::vector<SpectrumIdentification> & pep_ids,
                      std::vector<ProteinIdentification> & prot_ids,
                      PrecursorIonSelectionPreprocessing & preprocessed_db,
                      String path, MSExperiment<> & experiment, String precursor_path = "");
@@ -200,12 +200,12 @@ public:
 
 private:
     void simulateILPBasedIPSRun_(FeatureMap & features, MSExperiment<> & experiment,
-                                 std::vector<PeptideIdentification> & pep_ids,
+                                 std::vector<SpectrumIdentification> & pep_ids,
                                  std::vector<ProteinIdentification> & prot_ids,
                                  PrecursorIonSelectionPreprocessing & preprocessed_db,
                                  String output_path, String precursor_path = "");
 
-    void simulateRun_(FeatureMap & features, std::vector<PeptideIdentification> & pep_ids,
+    void simulateRun_(FeatureMap & features, std::vector<SpectrumIdentification> & pep_ids,
                       std::vector<ProteinIdentification> & prot_ids,
                       PrecursorIonSelectionPreprocessing & preprocessed_db, String path, String precursor_path = "");
 
@@ -216,7 +216,7 @@ private:
     /// update members method from DefaultParamHandler to update the members
     void updateMembers_();
 
-    void rescore_(FeatureMap & features, std::vector<PeptideIdentification> & new_pep_ids,
+    void rescore_(FeatureMap & features, std::vector<SpectrumIdentification> & new_pep_ids,
                   PrecursorIonSelectionPreprocessing & preprocessed_db, PSProteinInference & protein_inference);
 
     /**
@@ -233,9 +233,9 @@ private:
     */
     UInt filterProtIds_(std::vector<ProteinIdentification> & prot_ids);
 
-    std::vector<PeptideIdentification> filterPeptideIds_(std::vector<PeptideIdentification> & pep_ids);
+    std::vector<SpectrumIdentification> filterPeptideIds_(std::vector<SpectrumIdentification> & pep_ids);
 
-    void convertPeptideIdScores_(std::vector<PeptideIdentification> & pep_ids);
+    void convertPeptideIdScores_(std::vector<SpectrumIdentification> & pep_ids);
 
     /// minimal number of peptides identified for a protein to be declared identified
     UInt min_pep_ids_;

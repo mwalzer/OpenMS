@@ -149,7 +149,7 @@ public:
          Parameters should be set before using this method, as setting parameters will clear all results.
     */
     void readQuantData(std::vector<ProteinIdentification>& proteins,
-                       std::vector<PeptideIdentification>& peptides);
+                       std::vector<SpectrumIdentification>& peptides);
 
     /**
          @brief Compute peptide abundances.
@@ -160,8 +160,8 @@ public:
 
          Optional (peptide-level) protein inference information (e.g. from Fido or ProteinProphet) can be supplied via @p peptides. In that case, peptide-to-protein associations - the basis for protein-level quantification - will also be read from @p peptides!
     */
-    void quantifyPeptides(const std::vector<PeptideIdentification>& peptides =
-                          std::vector<PeptideIdentification>());
+    void quantifyPeptides(const std::vector<SpectrumIdentification>& peptides =
+                          std::vector<SpectrumIdentification>());
 
 
     /**
@@ -199,14 +199,14 @@ private:
          Only the best-scoring peptide hit of each ID in @p peptides is taken into account. The hits of each ID must already be sorted! If there's more than one ID and the best hits are not identical by sequence, or if there's no peptide ID, an empty peptide hit (for "ambiguous/no annotation") is returned.
          Protein accessions from identical peptide hits are accumulated.
     */
-    PeptideHit getAnnotation_(std::vector<PeptideIdentification>& peptides);
+    SpectrumMatch getAnnotation_(std::vector<SpectrumIdentification>& peptides);
 
     /**
          @brief Gather quantitative information from a feature.
 
          Store quantitative information from @p feature in member @p pep_quant_, based on the peptide annotation in @p hit. If @p hit is empty ("ambiguous/no annotation"), nothing is stored.
     */
-    void quantifyFeature_(const FeatureHandle& feature, const PeptideHit& hit);
+    void quantifyFeature_(const FeatureHandle& feature, const SpectrumMatch& hit);
 
     /**
          @brief Order keys (charges/peptides for peptide/protein quantification) according to how many samples they allow to quantify, breaking ties by total abundance.
@@ -265,7 +265,7 @@ private:
 
          The peptide hits in @p peptides are sorted by score in the process.
     */
-    void countPeptides_(std::vector<PeptideIdentification>& peptides);
+    void countPeptides_(std::vector<SpectrumIdentification>& peptides);
 
     /// Clear all data when parameters are set
     void updateMembers_();

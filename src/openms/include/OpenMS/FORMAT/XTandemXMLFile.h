@@ -78,7 +78,7 @@ public:
 
       @ingroup FileIO
     */
-    void load(const String & filename, ProteinIdentification & protein_identification, std::vector<PeptideIdentification> & id_data);
+    void load(const String & filename, ProteinIdentification & protein_identification, std::vector<SpectrumIdentification> & id_data);
 
 
     /// sets the valid modifications
@@ -110,7 +110,7 @@ private:
     bool is_description_;
 
     // peptide hits of one spectrum
-    Map<UInt, std::vector<PeptideHit> > peptide_hits_;
+    Map<UInt, std::vector<SpectrumMatch> > peptide_hits_;
 
     // protein hits, sorted by the id
     Map<String, ProteinHit> protein_hits_;

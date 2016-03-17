@@ -100,7 +100,7 @@ protected:
   ExitCodes main_(int, const char**)
   {
     vector<ProteinIdentification> protein_identifications;
-    vector<PeptideIdentification> identifications;
+    vector<SpectrumIdentification> identifications;
     vector<FASTAFile::FASTAEntry> sequences;
 
     bool latex = getFlag_("latex");
@@ -179,10 +179,10 @@ protected:
 
       // @TODO: could save copying data if we started with the highest FDR
       // cut-off and filtered sequentially towards the lowest
-      vector<PeptideIdentification> filtered_ids = identifications;
+      vector<SpectrumIdentification> filtered_ids = identifications;
       IDFilter::filterHitsByScore(filtered_ids, fdrs[j]);
 
-      vector<PeptideIdentification> filtered_ids_rt1 = filtered_ids,
+      vector<SpectrumIdentification> filtered_ids_rt1 = filtered_ids,
         filtered_ids_rt2 = filtered_ids, filtered_ids_both = filtered_ids;
 
       if (p_value_dim_1 > 0)
@@ -203,7 +203,7 @@ protected:
       }
 
       // remove decoy hits:
-      vector<PeptideIdentification> no_decoys = filtered_ids,
+      vector<SpectrumIdentification> no_decoys = filtered_ids,
         no_decoys_rt1 = filtered_ids_rt1, no_decoys_rt2 = filtered_ids_rt2,
         no_decoys_both = filtered_ids_both;
       IDFilter::removeDecoyHits(no_decoys);

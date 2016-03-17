@@ -107,7 +107,7 @@ namespace OpenMS
   }
 
   // list of peptide hits in "peptide" will be sorted
-  bool MapAlignmentAlgorithmIdentification::hasGoodHit_(PeptideIdentification&
+  bool MapAlignmentAlgorithmIdentification::hasGoodHit_(SpectrumIdentification&
                                                         peptide)
   {
     if (peptide.empty() || peptide.getHits().empty()) return false;
@@ -119,9 +119,9 @@ namespace OpenMS
 
   // lists of peptide hits in "peptides" will be sorted
   bool MapAlignmentAlgorithmIdentification::getRetentionTimes_(
-    vector<PeptideIdentification>& peptides, SeqToList& rt_data)
+    vector<SpectrumIdentification>& peptides, SeqToList& rt_data)
   {
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       if (hasGoodHit_(*pep_it))

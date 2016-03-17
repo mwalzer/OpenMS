@@ -104,7 +104,7 @@ namespace OpenMS
     resolver_result_.clear();
   }
 
-  void ProteinResolver::resolveID(vector<PeptideIdentification> & peptide_identifications)
+  void ProteinResolver::resolveID(vector<SpectrumIdentification> & peptide_identifications)
   {
     vector<ProteinEntry> * protein_nodes = new vector<ProteinEntry>;
     vector<PeptideEntry> * peptide_nodes = new vector<PeptideEntry>;
@@ -223,7 +223,7 @@ namespace OpenMS
     }
   }
 
-  void ProteinResolver::countTargetDecoy(vector<MSDGroup> & msd_groups, vector<PeptideIdentification> & peptide_nodes)
+  void ProteinResolver::countTargetDecoy(vector<MSDGroup> & msd_groups, vector<SpectrumIdentification> & peptide_nodes)
   {
     for (vector<MSDGroup>::iterator group = msd_groups.begin(); group != msd_groups.end(); ++group)
     {
@@ -325,7 +325,7 @@ namespace OpenMS
   }
 
   //includes all MSMS derived peptides into the graph --idXML
-  Size ProteinResolver::includeMSMSPeptides_(vector<PeptideIdentification> & peptide_identifications, vector<PeptideEntry> & peptide_nodes)
+  Size ProteinResolver::includeMSMSPeptides_(vector<SpectrumIdentification> & peptide_identifications, vector<PeptideEntry> & peptide_nodes)
   {
     Size found_peptide = 0;
     for (Size pep = 0; pep != peptide_identifications.size(); ++pep)
@@ -356,7 +356,7 @@ namespace OpenMS
       ConsensusFeature & feature = consensus[pep];
 
       // get all peptide identifications
-      const vector<PeptideIdentification> & pep_id  = feature.getPeptideIdentifications();
+      const vector<SpectrumIdentification> & pep_id  = feature.getPeptideIdentifications();
 
 
       for (Size cons_pep = 0; cons_pep < pep_id.size(); ++cons_pep)
@@ -384,22 +384,22 @@ namespace OpenMS
   }
 
   //overloaded functions -- return a const reference to a PeptideIdentification object or a peptideHit either from a consensusMap or a vector<PeptideIdentification>
-  const PeptideIdentification & ProteinResolver::getPeptideIdentification(const ConsensusMap & consensus, const PeptideEntry * peptide)
+  const SpectrumIdentification & ProteinResolver::getPeptideIdentification(const ConsensusMap & consensus, const PeptideEntry * peptide)
   {
     return consensus[peptide->peptide_identification].getPeptideIdentifications()[peptide->peptide_hit];
   }
 
-  const PeptideHit & ProteinResolver::getPeptideHit(const ConsensusMap & consensus, const PeptideEntry * peptide)
+  const SpectrumMatch & ProteinResolver::getPeptideHit(const ConsensusMap & consensus, const PeptideEntry * peptide)
   {
     return getPeptideIdentification(consensus, peptide).getHits().front();
   }
 
-  const PeptideIdentification & ProteinResolver::getPeptideIdentification(const vector<PeptideIdentification> & peptide_nodes, const PeptideEntry * peptide)
+  const SpectrumIdentification & ProteinResolver::getPeptideIdentification(const vector<SpectrumIdentification> & peptide_nodes, const PeptideEntry * peptide)
   {
     return peptide_nodes[peptide->peptide_identification];
   }
 
-  const PeptideHit & ProteinResolver::getPeptideHit(const vector<PeptideIdentification> & peptide_nodes, const PeptideEntry * peptide)
+  const SpectrumMatch & ProteinResolver::getPeptideHit(const vector<SpectrumIdentification> & peptide_nodes, const PeptideEntry * peptide)
   {
     return getPeptideIdentification(peptide_nodes, peptide).getHits().front();
   }

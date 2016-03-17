@@ -67,7 +67,7 @@ namespace OpenMS
     ConsensusIDAlgorithmRanks& operator=(const ConsensusIDAlgorithmRanks&);
 
     /// Assign peptide scores based on search ranks
-    virtual void preprocess_(std::vector<PeptideIdentification>& ids);
+    virtual void preprocess_(std::vector<SpectrumIdentification>& ids);
 
     /// Aggregate peptide scores into one final score (by averaging ranks)
     virtual double getAggregateScore_(std::vector<double>& scores,

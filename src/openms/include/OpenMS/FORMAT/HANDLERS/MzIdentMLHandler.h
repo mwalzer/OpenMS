@@ -39,8 +39,6 @@
 
 #include <OpenMS/FORMAT/HANDLERS/XMLHandler.h>
 #include <OpenMS/FORMAT/ControlledVocabulary.h>
-#include <OpenMS/METADATA/IdentificationHit.h>
-#include <OpenMS/METADATA/Identification.h>
 #include <OpenMS/METADATA/ProteinHit.h>
 #include <OpenMS/CHEMISTRY/AASequence.h>
 #include <OpenMS/CHEMISTRY/Enzyme.h>
@@ -73,15 +71,11 @@ namespace OpenMS
 public:
       /**@name Constructors and destructor */
       //@{
-      /// Constructor for a write-only handler
-      MzIdentMLHandler(const Identification& id, const String& filename, const String& version, const ProgressLogger& logger);
       /// Constructor for a write-only handler for internal identification structures
-      MzIdentMLHandler(const std::vector<ProteinIdentification>& pro_id, const std::vector<PeptideIdentification>& pep_id, const String& filename, const String& version, const ProgressLogger& logger);
+      MzIdentMLHandler(const std::vector<ProteinIdentification>& pro_id, const std::vector<SpectrumIdentification>& pep_id, const String& filename, const String& version, const ProgressLogger& logger);
 
-      /// Constructor for a read-only handler
-      MzIdentMLHandler(Identification& id, const String& filename, const String& version, const ProgressLogger& logger);
       /// Constructor for a read-only handler for internal identification structures
-      MzIdentMLHandler(std::vector<ProteinIdentification>& pro_id, std::vector<PeptideIdentification>& pep_id, const String& filename, const String& version, const ProgressLogger& logger);
+      MzIdentMLHandler(std::vector<ProteinIdentification>& pro_id, std::vector<SpectrumIdentification>& pep_id, const String& filename, const String& version, const ProgressLogger& logger);
 
       /// Destructor
       virtual ~MzIdentMLHandler();
@@ -114,22 +108,13 @@ protected:
       ///XML tag parse element
       String tag_;
 
-      ///Identification Item
-      Identification* id_;
       ///internal Identification Item for proteins
       std::vector<ProteinIdentification>* pro_id_;
       ///Identification Item for peptides
-      std::vector<PeptideIdentification>* pep_id_;
+      std::vector<SpectrumIdentification>* pep_id_;
 
-      const Identification* cid_;
       const std::vector<ProteinIdentification>* cpro_id_;
-      const std::vector<PeptideIdentification>* cpep_id_;
-
-      ///SpectrumIdentification Item
-      SpectrumIdentification current_spectrum_id_;
-
-      ///IdentificationHit Item
-      IdentificationHit current_id_hit_;
+      const std::vector<SpectrumIdentification>* cpep_id_;
 
       /// Handles CV terms
       void handleCVParam_(const String& parent_parent_tag, const String& parent_tag, const String& accession, /* const String& name, */ /* const String& value, */ const xercesc::Attributes& attributes, const String& cv_ref /* ,  const String& unit_accession="" */);

@@ -548,7 +548,7 @@ protected:
 
 
     // protein and peptide identifications for all spectra
-    vector<PeptideIdentification> whole_experiment_filtered_peptide_ids;
+    vector<SpectrumIdentification> whole_experiment_filtered_peptide_ids;
     vector<ProteinIdentification> whole_experiment_filtered_protein_ids;
 
     Map<String, vector<pair<double, double> > > marker_ions;
@@ -566,7 +566,7 @@ protected:
       idxml_string.substitute(".mzML", ".idXML");
 
       vector<ProteinIdentification> prot_ids;
-      vector<PeptideIdentification> pep_ids;
+      vector<SpectrumIdentification> pep_ids;
       IdXMLFile().load(idxml_string, prot_ids, pep_ids);
 
       // copy protein identifications as is - they are not really needed in the later output
@@ -599,10 +599,10 @@ protected:
       // The best peptide hit of the whole variant map is retained and stored
 
       // copy all peptide hits (should be only one) from all peptide identifications (there can be one for every variant)
-      vector<PeptideHit> pep_hits;
-      for (vector<PeptideIdentification>::const_iterator pit = pep_ids.begin(); pit != pep_ids.end(); ++pit)
+      vector<SpectrumMatch> pep_hits;
+      for (vector<SpectrumIdentification>::const_iterator pit = pep_ids.begin(); pit != pep_ids.end(); ++pit)
       {
-        for (vector<PeptideHit>::const_iterator hit = pit->getHits().begin(); hit != pit->getHits().end(); ++hit)
+        for (vector<SpectrumMatch>::const_iterator hit = pit->getHits().begin(); hit != pit->getHits().end(); ++hit)
         {
           pep_hits.push_back(*hit);
           pep_hits.back().setMetaValue("RT", pit->getRT());
@@ -611,7 +611,7 @@ protected:
       }
 
       // create new peptide identification and reassign all hits
-      PeptideIdentification new_pep_id = *pep_ids.begin();
+      SpectrumIdentification new_pep_id = *pep_ids.begin();
       new_pep_id.setHigherScoreBetter(false);
       new_pep_id.setHits(pep_hits);
       new_pep_id.assignRanks(); //sort by score and assign ranks
@@ -627,7 +627,7 @@ protected:
       // store best peptide identification
       whole_experiment_filtered_peptide_ids.push_back(new_pep_id);
 
-      for (vector<PeptideHit>::const_iterator hit = pep_hits.begin(); hit != pep_hits.end(); ++hit)
+      for (vector<SpectrumMatch>::const_iterator hit = pep_hits.begin(); hit != pep_hits.end(); ++hit)
       {
         Size orig_rt = (double)hit->getMetaValue("RT");
         double orig_mz = (double)hit->getMetaValue("MZ");
@@ -727,19 +727,19 @@ protected:
     }
 
     // create new peptide identifications and copy over data
-    vector<PeptideIdentification> pt_tmp;
+    vector<SpectrumIdentification> pt_tmp;
     for (size_t k = 0; k != whole_experiment_filtered_peptide_ids.size(); ++k)
     {
-      for (vector<PeptideHit>::const_iterator hit = whole_experiment_filtered_peptide_ids[k].getHits().begin(); hit != whole_experiment_filtered_peptide_ids[k].getHits().end(); ++hit)
+      for (vector<SpectrumMatch>::const_iterator hit = whole_experiment_filtered_peptide_ids[k].getHits().begin(); hit != whole_experiment_filtered_peptide_ids[k].getHits().end(); ++hit)
       {
-        PeptideIdentification np;
+        SpectrumIdentification np;
         double rt = whole_experiment_filtered_peptide_ids[k].getRT();
         double orig_rt = rt / (double)RT_FACTOR;
         np.setRT(orig_rt);
         np.setMZ(whole_experiment_filtered_peptide_ids[k].getMZ());
 
-        vector<PeptideHit> phs;
-        PeptideHit ph = *hit;
+        vector<SpectrumMatch> phs;
+        SpectrumMatch ph = *hit;
         std::vector<String> keys;
         whole_experiment_filtered_peptide_ids[k].getKeys(keys);
         for (size_t i = 0; i != keys.size(); ++i)
@@ -792,9 +792,9 @@ protected:
 
     // reindex tabular data to contain protein ids
     map<double, String> map_rt_2_accession;
-    for (vector<PeptideIdentification>::const_iterator pit = pt_tmp.begin(); pit != pt_tmp.end(); ++pit)
+    for (vector<SpectrumIdentification>::const_iterator pit = pt_tmp.begin(); pit != pt_tmp.end(); ++pit)
     {
-      for (vector<PeptideHit>::const_iterator hit = pit->getHits().begin(); hit != pit->getHits().end(); ++hit)
+      for (vector<SpectrumMatch>::const_iterator hit = pit->getHits().begin(); hit != pit->getHits().end(); ++hit)
       {
         double rt = pit->getRT();
 

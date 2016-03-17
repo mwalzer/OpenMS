@@ -170,7 +170,7 @@ protected:
       // Load reference map and input it to the algorithm
       UInt64 ref_id;
       Size ref_size;
-      std::vector<PeptideIdentification> ref_pepids;
+      std::vector<SpectrumIdentification> ref_pepids;
       std::vector<ProteinIdentification> ref_protids;
       {
         FeatureMap map_ref;

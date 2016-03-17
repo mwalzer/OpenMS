@@ -765,7 +765,7 @@ START_SECTION(std::vector<RichPeakSpectrum> createTheoreticalSpectraTest_(const 
 }
 END_SECTION 
 
-START_SECTION(PeptideHit AScore::compute(const PeptideHit & hit, PeakSpectrum & real_spectrum, double fragment_mass_tolerance, bool fragment_mass_unit_ppm) const)
+START_SECTION(SpectrumMatch AScore::compute(const SpectrumMatch & hit, PeakSpectrum & real_spectrum, double fragment_mass_tolerance, bool fragment_mass_unit_ppm) const)
 {
   // ====================================================================================================================================
   // The Ascore results differ to the results of the Ascore tool provided on the website http://ascore.med.harvard.edu/ascore.html
@@ -783,7 +783,7 @@ START_SECTION(PeptideHit AScore::compute(const PeptideHit & hit, PeakSpectrum & 
   bool fragment_mass_unit_ppm = false;
   
   DTAFile().load(OPENMS_GET_TEST_DATA_PATH("Ascore_test_input1.dta"), real_spectrum);
-  PeptideHit hit1(1.0, 1, 1, AASequence::fromString("QSSVT(Phospho)QSK"));
+  SpectrumMatch hit1(1.0, 1, 1, AASequence::fromString("QSSVT(Phospho)QSK"));
   hit1 = ptr_test->compute(hit1, real_spectrum, fragment_mass_tolerance, fragment_mass_unit_ppm);
   
   // http://ascore.med.harvard.edu/ascore.html result=3.51, sequence=QSSVT*QSK
@@ -793,7 +793,7 @@ START_SECTION(PeptideHit AScore::compute(const PeptideHit & hit, PeakSpectrum & 
   // ===========================================================================
   
   DTAFile().load(OPENMS_GET_TEST_DATA_PATH("Ascore_test_input2.dta"), real_spectrum);
-  PeptideHit hit2(1.0, 1, 1, AASequence::fromString("RIRLT(Phospho)ATTR"));
+  SpectrumMatch hit2(1.0, 1, 1, AASequence::fromString("RIRLT(Phospho)ATTR"));
   hit2 = ptr_test->compute(hit2, real_spectrum, fragment_mass_tolerance, fragment_mass_unit_ppm);
   
   // http://ascore.med.harvard.edu/ascore.html result=21.3
@@ -803,7 +803,7 @@ START_SECTION(PeptideHit AScore::compute(const PeptideHit & hit, PeakSpectrum & 
   // ===========================================================================
   
   DTAFile().load(OPENMS_GET_TEST_DATA_PATH("Ascore_test_input3.dta"), real_spectrum);
-  PeptideHit hit3(1.0, 1, 1, AASequence::fromString("QSSVTQVTEQS(Phospho)PK"));
+  SpectrumMatch hit3(1.0, 1, 1, AASequence::fromString("QSSVTQVTEQS(Phospho)PK"));
   hit3 = ptr_test->compute(hit3, real_spectrum, fragment_mass_tolerance, fragment_mass_unit_ppm);
   
   // http://ascore.med.harvard.edu/ascore.html result=88.3
@@ -816,7 +816,7 @@ START_SECTION(PeptideHit AScore::compute(const PeptideHit & hit, PeakSpectrum & 
   fragment_mass_unit_ppm = false; 
   
   DTAFile().load(OPENMS_GET_TEST_DATA_PATH("Ascore_test_input4.dta"), real_spectrum);
-  PeptideHit hit4(1.0, 1, 1, AASequence::fromString("ATPGNLGSSVLHS(Phospho)K"));
+  SpectrumMatch hit4(1.0, 1, 1, AASequence::fromString("ATPGNLGSSVLHS(Phospho)K"));
   
   hit4 = ptr_test->compute(hit4, real_spectrum, fragment_mass_tolerance, fragment_mass_unit_ppm);
   
@@ -832,7 +832,7 @@ START_SECTION(PeptideHit AScore::compute(const PeptideHit & hit, PeakSpectrum & 
   fragment_mass_unit_ppm = true; 
   
   DTAFile().load(OPENMS_GET_TEST_DATA_PATH("Ascore_test_input1.dta"), real_spectrum);
-  PeptideHit hit5(1.0, 1, 1, AASequence::fromString("QSSVT(Phospho)QSK"));
+  SpectrumMatch hit5(1.0, 1, 1, AASequence::fromString("QSSVT(Phospho)QSK"));
   hit5 = ptr_test->compute(hit5, real_spectrum, fragment_mass_tolerance, fragment_mass_unit_ppm);
   
   // http://ascore.med.harvard.edu/ascore.html result=3.51, sequence=QSSVT*QSK
@@ -843,7 +843,7 @@ START_SECTION(PeptideHit AScore::compute(const PeptideHit & hit, PeakSpectrum & 
   fragment_mass_unit_ppm = true; 
   
   DTAFile().load(OPENMS_GET_TEST_DATA_PATH("Ascore_test_input4.dta"), real_spectrum);
-  PeptideHit hit6(1.0, 1, 1, AASequence::fromString("ATPGNLGSSVLHS(Phospho)K"));
+  SpectrumMatch hit6(1.0, 1, 1, AASequence::fromString("ATPGNLGSSVLHS(Phospho)K"));
   
   hit6 = ptr_test->compute(hit6, real_spectrum, fragment_mass_tolerance, fragment_mass_unit_ppm);
   

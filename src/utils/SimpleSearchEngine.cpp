@@ -414,16 +414,16 @@ class SimpleSearchEngine :
       }
     }
 
-    void postProcessHits_(const PeakMap& exp, const vector<vector<PeptideHit> >& peptide_hits, vector<ProteinIdentification>& protein_ids, vector<PeptideIdentification>& peptide_ids, Size top_hits)
+    void postProcessHits_(const PeakMap& exp, const vector<vector<SpectrumMatch> >& peptide_hits, vector<ProteinIdentification>& protein_ids, vector<SpectrumIdentification>& peptide_ids, Size top_hits)
     {
-      for (vector<vector<PeptideHit> >::const_iterator pit = peptide_hits.begin(); pit != peptide_hits.end(); ++pit)
+      for (vector<vector<SpectrumMatch> >::const_iterator pit = peptide_hits.begin(); pit != peptide_hits.end(); ++pit)
       {
         if (!pit->empty())
         {
           Size scan_index = pit - peptide_hits.begin();
 
           // create empty PeptideIdentification object and fill meta data
-          PeptideIdentification pi;
+          SpectrumIdentification pi;
           pi.setScoreType("hyperscore");
           pi.setHigherScoreBetter(true);
           pi.setRT(exp[scan_index].getRT());
@@ -527,7 +527,7 @@ class SimpleSearchEngine :
       // create spectrum generator
       TheoreticalSpectrumGenerator spectrum_generator;
 
-      vector<vector<PeptideHit> > peptide_hits(spectra.size(), vector<PeptideHit>());
+      vector<vector<SpectrumMatch> > peptide_hits(spectra.size(), vector<SpectrumMatch>());
 
       progresslogger.startProgress(0, 1, "Load database from FASTA file...");
       FASTAFile fastaFile;
@@ -647,7 +647,7 @@ class SimpleSearchEngine :
                 continue;
               }
 
-              PeptideHit hit;
+              SpectrumMatch hit;
               hit.setSequence(candidate);
               hit.setCharge(exp_spectrum.getPrecursors()[0].getCharge());
               hit.setScore(score);
@@ -663,7 +663,7 @@ class SimpleSearchEngine :
       }
       progresslogger.endProgress();
 
-      vector<PeptideIdentification> peptide_ids;
+      vector<SpectrumIdentification> peptide_ids;
       vector<ProteinIdentification> protein_ids;
       progresslogger.startProgress(0, 1, "Post-processing PSMs...");
       postProcessHits_(spectra, peptide_hits, protein_ids, peptide_ids, report_top_hits);

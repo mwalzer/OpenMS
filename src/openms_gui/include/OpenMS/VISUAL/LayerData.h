@@ -284,7 +284,7 @@ public:
     String filename;
 
     /// peptide identifications
-    std::vector<PeptideIdentification> peptides;
+    std::vector<SpectrumIdentification> peptides;
 
     /// Layer parameters
     Param param;

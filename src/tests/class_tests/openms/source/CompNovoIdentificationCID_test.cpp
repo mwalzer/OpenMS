@@ -82,7 +82,7 @@ START_SECTION((CompNovoIdentificationCID& operator = (const CompNovoIdentificati
   TEST_EQUAL(cnis2.getParameters() == p, true)
 END_SECTION
 
-START_SECTION((void getIdentifications(std::vector<PeptideIdentification>& ids, const PeakMap& exp)))
+START_SECTION((void getIdentifications(std::vector<SpectrumIdentification>& ids, const PeakMap& exp)))
   TheoreticalSpectrumGenerator tsg;
   Param tsg_param(tsg.getParameters());
   tsg_param.setValue("add_losses", "true");
@@ -108,7 +108,7 @@ START_SECTION((void getIdentifications(std::vector<PeptideIdentification>& ids, 
   precs.push_back(prec);
   spec.setPrecursors(precs);
 
-  vector<PeptideIdentification> ids;
+  vector<SpectrumIdentification> ids;
   CompNovoIdentificationCID cni;
   Param cni_param(cni.getParameters());
   cni_param.setValue("precursor_mass_tolerance", 0.3);
@@ -121,7 +121,7 @@ START_SECTION((void getIdentifications(std::vector<PeptideIdentification>& ids, 
   TEST_STRING_EQUAL(ids.begin()->getHits().begin()->getSequence().toString(), "DFPLANGER")
 END_SECTION
 
-START_SECTION((void getIdentification(PeptideIdentification& id, const PeakSpectrum& CID_spec)))
+START_SECTION((void getIdentification(SpectrumIdentification& id, const PeakSpectrum& CID_spec)))
   TheoreticalSpectrumGenerator tsg;
   Param tsg_param(tsg.getParameters());
   tsg_param.setValue("add_losses", "true");
@@ -147,7 +147,7 @@ START_SECTION((void getIdentification(PeptideIdentification& id, const PeakSpect
   precs.push_back(prec);
   spec.setPrecursors(precs);
 
-  PeptideIdentification id;
+  SpectrumIdentification id;
   CompNovoIdentificationCID cni;
   Param cni_param(cni.getParameters());
   cni_param.setValue("precursor_mass_tolerance", 0.3);

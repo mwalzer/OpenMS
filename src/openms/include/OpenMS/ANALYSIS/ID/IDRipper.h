@@ -71,7 +71,7 @@ public:
       @param proteins Peptide identification annotated with file origin
       @param peptides Protein identification
     */
-    void rip(std::map<String, std::pair<std::vector<ProteinIdentification>, std::vector<PeptideIdentification> > > & ripped, std::vector<ProteinIdentification> & proteins, std::vector<PeptideIdentification> & peptides);
+    void rip(std::map<String, std::pair<std::vector<ProteinIdentification>, std::vector<SpectrumIdentification> > > & ripped, std::vector<ProteinIdentification> & proteins, std::vector<SpectrumIdentification> & peptides);
 
 private:
 
@@ -86,9 +86,9 @@ private:
     /// helper function, extracts all protein hits that match the protein accession
     void getProteinHits_(std::vector<ProteinHit> & result, const std::vector<ProteinHit> & protein_hits, const std::vector<String> & protein_accessions);
     /// helper function, returns the string representation of the peptide hit accession
-    void getProteinAccessions_(std::vector<String> & result, const std::vector<PeptideHit> & peptide_hits);
+    void getProteinAccessions_(std::vector<String> & result, const std::vector<SpectrumMatch> & peptide_hits);
     /// helper function, returns the protein identification for the given peptide identification based on the same identifier
-    void getProteinIdentification_(ProteinIdentification & result, PeptideIdentification pep_ident, std::vector<ProteinIdentification> & prot_idents);
+    void getProteinIdentification_(ProteinIdentification & result, SpectrumIdentification pep_ident, std::vector<ProteinIdentification> & prot_idents);
   };
 
 } // namespace OpenMS

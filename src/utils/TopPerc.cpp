@@ -114,12 +114,12 @@ public:
   }
 
 protected:
-  void preparePIN(vector<PeptideIdentification>& peptide_ids, bool is_decoy, TextFile& txt, int minCharge, int maxCharge)
+  void preparePIN(vector<SpectrumIdentification>& peptide_ids, bool is_decoy, TextFile& txt, int minCharge, int maxCharge)
   {
     char out_sep = '\t';
-    for (vector<PeptideIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
     {
-      for (vector<PeptideHit>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
+      for (vector<SpectrumMatch>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
       {
         // Some Hits have no NumMatchedMainIons, and MeanError, etc. values. Have to ignore them!
         if (hit->metaValueExists("NumMatchedMainIons"))
@@ -387,9 +387,9 @@ protected:
     //-------------------------------------------------------------
     // general variables and data to perform TopPerc
     //-------------------------------------------------------------
-    vector<PeptideIdentification> peptide_ids;
+    vector<SpectrumIdentification> peptide_ids;
     vector<ProteinIdentification> protein_ids;
-    vector<PeptideIdentification> peptide_ids_d;
+    vector<SpectrumIdentification> peptide_ids_d;
     vector<ProteinIdentification> protein_ids_d;
 
     //-------------------------------------------------------------
@@ -454,9 +454,9 @@ protected:
         // Find out how many possible charges are available
         int maxCharge = 0;
         int minCharge = 10;
-        for (vector<PeptideIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
+        for (vector<SpectrumIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
         {
-          for (vector<PeptideHit>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
+          for (vector<SpectrumMatch>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
           {
             if (hit->getCharge() > maxCharge)
             {
@@ -507,9 +507,9 @@ protected:
       int maxCharge = 0;
       int minCharge = 10;
 
-      for (vector<PeptideIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
+      for (vector<SpectrumIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
       {
-        for (vector<PeptideHit>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
+        for (vector<SpectrumMatch>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
         {
           if (hit->getCharge() > maxCharge)
           {
@@ -573,7 +573,7 @@ protected:
 
       LOG_INFO << "read in target file" << endl;
       // get all the features from the target file
-      for (vector<PeptideIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
+      for (vector<SpectrumIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
       {
         if (it->isHigherScoreBetter())
         {
@@ -667,7 +667,7 @@ protected:
 
       LOG_INFO << "read in decoy file" << endl;
       // get all the features from the decoy file
-      for (vector<PeptideIdentification>::iterator it = peptide_ids_d.begin(); it != peptide_ids_d.end(); ++it)
+      for (vector<SpectrumIdentification>::iterator it = peptide_ids_d.begin(); it != peptide_ids_d.end(); ++it)
       {
         if (it->isHigherScoreBetter())
         {
@@ -846,7 +846,7 @@ protected:
 
 
     // Add the percolator results to the peptide vector of the original input file
-    for (vector<PeptideIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = peptide_ids.begin(); it != peptide_ids.end(); ++it)
     {
       String sid = it->getMetaValue("spectrum_id");
       if (pep_map.find(sid) == pep_map.end())
@@ -863,9 +863,9 @@ protected:
 
       it->setScoreType("q-value");
       it->setHigherScoreBetter(false);
-      vector<PeptideHit> temp;
+      vector<SpectrumMatch> temp;
       swap(temp, it->getHits());
-      for (vector<PeptideHit>::iterator hit = temp.begin(); hit != temp.end(); ++hit)
+      for (vector<SpectrumMatch>::iterator hit = temp.begin(); hit != temp.end(); ++hit)
       {
         AASequence aat;
         aat.fromString(pep_map[sid][0]);

@@ -78,7 +78,7 @@ public:
 
   }
 
-  static bool compareIDsWithScores(pair<double, PeptideIdentification> a, pair<double, PeptideIdentification> b)
+  static bool compareIDsWithScores(pair<double, SpectrumIdentification> a, pair<double, SpectrumIdentification> b)
   {
     if (a.second.isHigherScoreBetter())
     {
@@ -109,18 +109,18 @@ protected:
     IdXMLFile idXML_file;
     vector<ProteinIdentification> protein_identifications;
     vector<ProteinIdentification> chosen_protein_identifications;
-    vector<PeptideIdentification> identifications;
-    vector<PeptideIdentification> chosen_identifications;
+    vector<SpectrumIdentification> identifications;
+    vector<SpectrumIdentification> chosen_identifications;
     vector<Size> indices;
-    vector<PeptideHit> temp_peptide_hits;
+    vector<SpectrumMatch> temp_peptide_hits;
     vector<ProteinHit> temp_protein_hits;
     vector<ProteinHit> chosen_protein_hits;
-    map<String, vector<PeptideIdentification> > identifiers;
-    PeptideIdentification temp_identification;
+    map<String, vector<SpectrumIdentification> > identifiers;
+    SpectrumIdentification temp_identification;
     vector<String> chosen_ids;
-    vector<pair<double, PeptideIdentification> > identifications_with_scores;
-    vector<pair<double, PeptideIdentification> >::iterator it = identifications_with_scores.begin();
-    vector<PeptideIdentification> temp_identifications;
+    vector<pair<double, SpectrumIdentification> > identifications_with_scores;
+    vector<pair<double, SpectrumIdentification> >::iterator it = identifications_with_scores.begin();
+    vector<SpectrumIdentification> temp_identifications;
 
 
     protein_identifications.push_back(ProteinIdentification());
@@ -234,7 +234,7 @@ protected:
             temp_peptide_hits.clear();
             set<String> accession;
             accession.insert(temp_protein_hits[j].getAccession());
-            temp_peptide_hits = PeptideIdentification::getReferencingHits(temp_identifications[k].getHits(), accession);
+            temp_peptide_hits = SpectrumIdentification::getReferencingHits(temp_identifications[k].getHits(), accession);
             if (!temp_peptide_hits.empty() && !already_chosen)
             {
               chosen_protein_hits.push_back(temp_protein_hits[j]);

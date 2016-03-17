@@ -336,7 +336,7 @@ namespace OpenMS
     }
   }
 
-  Size ProteinIdentification::computeCoverage(const std::vector<PeptideIdentification>& pep_ids)
+  Size ProteinIdentification::computeCoverage(const std::vector<SpectrumIdentification>& pep_ids)
   {
     // TODO: we currently ignore overlapping peptides, i.e. the coverage could be > 100%
 
@@ -360,11 +360,11 @@ namespace OpenMS
 
     // go through peptides and add length to proteinHit
     Size protein_not_found_counter(0);
-    for (vector<PeptideIdentification>::const_iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
+    for (vector<SpectrumIdentification>::const_iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
     {
       // peptide hits
-      vector<PeptideHit> peptide_hits = it1->getHits();
-      for (vector<PeptideHit>::iterator it2 = peptide_hits.begin(); it2 != peptide_hits.end(); ++it2)
+      vector<SpectrumMatch> peptide_hits = it1->getHits();
+      for (vector<SpectrumMatch>::iterator it2 = peptide_hits.begin(); it2 != peptide_hits.end(); ++it2)
       {
         set<String> protein_accessions = it2->extractProteinAccessions();
         // matched proteins for hit

@@ -76,10 +76,10 @@ START_SECTION((virtual ~FeatureMap()))
 	delete pl_ptr;
 END_SECTION
 
-std::vector<PeptideIdentification> ids(1);
-PeptideHit hit;
+std::vector<SpectrumIdentification> ids(1);
+SpectrumMatch hit;
 hit.setSequence(AASequence::fromString("ABCDE"));
-ids[0].setHits(std::vector<PeptideHit>(1, hit));
+ids[0].setHits(std::vector<SpectrumMatch>(1, hit));
 
 Feature feature1;
 feature1.getPosition()[0] = 2.0;
@@ -92,7 +92,7 @@ feature2.getPosition()[0] = 0.0;
 feature2.getPosition()[1] = 2.5;
 feature2.setIntensity(0.5f);
 ids.resize(2);
-ids[1].setHits(std::vector<PeptideHit>(1, hit)); // same as first hit
+ids[1].setHits(std::vector<SpectrumMatch>(1, hit)); // same as first hit
 feature2.setPeptideIdentifications(ids);
 
 Feature feature3;
@@ -100,7 +100,7 @@ feature3.getPosition()[0] = 10.5;
 feature3.getPosition()[1] = 0.0;
 feature3.setIntensity(0.01f);
 hit.setSequence(AASequence::fromString("KRGH"));
-ids[1].setHits(std::vector<PeptideHit>(1, hit)); // different to first hit
+ids[1].setHits(std::vector<SpectrumMatch>(1, hit)); // different to first hit
 feature3.setPeptideIdentifications(ids);
 
 //feature with convex hulls
@@ -144,7 +144,7 @@ END_SECTION
 
 START_SECTION((void setUnassignedPeptideIdentifications(const std::vector<PeptideIdentification>& unassigned_peptide_identifications)))
 	FeatureMap tmp;
-	tmp.setUnassignedPeptideIdentifications(std::vector<PeptideIdentification>(2));
+	tmp.setUnassignedPeptideIdentifications(std::vector<SpectrumIdentification>(2));
 	TEST_EQUAL(tmp.getUnassignedPeptideIdentifications().size(),2)
 END_SECTION
 

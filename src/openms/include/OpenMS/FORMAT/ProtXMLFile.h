@@ -85,7 +85,7 @@ public:
         @exception Exception::FileNotFound is thrown if the file could not be opened
         @exception Exception::ParseError is thrown if an error occurs during parsing
     */
-    void load(const String & filename, ProteinIdentification & protein_ids, PeptideIdentification & peptide_ids);
+    void load(const String & filename, ProteinIdentification & protein_ids, SpectrumIdentification & peptide_ids);
 
     /**
         @brief [not implemented yet!] Stores the data in an ProtXML file
@@ -95,7 +95,7 @@ public:
 
         @exception Exception::UnableToCreateFile is thrown if the file could not be created
     */
-    void store(const String & filename, const ProteinIdentification & protein_ids, const PeptideIdentification & peptide_ids, const String & document_id = "");
+    void store(const String & filename, const ProteinIdentification & protein_ids, const SpectrumIdentification & peptide_ids, const String & document_id = "");
 
 protected:
 
@@ -130,9 +130,9 @@ protected:
     /// Pointer to protein identification
     ProteinIdentification * prot_id_;
     /// Pointer to peptide identification
-    PeptideIdentification * pep_id_;
+    SpectrumIdentification * pep_id_;
     /// Temporary peptide hit
-    PeptideHit * pep_hit_;
+    SpectrumMatch * pep_hit_;
     /// protein group
     ProteinGroup protein_group_;
 

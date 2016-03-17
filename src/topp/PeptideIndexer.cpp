@@ -551,7 +551,7 @@ protected:
     FASTAFile().load(db_name, proteins);
 
     vector<ProteinIdentification> prot_ids;
-    vector<PeptideIdentification> pep_ids;
+    vector<SpectrumIdentification> pep_ids;
 
     IdXMLFile().load(in, prot_ids, pep_ids);
 
@@ -634,11 +634,11 @@ protected:
         BUILD Peptide DB
       */
       seqan::StringSet<seqan::Peptide> pep_DB;
-      for (vector<PeptideIdentification>::const_iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
+      for (vector<SpectrumIdentification>::const_iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
       {
         //String run_id = it1->getIdentifier();
-        vector<PeptideHit> hits = it1->getHits();
-        for (vector<PeptideHit>::iterator it2 = hits.begin(); it2 != hits.end(); ++it2)
+        vector<SpectrumMatch> hits = it1->getHits();
+        for (vector<SpectrumMatch>::iterator it2 = hits.begin(); it2 != hits.end(); ++it2)
         {
           String seq = it2->getSequence().toUnmodifiedString().remove('*');
           if (il_equivalent) // convert I to L; warning: do not use 'J', since Seqan does not know about it and will convert 'J' to 'X'
@@ -799,14 +799,14 @@ protected:
     Map<Size, set<Size> > runidx_to_protidx; // in which protID do appear which proteins (according to mapped peptides)
 
     Size pep_idx(0);
-    for (vector<PeptideIdentification>::iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
+    for (vector<SpectrumIdentification>::iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
     {
       // which ProteinIdentification does the peptide belong to?
       Size run_idx = runid_to_runidx[it1->getIdentifier()];
 
-      vector<PeptideHit> hits = it1->getHits();
+      vector<SpectrumMatch> hits = it1->getHits();
 
-      for (vector<PeptideHit>::iterator it2 = hits.begin(); it2 != hits.end(); ++it2)
+      for (vector<SpectrumMatch>::iterator it2 = hits.begin(); it2 != hits.end(); ++it2)
       {
         // clear protein accessions
         it2->setPeptideEvidences(vector<PeptideEvidence>());

@@ -103,8 +103,8 @@ protected:
   // compare peptide IDs by score of best hit (hits must be sorted first!)
   // (note to self: the "static" is necessary to avoid cryptic "no matching
   // function" errors from gcc when the comparator is used below)
-  static bool compareIDs_(const PeptideIdentification & left,
-                          const PeptideIdentification & right)
+  static bool compareIDs_(const SpectrumIdentification & left,
+                          const SpectrumIdentification & right)
   {
     if (left.getHits()[0].getScore() < right.getHits()[0].getScore())
     {
@@ -113,16 +113,16 @@ protected:
     return false;
   }
 
-  void resolveConflict_(vector<PeptideIdentification> & peptides)
+  void resolveConflict_(vector<SpectrumIdentification> & peptides)
   {
     if (peptides.empty()) return;
 
-    for (vector<PeptideIdentification>::iterator pep_id = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_id = peptides.begin();
          pep_id != peptides.end(); ++pep_id)
     {
       pep_id->sort();
     }
-    vector<PeptideIdentification>::iterator pos;
+    vector<SpectrumIdentification>::iterator pos;
     if (peptides[0].isHigherScoreBetter())     // find highest-scoring ID
     {
       pos = max_element(peptides.begin(), peptides.end(), compareIDs_);
@@ -134,7 +134,7 @@ protected:
     peptides[0] = *pos;
     peptides.resize(1);
     // remove all but the best hit:
-    vector<PeptideHit> best_hit(1, peptides[0].getHits()[0]);
+    vector<SpectrumMatch> best_hit(1, peptides[0].getHits()[0]);
     peptides[0].setHits(best_hit);
   }
 

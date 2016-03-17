@@ -322,7 +322,7 @@ namespace OpenMS
       if (tag_ == "PeptideSequence")
       {
         AASequence p = AASequence::fromString(String(sm_.convert(chars)));
-        PeptideHit ph = PeptideHit(0, 0, cf_cf_obj_[current_cf_id_].getCharge(), p);
+        SpectrumMatch ph = SpectrumMatch(0, 0, cf_cf_obj_[current_cf_id_].getCharge(), p);
         cf_cf_obj_[current_cf_id_].getPeptideIdentifications().back().insertHit(ph); // just moments before added
         return;
       }

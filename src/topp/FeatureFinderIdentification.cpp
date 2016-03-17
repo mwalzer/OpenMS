@@ -199,7 +199,7 @@ protected:
   typedef MSExperiment<Peak1D> PeakMap;
 
   // mapping: charge -> pointer to peptides
-  typedef map<Int, vector<PeptideIdentification*> > ChargeMap;
+  typedef map<Int, vector<SpectrumIdentification*> > ChargeMap;
   // mapping: sequence -> charge -> pointer to peptide
   typedef map<AASequence, ChargeMap> PeptideMap;
 
@@ -253,7 +253,7 @@ protected:
              charge_data.second.begin(); pi_it != charge_data.second.end();
            ++pi_it)
       {
-        const PeptideHit& hit = (*pi_it)->getHits()[0];
+        const SpectrumMatch& hit = (*pi_it)->getHits()[0];
         bool higher_better = (*pi_it)->isHigherScoreBetter();
         if ((pi_it == charge_data.second.begin()) || // initial case
             (higher_better && (hit.getScore() > best_score)) ||
@@ -813,7 +813,7 @@ protected:
       TransformationXMLFile().store(trafo_out, trafo_);
     }
 
-    vector<PeptideIdentification> peptides;
+    vector<SpectrumIdentification> peptides;
     vector<ProteinIdentification> proteins;
     IdXMLFile().load(id, proteins, peptides);
 
@@ -822,12 +822,12 @@ protected:
     //-------------------------------------------------------------
     LOG_INFO << "Preparing mapping of peptide data..." << endl;
     PeptideMap peptide_map;
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       if (pep_it->getHits().empty()) continue;
       pep_it->sort();
-      PeptideHit& hit = pep_it->getHits()[0];
+      SpectrumMatch& hit = pep_it->getHits()[0];
       peptide_map[hit.getSequence()][hit.getCharge()].push_back(&(*pep_it));
     }
 
@@ -844,7 +844,7 @@ protected:
       // LOG_DEBUG << "Peptide: " << seq.toString() << endl;
 
       // keep track of protein accessions:
-      const PeptideHit& hit = pm_it->second.begin()->second[0]->getHits()[0];
+      const SpectrumMatch& hit = pm_it->second.begin()->second[0]->getHits()[0];
 
       set<String> current_accessions = hit.extractProteinAccessions();
       // missing protein accession would crash OpenSwath algorithms:

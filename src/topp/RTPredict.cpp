@@ -181,10 +181,10 @@ protected:
   {
     IdXMLFile idXML_file;
     vector<ProteinIdentification> protein_identifications;
-    vector<PeptideIdentification> identifications;
+    vector<SpectrumIdentification> identifications;
     vector<String> peptides;
     vector<AASequence> modified_peptides;
-    vector<PeptideHit> temp_peptide_hits;
+    vector<SpectrumMatch> temp_peptide_hits;
     SVMWrapper svm;
     LibSVMEncoder encoder;
     String allowed_amino_acid_characters = "ACDEFGHIKLMNPQRSTVWY";
@@ -207,8 +207,8 @@ protected:
     String svmfile_name = "";
     float total_gradient_time = 1.f;
     bool separation_prediction = false;
-    vector<PeptideIdentification> identifications_positive;
-    vector<PeptideIdentification> identifications_negative;
+    vector<SpectrumIdentification> identifications_positive;
+    vector<SpectrumIdentification> identifications_negative;
     bool first_dim_rt = false;
     Size number_of_peptides = 0;
     Size max_number_of_peptides = getIntOption_("max_number_of_peptides");
@@ -569,10 +569,10 @@ protected:
       }
       else // separation prediction
       {
-        vector<PeptideHit> hits_positive;
-        vector<PeptideHit> hits_negative;
+        vector<SpectrumMatch> hits_positive;
+        vector<SpectrumMatch> hits_negative;
 
-        PeptideIdentification temp_identification;
+        SpectrumIdentification temp_identification;
 
         for (Size i = 0; i < identifications.size(); i++)
         {
@@ -580,7 +580,7 @@ protected:
           hits_positive.clear();
 
           temp_peptide_hits = identifications[i].getHits();
-          for (vector<PeptideHit>::iterator it = temp_peptide_hits.begin();
+          for (vector<SpectrumMatch>::iterator it = temp_peptide_hits.begin();
                it != temp_peptide_hits.end();
                ++it)
           {

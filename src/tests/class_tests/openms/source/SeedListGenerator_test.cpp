@@ -86,9 +86,9 @@ START_SECTION((void generateSeedList(const MSExperiment<>& experiment, SeedList&
 END_SECTION
 
 
-START_SECTION((void generateSeedList(vector<PeptideIdentification>& peptides, SeedList& seeds, bool use_peptide_mass = false)))
+START_SECTION((void generateSeedList(vector<SpectrumIdentification>& peptides, SeedList& seeds, bool use_peptide_mass = false)))
 {
-	vector<PeptideIdentification> peptides(3);
+	vector<SpectrumIdentification> peptides(3);
 	peptides[0].setRT(1.1);
 	peptides[0].setMZ(111.111);
 	peptides[1].setRT(2.2);
@@ -101,7 +101,7 @@ START_SECTION((void generateSeedList(vector<PeptideIdentification>& peptides, Se
 	TEST_EQUAL(seeds[0], DPosition<2>(1.1, 111.111));
 	TEST_EQUAL(seeds[1], DPosition<2>(2.2, 222.222));
 	TEST_EQUAL(seeds[2], DPosition<2>(3.3, 333.333));
-	PeptideHit hit;
+	SpectrumMatch hit;
 	hit.setSequence(AASequence::fromString("TEST"));
 	hit.setCharge(2);
 	peptides[0].insertHit(hit);

@@ -77,8 +77,6 @@ set(metadata_executables_list
   Gradient_test
   HPLC_test
   DocumentIDTagger_test
-  Identification_test
-  IdentificationHit_test
   InstrumentSettings_test
   Instrument_test
   IonDetector_test
@@ -103,7 +101,6 @@ set(metadata_executables_list
   ScanWindow_test
   Software_test
   SourceFile_test
-  SpectrumIdentification_test
   SpectrumLookup_test
   SpectrumMetaDataLookup_test
   SpectrumSettings_test

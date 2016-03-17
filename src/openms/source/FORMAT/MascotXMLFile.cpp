@@ -49,7 +49,7 @@ namespace OpenMS
 
   void MascotXMLFile::load(const String& filename,
                            ProteinIdentification& protein_identification,
-                           vector<PeptideIdentification>& id_data,
+                           vector<SpectrumIdentification>& id_data,
                            const SpectrumMetaDataLookup& lookup)
   {
     map<String, vector<AASequence> > peptides;
@@ -59,7 +59,7 @@ namespace OpenMS
 
   void MascotXMLFile::load(const String& filename,
                            ProteinIdentification& protein_identification,
-                           vector<PeptideIdentification>& id_data,
+                           vector<SpectrumIdentification>& id_data,
                            map<String, vector<AASequence> >& peptides,
                            const SpectrumMetaDataLookup& lookup)
   {
@@ -73,14 +73,14 @@ namespace OpenMS
 
     // since the Mascot XML can contain "peptides" without sequences,
     // the identifications without any real peptide hit are removed
-    vector<PeptideIdentification> filtered_hits;
+    vector<SpectrumIdentification> filtered_hits;
     filtered_hits.reserve(id_data.size());
     Size missing_sequence = 0; // counter
 
-    for (vector<PeptideIdentification>::iterator id_it = id_data.begin();
+    for (vector<SpectrumIdentification>::iterator id_it = id_data.begin();
          id_it != id_data.end(); ++id_it)
     {
-      const vector<PeptideHit>& peptide_hits = id_it->getHits();
+      const vector<SpectrumMatch>& peptide_hits = id_it->getHits();
       if (!peptide_hits.empty() && 
           (peptide_hits.size() > 1 || !peptide_hits[0].getSequence().empty()))
       {
@@ -97,7 +97,7 @@ namespace OpenMS
 
     // check if we have (some) RT information:
     Size no_rt_count = 0;
-    for (vector<PeptideIdentification>::iterator id_it = id_data.begin();
+    for (vector<SpectrumIdentification>::iterator id_it = id_data.begin();
          id_it != id_data.end(); ++id_it)
     {
       if (!id_it->hasRT()) ++no_rt_count;
@@ -118,10 +118,10 @@ namespace OpenMS
 
     // argh! Mascot 2.2 tends to repeat the first hit (yes it appears twice),
     // so we delete one of them
-    for (vector<PeptideIdentification>::iterator it = id_data.begin(); 
+    for (vector<SpectrumIdentification>::iterator it = id_data.begin(); 
          it != id_data.end(); ++it)
     {
-      vector<PeptideHit> peptide_hits = it->getHits();
+      vector<SpectrumMatch> peptide_hits = it->getHits();
       // check if equal, except for rank
       if (peptide_hits.size() > 1 &&
           peptide_hits[0].getScore() == peptide_hits[1].getScore() &&

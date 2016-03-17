@@ -240,7 +240,7 @@ namespace OpenMS
       else
       {
         // protein name:
-        const PeptideHit& peptide_hit = cFeature.getPeptideIdentifications()[0].getHits()[0];
+        const SpectrumMatch& peptide_hit = cFeature.getPeptideIdentifications()[0].getHits()[0];
         std::set<String> protein_accessions = peptide_hit.extractProteinAccessions();
         if (protein_accessions.size() != 1)
         {

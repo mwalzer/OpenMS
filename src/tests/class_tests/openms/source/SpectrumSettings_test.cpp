@@ -205,18 +205,18 @@ END_SECTION
 
 START_SECTION((const std::vector<PeptideIdentification>& getPeptideIdentifications() const))
 	SpectrumSettings tmp;
-	vector<PeptideIdentification> vec(tmp.getPeptideIdentifications());
+	vector<SpectrumIdentification> vec(tmp.getPeptideIdentifications());
 	TEST_EQUAL(vec.size(),0);
 END_SECTION
 
 START_SECTION((void setPeptideIdentifications(const std::vector<PeptideIdentification>& identifications)))
 	SpectrumSettings tmp;
-	vector<PeptideIdentification> vec;
+	vector<SpectrumIdentification> vec;
 	
 	tmp.setPeptideIdentifications(vec);
 	TEST_EQUAL(tmp.getPeptideIdentifications().size(),0);
 	
-	PeptideIdentification dbs;
+	SpectrumIdentification dbs;
 	vec.push_back(dbs);
 	tmp.setPeptideIdentifications(vec);
 	TEST_EQUAL(tmp.getPeptideIdentifications().size(),1);
@@ -224,7 +224,7 @@ END_SECTION
 
 START_SECTION((std::vector<PeptideIdentification>& getPeptideIdentifications()))
 	SpectrumSettings tmp;
-	vector<PeptideIdentification> vec;
+	vector<SpectrumIdentification> vec;
 	
 	tmp.getPeptideIdentifications().resize(1);
 	TEST_EQUAL(tmp.getPeptideIdentifications().size(),1);
@@ -436,11 +436,11 @@ START_SECTION((void unify(const SpectrumSettings &rhs)))
   appended.getProducts().push_back(appended_product);
 
   // Identifications
-  PeptideIdentification org_ident;
+  SpectrumIdentification org_ident;
   org_ident.setIdentifier("org_ident");
   org.getPeptideIdentifications().push_back(org_ident);
 
-  PeptideIdentification appended_ident;
+  SpectrumIdentification appended_ident;
   appended_ident.setIdentifier("appended_ident");
   appended.getPeptideIdentifications().push_back(appended_ident);
 

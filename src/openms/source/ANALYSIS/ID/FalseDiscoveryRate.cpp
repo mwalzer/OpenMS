@@ -61,7 +61,7 @@ namespace OpenMS
     defaultsToParam_();
   }
 
-  void FalseDiscoveryRate::apply(vector<PeptideIdentification>& ids)
+  void FalseDiscoveryRate::apply(vector<SpectrumIdentification>& ids)
   {
     bool q_value = !param_.getValue("no_qvalues").toBool();
     bool use_all_hits = param_.getValue("use_all_hits").toBool();
@@ -82,7 +82,7 @@ namespace OpenMS
     // first search for all identifiers and charge variants
     set<String> identifiers;
     set<SignedSize> charge_variants;
-    for (vector<PeptideIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
     {
       identifiers.insert(it->getIdentifier());
       it->sort();
@@ -92,7 +92,7 @@ namespace OpenMS
         it->getHits().resize(1);
       }
 
-      for (vector<PeptideHit>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
+      for (vector<SpectrumMatch>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
       {
         charge_variants.insert(pit->getCharge());
       }
@@ -134,7 +134,7 @@ namespace OpenMS
 #endif
         // get the scores of all peptide hits
         vector<double> target_scores, decoy_scores;
-        for (vector<PeptideIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
+        for (vector<SpectrumIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
         {
           // if runs should be treated separately, the identifiers must be the same
           if (treat_runs_separately && it->getIdentifier() != *iit)
@@ -224,7 +224,7 @@ namespace OpenMS
         if (target_scores.empty() || decoy_scores.empty())
         {
           // no remove the the relevant entries, or put 'pseudo-scores' in
-          for (vector<PeptideIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
+          for (vector<SpectrumIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
           {
             // if runs should be treated separately, the identifiers must be the same
             if (treat_runs_separately && it->getIdentifier() != *iit)
@@ -232,7 +232,7 @@ namespace OpenMS
               continue;
             }
 
-            vector<PeptideHit> hits(it->getHits()), new_hits;
+            vector<SpectrumMatch> hits(it->getHits()), new_hits;
             for (Size i = 0; i < hits.size(); ++i)
             {
               if (split_charge_variants && hits[i].getCharge() != *zit)
@@ -275,7 +275,7 @@ namespace OpenMS
         calculateFDRs_(score_to_fdr, target_scores, decoy_scores, q_value, higher_score_better);
 
         // annotate fdr
-        for (vector<PeptideIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
+        for (vector<SpectrumIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
         {
           // if runs should be treated separately, the identifiers must be the same
           if (treat_runs_separately && it->getIdentifier() != *iit)
@@ -284,10 +284,10 @@ namespace OpenMS
           }
 
           String score_type = it->getScoreType() + "_score";
-          vector<PeptideHit> hits;
-          for (vector<PeptideHit>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
+          vector<SpectrumMatch> hits;
+          for (vector<SpectrumMatch>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
           {
-            PeptideHit hit = *pit;
+            SpectrumMatch hit = *pit;
 
             if (split_charge_variants && pit->getCharge() != *zit)
             {
@@ -316,7 +316,7 @@ namespace OpenMS
     }
 
     // higher-score-better can be set now, calculations are finished
-    for (vector<PeptideIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = ids.begin(); it != ids.end(); ++it)
     {
       if (q_value)
       {
@@ -339,7 +339,7 @@ namespace OpenMS
     return;
   }
 
-  void FalseDiscoveryRate::apply(vector<PeptideIdentification>& fwd_ids, vector<PeptideIdentification>& rev_ids)
+  void FalseDiscoveryRate::apply(vector<SpectrumIdentification>& fwd_ids, vector<SpectrumIdentification>& rev_ids)
   {
     if (fwd_ids.empty() || rev_ids.empty())
     {
@@ -347,17 +347,17 @@ namespace OpenMS
     }
     vector<double> target_scores, decoy_scores;
     // get the scores of all peptide hits
-    for (vector<PeptideIdentification>::const_iterator it = fwd_ids.begin(); it != fwd_ids.end(); ++it)
+    for (vector<SpectrumIdentification>::const_iterator it = fwd_ids.begin(); it != fwd_ids.end(); ++it)
     {
-      for (vector<PeptideHit>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
+      for (vector<SpectrumMatch>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
       {
         target_scores.push_back(pit->getScore());
       }
     }
 
-    for (vector<PeptideIdentification>::const_iterator it = rev_ids.begin(); it != rev_ids.end(); ++it)
+    for (vector<SpectrumIdentification>::const_iterator it = rev_ids.begin(); it != rev_ids.end(); ++it)
     {
-      for (vector<PeptideHit>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
+      for (vector<SpectrumMatch>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
       {
         decoy_scores.push_back(pit->getScore());
       }
@@ -372,7 +372,7 @@ namespace OpenMS
 
     // annotate fdr
     String score_type = fwd_ids.begin()->getScoreType() + "_score";
-    for (vector<PeptideIdentification>::iterator it = fwd_ids.begin(); it != fwd_ids.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = fwd_ids.begin(); it != fwd_ids.end(); ++it)
     {
       if (q_value)
       {
@@ -384,8 +384,8 @@ namespace OpenMS
       }
 
       it->setHigherScoreBetter(false);
-      vector<PeptideHit> hits = it->getHits();
-      for (vector<PeptideHit>::iterator pit = hits.begin(); pit != hits.end(); ++pit)
+      vector<SpectrumMatch> hits = it->getHits();
+      for (vector<SpectrumMatch>::iterator pit = hits.begin(); pit != hits.end(); ++pit)
       {
 #ifdef FALSE_DISCOVERY_RATE_DEBUG
         cerr << pit->getScore() << " " << score_to_fdr[pit->getScore()] << endl;
@@ -399,7 +399,7 @@ namespace OpenMS
     if (add_decoy_peptides)
     {
       score_type = rev_ids.begin()->getScoreType() + "_score";
-      for (vector<PeptideIdentification>::iterator it = rev_ids.begin(); it != rev_ids.end(); ++it)
+      for (vector<SpectrumIdentification>::iterator it = rev_ids.begin(); it != rev_ids.end(); ++it)
       {
         if (q_value)
         {
@@ -411,8 +411,8 @@ namespace OpenMS
         }
 
         it->setHigherScoreBetter(false);
-        vector<PeptideHit> hits = it->getHits();
-        for (vector<PeptideHit>::iterator pit = hits.begin(); pit != hits.end(); ++pit)
+        vector<SpectrumMatch> hits = it->getHits();
+        for (vector<SpectrumMatch>::iterator pit = hits.begin(); pit != hits.end(); ++pit)
         {
 #ifdef FALSE_DISCOVERY_RATE_DEBUG
           cerr << pit->getScore() << " " << score_to_fdr[pit->getScore()] << endl;

@@ -52,7 +52,7 @@ namespace OpenMS
 
         @ingroup Metadata
   */
-  class OPENMS_DLLAPI PeptideHit :
+  class OPENMS_DLLAPI SpectrumMatch :
     public MetaInfoInterface
   {
 public:
@@ -128,29 +128,29 @@ public:
     /** @name Constructors and Destructor */
     //@{
     /// default constructor
-    PeptideHit();
+    SpectrumMatch();
 
     /// values constructor
-    PeptideHit(double score,
+    SpectrumMatch(double score,
                UInt rank,
                Int charge,
                const AASequence& sequence);
 
     /// copy constructor
-    PeptideHit(const PeptideHit& source);
+    SpectrumMatch(const SpectrumMatch& source);
 
     /// destructor
-    virtual ~PeptideHit();
+    virtual ~SpectrumMatch();
     //@}
 
     /// assignment operator
-    PeptideHit& operator=(const PeptideHit& source);
+    SpectrumMatch& operator=(const SpectrumMatch& source);
 
     /// Equality operator
-    bool operator==(const PeptideHit& rhs) const;
+    bool operator==(const SpectrumMatch& rhs) const;
 
     /// Inequality operator
-    bool operator!=(const PeptideHit& rhs) const;
+    bool operator!=(const SpectrumMatch& rhs) const;
 
     /**	@name Accessors
     */

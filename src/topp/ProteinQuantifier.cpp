@@ -339,7 +339,7 @@ protected:
 
   Param algo_params_; // parameters for PeptideAndProteinQuant algorithm
   ProteinIdentification proteins_; // protein inference results (proteins)
-  vector<PeptideIdentification> peptides_; // protein inference res. (peptides)
+  vector<SpectrumIdentification> peptides_; // protein inference res. (peptides)
   ConsensusMap::FileDescriptions files_; // information about files involved
   bool spectral_counting_; // quantification based on spectral counting?
 
@@ -706,7 +706,7 @@ protected:
     {
       spectral_counting_ = true;
       vector<ProteinIdentification> proteins;
-      vector<PeptideIdentification> peptides;
+      vector<SpectrumIdentification> peptides;
       IdXMLFile().load(in, proteins, peptides);
       for (Size i = 0; i < proteins.size(); ++i)
       {

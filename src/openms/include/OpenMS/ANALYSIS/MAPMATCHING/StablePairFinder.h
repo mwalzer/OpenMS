@@ -179,7 +179,7 @@ protected:
 
       @param peptideIdentification The peptideIdentification to scan.
     */
-    const AASequence& getBestHitSequence_(const PeptideIdentification& peptideIdentification) const;
+    const AASequence& getBestHitSequence_(const SpectrumIdentification& peptideIdentification) const;
   };
 
 } // namespace OpenMS

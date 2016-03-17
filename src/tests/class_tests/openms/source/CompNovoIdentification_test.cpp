@@ -73,7 +73,7 @@ START_SECTION((CompNovoIdentification(const CompNovoIdentification& source)))
 END_SECTION
 
 
-START_SECTION((void getIdentifications(std::vector< PeptideIdentification > &ids, const PeakMap &exp)))
+START_SECTION((void getIdentifications(std::vector< SpectrumIdentification > &ids, const PeakMap &exp)))
 {
    TheoreticalSpectrumGenerator tsg;
   Param tsg_param(tsg.getParameters());
@@ -117,7 +117,7 @@ START_SECTION((void getIdentifications(std::vector< PeptideIdentification > &ids
   exp.addSpectrum(spec);
   exp.addSpectrum(spec_ETD);
 
-  vector<PeptideIdentification> ids;
+  vector<SpectrumIdentification> ids;
   CompNovoIdentification cni;
   Param cni_param(cni.getParameters());
   cni.setParameters(cni_param);
@@ -129,7 +129,7 @@ START_SECTION((void getIdentifications(std::vector< PeptideIdentification > &ids
 }
 END_SECTION
 
-START_SECTION((void getIdentification(PeptideIdentification &id, const PeakSpectrum &CID_spec, const PeakSpectrum &ETD_spec)))
+START_SECTION((void getIdentification(SpectrumIdentification &id, const PeakSpectrum &CID_spec, const PeakSpectrum &ETD_spec)))
 {
   TheoreticalSpectrumGenerator tsg;
   Param tsg_param(tsg.getParameters());
@@ -169,7 +169,7 @@ START_SECTION((void getIdentification(PeptideIdentification &id, const PeakSpect
   spec.setPrecursors(precs);
   spec_ETD.setPrecursors(precs);
 
-  PeptideIdentification id;
+  SpectrumIdentification id;
   CompNovoIdentification cni;
   Param cni_param(cni.getParameters());
   cni.setParameters(cni_param);

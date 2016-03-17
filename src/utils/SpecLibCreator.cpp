@@ -256,14 +256,14 @@ protected:
 
             speci.push_back(richy);
           }
-          PeptideHit hit; // = *it->getPeptideIdentifications().begin()->getHits().begin();
+          SpectrumMatch hit; // = *it->getPeptideIdentifications().begin()->getHits().begin();
           AASequence aa = AASequence::fromString(list[i][peptide]);
           hit.setSequence(aa);
           hit.setCharge(list[i][charge_state].toInt());
-          vector<PeptideHit> hits;
+          vector<SpectrumMatch> hits;
           hits.push_back(hit);
-          vector<PeptideIdentification> pepi;
-          PeptideIdentification pep;
+          vector<SpectrumIdentification> pepi;
+          SpectrumIdentification pep;
           pep.setHits(hits);
           pepi.push_back(pep);
           speci.setPeptideIdentifications(pepi);

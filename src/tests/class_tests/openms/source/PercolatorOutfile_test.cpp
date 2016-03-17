@@ -80,7 +80,7 @@ START_SECTION(enum ScoreType getScoreType(String score_type_name))
 END_SECTION
 
 START_SECTION(void load(const String& filename, ProteinIdentification& proteins,
-                        vector<PeptideIdentification>& peptides, 
+                        vector<SpectrumIdentification>& peptides, 
                         SpectrumMetaDataLookup& lookup,
                         enum ScoreType output_score))
 {
@@ -102,7 +102,7 @@ START_SECTION(void load(const String& filename, ProteinIdentification& proteins,
 
   String filename = OPENMS_GET_TEST_DATA_PATH("PercolatorOutfile_test.psms");
   ProteinIdentification proteins;
-  vector<PeptideIdentification> peptides;
+  vector<SpectrumIdentification> peptides;
   file.load(filename, proteins, peptides, lookup, PercolatorOutfile::SCORE);
 
   TEST_EQUAL(proteins.getHits().size(), 3);

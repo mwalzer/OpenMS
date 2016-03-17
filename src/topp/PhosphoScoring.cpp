@@ -258,7 +258,7 @@ protected:
   // E.g. Percolator_qvalue <-> q-value.
   // Improvement for the future would be to have unique names for the score_types
   // LuciphorAdapter uses the same stragety to backup previous scores.
-  void addScoreToMetaValues_(PeptideHit& hit, const String score_type)
+  void addScoreToMetaValues_(SpectrumMatch& hit, const String score_type)
   {
     if (!hit.metaValueExists(score_type) && !hit.metaValueExists(score_type + "_score"))
     {
@@ -293,9 +293,9 @@ protected:
     // loading input
     //-------------------------------------------------------------
     
-    vector<PeptideIdentification> pep_ids;
+    vector<SpectrumIdentification> pep_ids;
     vector<ProteinIdentification> prot_ids;
-    vector<PeptideIdentification> pep_out;
+    vector<SpectrumIdentification> pep_out;
     IdXMLFile().load(id, prot_ids, pep_ids);
 
     MSExperiment<> exp;
@@ -312,25 +312,25 @@ protected:
     SpectrumLookup lookup;
     lookup.readSpectra(exp.getSpectra());
 
-    for (vector<PeptideIdentification>::iterator pep_id = pep_ids.begin(); pep_id != pep_ids.end(); ++pep_id)
+    for (vector<SpectrumIdentification>::iterator pep_id = pep_ids.begin(); pep_id != pep_ids.end(); ++pep_id)
     {
       Size scan_id = lookup.findByRT(pep_id->getRT());
       PeakSpectrum& temp = exp.getSpectrum(scan_id);
       
-      vector<PeptideHit> scored_peptides;
-      for (vector<PeptideHit>::const_iterator hit = pep_id->getHits().begin(); hit < pep_id->getHits().end(); ++hit)
+      vector<SpectrumMatch> scored_peptides;
+      for (vector<SpectrumMatch>::const_iterator hit = pep_id->getHits().begin(); hit < pep_id->getHits().end(); ++hit)
       {
-        PeptideHit scored_hit = *hit;
+        SpectrumMatch scored_hit = *hit;
         addScoreToMetaValues_(scored_hit, pep_id->getScoreType()); // backup score value
         
         LOG_DEBUG << "starting to compute AScore RT=" << pep_id->getRT() << " SEQUENCE: " << scored_hit.getSequence().toString() << std::endl;
         
-        PeptideHit phospho_sites = scored_hit;
+        SpectrumMatch phospho_sites = scored_hit;
         phospho_sites = ascore.compute(scored_hit, temp, fragment_mass_tolerance, fragment_mass_unit_ppm, max_peptide_len, max_num_perm);
         scored_peptides.push_back(phospho_sites);
       }
 
-      PeptideIdentification new_pep_id(*pep_id);
+      SpectrumIdentification new_pep_id(*pep_id);
       new_pep_id.setScoreType("PhosphoScore");
       new_pep_id.setHigherScoreBetter(true);
       new_pep_id.setHits(scored_peptides);

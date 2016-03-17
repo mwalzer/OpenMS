@@ -59,7 +59,7 @@ public:
     ///Destructor
     ~MzTabFile();
 
-    typedef std::map<std::pair<String, String>, std::vector<PeptideHit> > MapAccPepType;
+    typedef std::map<std::pair<String, String>, std::vector<SpectrumMatch> > MapAccPepType;
 
     // store MzTab file
     void store(const String& filename, const MzTab& mz_tab) const;
@@ -119,26 +119,26 @@ protected:
     // extract two integers from string (e.g. search_engine_score[1]_ms_run[2] -> 1,2)
     static std::pair<int, int> extractIndexPairsFromBrackets_(const String& s);
 
-    static void sortPSM_(std::vector<PeptideIdentification>::iterator begin, std::vector<PeptideIdentification>::iterator end);
+    static void sortPSM_(std::vector<SpectrumIdentification>::iterator begin, std::vector<SpectrumIdentification>::iterator end);
 
-    static void keepFirstPSM_(std::vector<PeptideIdentification>::iterator begin, std::vector<PeptideIdentification>::iterator end);
+    static void keepFirstPSM_(std::vector<SpectrumIdentification>::iterator begin, std::vector<SpectrumIdentification>::iterator end);
 
     /// Extract protein and peptide identifications for each run. maps are assumed empty.
-    static void partitionIntoRuns_(const std::vector<PeptideIdentification>& pep_ids,
+    static void partitionIntoRuns_(const std::vector<SpectrumIdentification>& pep_ids,
                                    const std::vector<ProteinIdentification>& pro_ids,
-                                   std::map<String, std::vector<PeptideIdentification> >& map_run_to_pepids,
+                                   std::map<String, std::vector<SpectrumIdentification> >& map_run_to_pepids,
                                    std::map<String, std::vector<ProteinIdentification> >& map_run_to_proids
                                    );
 
 
     /// create links from protein to peptides
-    static void createProteinToPeptideLinks_(const std::map<String, std::vector<PeptideIdentification> >& map_run_to_pepids, MapAccPepType& map_run_accession_to_pephits);
+    static void createProteinToPeptideLinks_(const std::map<String, std::vector<SpectrumIdentification> >& map_run_to_pepids, MapAccPepType& map_run_accession_to_pephits);
 
     /// Extracts, if possible a unique protein accession for a peptide hit in mzTab format. Otherwise NA is returned
-    static String extractProteinAccession_(const PeptideHit& peptide_hit);
+    static String extractProteinAccession_(const SpectrumMatch& peptide_hit);
 
     /// Extracts, modifications and positions of a peptide hit in mzTab format
-    static String extractPeptideModifications_(const PeptideHit& peptide_hit);
+    static String extractPeptideModifications_(const SpectrumMatch& peptide_hit);
 
     /// Map search engine identifier to CV, param etc.
     static String mapSearchEngineToCvParam_(const String& openms_search_engine_name);

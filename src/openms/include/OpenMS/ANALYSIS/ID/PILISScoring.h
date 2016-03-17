@@ -95,10 +95,10 @@ public:
      */
     //@{
     /// performs an ProteinIdentification run on a PeakMap
-    void getScores(std::vector<PeptideIdentification> & ids);
+    void getScores(std::vector<SpectrumIdentification> & ids);
 
     /// performs an ProteinIdentification run on a PeakSpectrum
-    void getScore(PeptideIdentification & id);
+    void getScore(SpectrumIdentification & id);
     //@}
 
 protected:
@@ -110,7 +110,7 @@ protected:
     void getSurvivalFunction_(Map<UInt, double> & points, std::vector<DPosition<2> > & survival_function);
 
     ///
-    void getScore_(PeptideIdentification & id, double global_slope, double global_intercept);
+    void getScore_(SpectrumIdentification & id, double global_slope, double global_intercept);
 
   };
 }

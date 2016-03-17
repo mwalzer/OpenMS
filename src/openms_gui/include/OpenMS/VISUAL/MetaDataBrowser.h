@@ -62,7 +62,7 @@ namespace OpenMS
   class ExperimentalSettings;
   class Gradient;
   class HPLC;
-  class PeptideIdentification;
+  class SpectrumIdentification;
   class Instrument;
   class IonDetector;
   class IonSource;
@@ -72,7 +72,7 @@ namespace OpenMS
   class MetaInfoInterface;
   class MetaInfoRegistry;
   class Modification;
-  class PeptideHit;
+  class SpectrumMatch;
   class Precursor;
   class DataProcessing;
   class ProteinHit;
@@ -230,14 +230,14 @@ protected:
     void visualize_(DataProcessingPtr & meta, QTreeWidgetItem * parent = 0);
     void visualize_(ProteinIdentification & meta, QTreeWidgetItem * parent = 0);
     void visualize_(ProteinHit & meta, QTreeWidgetItem * parent = 0);
-    void visualize_(PeptideHit & meta, QTreeWidgetItem * parent = 0);
+    void visualize_(SpectrumMatch & meta, QTreeWidgetItem * parent = 0);
     void visualize_(Acquisition & meta, QTreeWidgetItem * parent = 0);
     void visualize_(AcquisitionInfo & meta, QTreeWidgetItem * parent = 0);
     void visualize_(MetaInfoDescription & meta, QTreeWidgetItem * parent = 0);
     void visualize_(Precursor & meta, QTreeWidgetItem * parent = 0);
     void visualize_(Product & meta, QTreeWidgetItem * parent = 0);
     void visualize_(InstrumentSettings & meta, QTreeWidgetItem * parent = 0);
-    void visualize_(PeptideIdentification & meta, QTreeWidgetItem * parent = 0);
+    void visualize_(SpectrumIdentification & meta, QTreeWidgetItem * parent = 0);
     void visualize_(DocumentIdentifier & meta, QTreeWidgetItem * parent = 0);
     //@}
 

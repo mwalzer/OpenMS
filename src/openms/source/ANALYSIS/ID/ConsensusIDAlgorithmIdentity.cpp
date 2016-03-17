@@ -46,13 +46,13 @@ namespace OpenMS
 
 
   void ConsensusIDAlgorithmIdentity::preprocess_(
-    vector<PeptideIdentification>& ids)
+    vector<SpectrumIdentification>& ids)
   {
     // check score types and orientations:
     bool higher_better = ids[0].isHigherScoreBetter();
     set<String> score_types;
 
-    for (vector<PeptideIdentification>::iterator pep_it = ids.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = ids.begin();
          pep_it != ids.end(); ++pep_it)
     {
       if (pep_it->isHigherScoreBetter() != higher_better)
@@ -79,16 +79,16 @@ namespace OpenMS
   }
 
 
-  void ConsensusIDAlgorithmIdentity::apply_(vector<PeptideIdentification>& ids,
+  void ConsensusIDAlgorithmIdentity::apply_(vector<SpectrumIdentification>& ids,
                                             SequenceGrouping& results)
   {
     preprocess_(ids);
 
     // group peptide hits by sequence:
-    for (vector<PeptideIdentification>::iterator pep_it = ids.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = ids.begin();
          pep_it != ids.end(); ++pep_it)
     {
-      for (vector<PeptideHit>::iterator hit_it = pep_it->getHits().begin();
+      for (vector<SpectrumMatch>::iterator hit_it = pep_it->getHits().begin();
            hit_it != pep_it->getHits().end(); ++hit_it)
       {
         const AASequence& seq = hit_it->getSequence();

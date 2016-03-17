@@ -75,14 +75,14 @@ public:
             @param fwd_ids forward peptide identifications
             @param rev_ids reverse peptide identifications
     */
-    void apply(std::vector<PeptideIdentification> & fwd_ids, std::vector<PeptideIdentification> & rev_ids);
+    void apply(std::vector<SpectrumIdentification> & fwd_ids, std::vector<SpectrumIdentification> & rev_ids);
 
     /**
         @brief Calculates the FDR of one run from a concatenated sequence db search
 
 @param id peptide identifications, containing target and decoy hits
     */
-    void apply(std::vector<PeptideIdentification> & id);
+    void apply(std::vector<SpectrumIdentification> & id);
 
     /**
         @brief Calculates the FDR of two runs, a forward run and decoy run on protein level

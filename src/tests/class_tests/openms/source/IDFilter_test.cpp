@@ -75,7 +75,7 @@ using namespace std;
 // load input data
 // @TODO: use an example with more than one peptide ID
 vector<ProteinIdentification> global_proteins;
-vector<PeptideIdentification> global_peptides;
+vector<SpectrumIdentification> global_peptides;
 IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("IDFilter_test.idXML"),
                  global_proteins, global_peptides);
 global_peptides[0].sort(); // makes it easier to compare results
@@ -124,7 +124,7 @@ END_SECTION
 
 START_SECTION((template <class IdentificationType> static Size countHits(const vector<IdentificationType>& ids)))
 {
-  vector<PeptideIdentification> peptides(4);
+  vector<SpectrumIdentification> peptides(4);
   peptides[0].getHits().resize(1);
   peptides[1].getHits().resize(3);
   // no hits in peptides[2]
@@ -136,8 +136,8 @@ END_SECTION
 
 START_SECTION((template <class IdentificationType> static bool getBestHit(const vector<IdentificationType>& identifications, bool assume_sorted, typename IdentificationType::HitType& best_hit)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
-  PeptideHit best_hit;
+  vector<SpectrumIdentification> peptides = global_peptides;
+  SpectrumMatch best_hit;
   IDFilter::getBestHit(peptides, true, best_hit);
   TEST_REAL_SIMILAR(best_hit.getScore(), 40);
   TEST_EQUAL(best_hit.getSequence().toString(), "FINFGVNVEVLSRFQTK");
@@ -155,7 +155,7 @@ START_SECTION((template <class IdentificationType> static bool getBestHit(const 
 }
 END_SECTION
 
-START_SECTION((static void extractPeptideSequences(const vector<PeptideIdentification>& peptides, set<String>& sequences, bool ignore_mods = false)))
+START_SECTION((static void extractPeptideSequences(const vector<SpectrumIdentification>& peptides, set<String>& sequences, bool ignore_mods = false)))
 {
   set<String> seqs;
   IDFilter::extractPeptideSequences(global_peptides, seqs);
@@ -201,10 +201,10 @@ START_SECTION((template <class IdentificationType> static void updateHitRanks(ve
 }
 END_SECTION
 
-START_SECTION((static void removeUnreferencedProteins(vector<ProteinIdentification>& proteins, vector<PeptideIdentification>& peptides)))
+START_SECTION((static void removeUnreferencedProteins(vector<ProteinIdentification>& proteins, vector<SpectrumIdentification>& peptides)))
 {
   vector<ProteinIdentification> proteins;
-  vector<PeptideIdentification> peptides;
+  vector<SpectrumIdentification> peptides;
   IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("IDFilter_test4.idXML"),
                    proteins, peptides);
   IDFilter::removeUnreferencedProteins(proteins, peptides);
@@ -217,11 +217,11 @@ START_SECTION((static void removeUnreferencedProteins(vector<ProteinIdentificati
 }
 END_SECTION
 
-START_SECTION((static void updateProteinReferences(vector<PeptideIdentification>& peptides, const vector<ProteinIdentification>& proteins, bool remove_peptides_without_reference = false)))
+START_SECTION((static void updateProteinReferences(vector<SpectrumIdentification>& peptides, const vector<ProteinIdentification>& proteins, bool remove_peptides_without_reference = false)))
 {
   vector<ProteinIdentification> proteins = global_proteins;
-  vector<PeptideIdentification> peptides = global_peptides;
-  vector<PeptideHit>& peptide_hits = peptides[0].getHits();
+  vector<SpectrumIdentification> peptides = global_peptides;
+  vector<SpectrumMatch>& peptide_hits = peptides[0].getHits();
   // create a peptide hit that matches to two proteins:
   peptide_hits[3].addPeptideEvidence(peptide_hits[4].getPeptideEvidences()[0]);
   TEST_EQUAL(peptide_hits[3].getPeptideEvidences().size(), 2);
@@ -301,7 +301,7 @@ START_SECTION((template <class IdentificationType> static void removeEmptyIdenti
   TEST_EQUAL(proteins.size(), 1);
   TEST_EQUAL(proteins[0].getHits().size(), 1);
 
-  vector<PeptideIdentification> peptides(2);
+  vector<SpectrumIdentification> peptides(2);
   peptides[0].getHits().resize(1);
   IDFilter::removeEmptyIdentifications(peptides);
   TEST_EQUAL(peptides.size(), 1);
@@ -311,8 +311,8 @@ END_SECTION
 
 START_SECTION((template <class IdentificationType> static void filterHitsByScore(vector<IdentificationType>& ids, double threshold_score)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
-  vector<PeptideHit>& peptide_hits = peptides[0].getHits();
+  vector<SpectrumIdentification> peptides = global_peptides;
+  vector<SpectrumMatch>& peptide_hits = peptides[0].getHits();
   TEST_EQUAL(peptide_hits.size(), 11);
 
   IDFilter::filterHitsByScore(peptides, 33);
@@ -341,8 +341,8 @@ END_SECTION
 
 START_SECTION((template <class IdentificationType> static void filterHitsBySignificance(vector<IdentificationType>& ids, double threshold_fraction = 1.0)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
-  vector<PeptideHit>& peptide_hits = peptides[0].getHits();
+  vector<SpectrumIdentification> peptides = global_peptides;
+  vector<SpectrumMatch>& peptide_hits = peptides[0].getHits();
   TEST_EQUAL(peptide_hits.size(), 11);
 
   IDFilter::filterHitsBySignificance(peptides, 1.0);
@@ -371,8 +371,8 @@ END_SECTION
 
 START_SECTION((template <class IdentificationType> static void keepNBestHits(vector<IdentificationType>& ids, Size n)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
-  vector<PeptideHit>& peptide_hits = peptides[0].getHits();
+  vector<SpectrumIdentification> peptides = global_peptides;
+  vector<SpectrumMatch>& peptide_hits = peptides[0].getHits();
 
   IDFilter::keepNBestHits(peptides, 3);
   TEST_EQUAL(peptides[0].getScoreType(), "Mascot");
@@ -393,7 +393,7 @@ END_SECTION
 START_SECTION((template <class IdentificationType> static void filterHitsByRank(vector<IdentificationType>& ids, Size min_rank, Size max_rank)))
 {
   vector<ProteinIdentification> proteins = global_proteins;
-  vector<PeptideIdentification> peptides = global_peptides;
+  vector<SpectrumIdentification> peptides = global_peptides;
 
   IDFilter::filterHitsByRank(peptides, 1, 5);
   TEST_EQUAL(peptides[0].getHits().size(), 6); // two rank 1 hits (same score)
@@ -420,7 +420,7 @@ START_SECTION((template <class IdentificationType> static void removeDecoyHits(v
   TEST_EQUAL(proteins[0].getHits()[1].metaValueExists("isDecoy"), false);
   TEST_EQUAL(proteins[0].getHits()[2].getMetaValue("isDecoy"), "false");
 
-  vector<PeptideIdentification> peptides(1);
+  vector<SpectrumIdentification> peptides(1);
   peptides[0].getHits().resize(6);
   peptides[0].getHits()[0].setMetaValue("target_decoy", "target");
   peptides[0].getHits()[1].setMetaValue("target_decoy", "decoy");
@@ -454,7 +454,7 @@ START_SECTION((template <class IdentificationType> static void removeHitsMatchin
   TEST_EQUAL(proteins[0].getHits()[0].getAccession(), "AAD30739");
   TEST_EQUAL(proteins[0].getHits()[1].getAccession(), "S53854");
 
-  vector<PeptideIdentification> peptides = global_peptides;
+  vector<SpectrumIdentification> peptides = global_peptides;
   IDFilter::removeHitsMatchingProteins(peptides, accessions);
 
   TEST_EQUAL(peptides[0].getScoreType(), "Mascot");
@@ -483,7 +483,7 @@ START_SECTION((template <class IdentificationType> static void keepHitsMatchingP
   TEST_EQUAL(proteins[0].getHits()[0].getAccession(), "Q824A5");
   TEST_EQUAL(proteins[0].getHits()[1].getAccession(), "Q872T5");
 
-  vector<PeptideIdentification> peptides = global_peptides;
+  vector<SpectrumIdentification> peptides = global_peptides;
   IDFilter::keepHitsMatchingProteins(peptides, accessions);
 
   TEST_EQUAL(peptides[0].getScoreType(), "Mascot");
@@ -495,10 +495,10 @@ START_SECTION((template <class IdentificationType> static void keepHitsMatchingP
 }
 END_SECTION
 
-START_SECTION((static void keepBestPeptideHits(vector<PeptideIdentification>& peptides, bool strict = false)))
+START_SECTION((static void keepBestPeptideHits(vector<SpectrumIdentification>& peptides, bool strict = false)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
-  vector<PeptideHit>& peptide_hits = peptides[0].getHits();
+  vector<SpectrumIdentification> peptides = global_peptides;
+  vector<SpectrumMatch>& peptide_hits = peptides[0].getHits();
 
   // not strict:
   IDFilter::keepBestPeptideHits(peptides);
@@ -518,19 +518,19 @@ START_SECTION((static void keepBestPeptideHits(vector<PeptideIdentification>& pe
 }
 END_SECTION
 
-START_SECTION((static void filterPeptidesByLength(vector<PeptideIdentification>& peptides, Size min_length, Size max_length = UINT_MAX)))
+START_SECTION((static void filterPeptidesByLength(vector<SpectrumIdentification>& peptides, Size min_length, Size max_length = UINT_MAX)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
+  vector<SpectrumIdentification> peptides = global_peptides;
   AASequence eighter = AASequence::fromString("OKTAMERR");
   AASequence niner = AASequence::fromString("NONAMERRR");
   AASequence tener = AASequence::fromString("DECAMERRRR");
-  peptides[0].insertHit(PeptideHit(99.99, 1, 2, eighter));
-  peptides[0].insertHit(PeptideHit(99.99, 1, 2, niner));
-  peptides[0].insertHit(PeptideHit(99.99, 1, 2, tener));
+  peptides[0].insertHit(SpectrumMatch(99.99, 1, 2, eighter));
+  peptides[0].insertHit(SpectrumMatch(99.99, 1, 2, niner));
+  peptides[0].insertHit(SpectrumMatch(99.99, 1, 2, tener));
   TEST_EQUAL(peptides[0].getHits().size(), 14);
   
-  vector<PeptideIdentification> peptides2 = peptides;
-  vector<PeptideHit>& peptide_hits = peptides2[0].getHits();
+  vector<SpectrumIdentification> peptides2 = peptides;
+  vector<SpectrumMatch>& peptide_hits = peptides2[0].getHits();
   IDFilter::filterPeptidesByLength(peptides2, 10);
   TEST_EQUAL(peptide_hits.size(), 12)
   for (Size i = 0; i < peptide_hits.size(); ++i)
@@ -557,10 +557,10 @@ START_SECTION((static void filterPeptidesByLength(vector<PeptideIdentification>&
 }
 END_SECTION
 
-START_SECTION((static void filterPeptidesByCharge(vector<PeptideIdentification>& peptides, Size min_charge, Size max_charge)))
+START_SECTION((static void filterPeptidesByCharge(vector<SpectrumIdentification>& peptides, Size min_charge, Size max_charge)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
-  vector<PeptideHit>& hits = peptides[0].getHits();
+  vector<SpectrumIdentification> peptides = global_peptides;
+  vector<SpectrumMatch>& hits = peptides[0].getHits();
   hits[3].setCharge(3);
   hits[4].setCharge(4);
   hits[6].setCharge(3);
@@ -575,9 +575,9 @@ START_SECTION((static void filterPeptidesByCharge(vector<PeptideIdentification>&
 }
 END_SECTION
 
-START_SECTION((static void filterPeptidesByRT(vector<PeptideIdentification>& peptides, double min_rt, double max_rt)))
+START_SECTION((static void filterPeptidesByRT(vector<SpectrumIdentification>& peptides, double min_rt, double max_rt)))
 {
-  vector<PeptideIdentification> peptides(5);
+  vector<SpectrumIdentification> peptides(5);
   peptides[1].setRT(1);
   peptides[2].setRT(2);
   peptides[3].setRT(2.5);
@@ -590,9 +590,9 @@ START_SECTION((static void filterPeptidesByRT(vector<PeptideIdentification>& pep
 }
 END_SECTION
 
-START_SECTION((static void filterPeptidesByMZ(vector<PeptideIdentification>& peptides, double min_mz, double max_mz)))
+START_SECTION((static void filterPeptidesByMZ(vector<SpectrumIdentification>& peptides, double min_mz, double max_mz)))
 {
-  vector<PeptideIdentification> peptides(5);
+  vector<SpectrumIdentification> peptides(5);
   peptides[1].setMZ(111.1);
   peptides[2].setMZ(222.2);
   peptides[3].setMZ(225.5);
@@ -605,13 +605,13 @@ START_SECTION((static void filterPeptidesByMZ(vector<PeptideIdentification>& pep
 }
 END_SECTION
 
-START_SECTION((static void filterPeptidesByMZError(vector<PeptideIdentification>& peptides, double mass_error, bool unit_ppm)))
+START_SECTION((static void filterPeptidesByMZError(vector<SpectrumIdentification>& peptides, double mass_error, bool unit_ppm)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
+  vector<SpectrumIdentification> peptides = global_peptides;
   peptides[0].setMZ(1000.0);
   IDFilter::filterPeptidesByMZError(peptides, 1, false); // in Da
   TEST_EQUAL(peptides[0].getHits().size(), 7);
-  for (vector<PeptideHit>::iterator it = peptides[0].getHits().begin(); 
+  for (vector<SpectrumMatch>::iterator it = peptides[0].getHits().begin(); 
        it != peptides[0].getHits().end(); ++it)
   {
     double mz = it->getSequence().getMonoWeight(Residue::Full, 2) / 2.0;
@@ -623,17 +623,17 @@ START_SECTION((static void filterPeptidesByMZError(vector<PeptideIdentification>
 }
 END_SECTION
 
-START_SECTION((static void filterPeptidesByRTPredictPValue(vector<PeptideIdentification>& peptides, const String& metavalue_key, double threshold = 0.05)))
+START_SECTION((static void filterPeptidesByRTPredictPValue(vector<SpectrumIdentification>& peptides, const String& metavalue_key, double threshold = 0.05)))
 {
   vector<ProteinIdentification> proteins;
-  vector<PeptideIdentification> peptides;
+  vector<SpectrumIdentification> peptides;
 
   { // RT prediction:
     IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("IDFilter_test2.idXML"), 
                      proteins, peptides);
     IDFilter::filterPeptidesByRTPredictPValue(peptides, "predicted_RT_p_value",
                                               0.08);
-    vector<PeptideHit>& hits = peptides[0].getHits();
+    vector<SpectrumMatch>& hits = peptides[0].getHits();
 
     TEST_EQUAL(hits.size(), 4);
     TEST_EQUAL(hits[0].getSequence().toString(), "LHASGITVTEIPVTATNFK");
@@ -647,7 +647,7 @@ START_SECTION((static void filterPeptidesByRTPredictPValue(vector<PeptideIdentif
     IDFilter::filterPeptidesByRTPredictPValue(peptides,
                                               "predicted_RT_p_value_first_dim",
                                               0.08);
-    vector<PeptideHit>& hits = peptides[0].getHits();
+    vector<SpectrumMatch>& hits = peptides[0].getHits();
 
     TEST_EQUAL(hits.size(), 4);
     TEST_EQUAL(hits[0].getSequence().toString(), "LHASGITVTEIPVTATNFK");
@@ -658,9 +658,9 @@ START_SECTION((static void filterPeptidesByRTPredictPValue(vector<PeptideIdentif
 }
 END_SECTION
 
-START_SECTION((static void removePeptidesWithMatchingModifications(vector<PeptideIdentification>& peptides, const set<String>& modifications)))
+START_SECTION((static void removePeptidesWithMatchingModifications(vector<SpectrumIdentification>& peptides, const set<String>& modifications)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
+  vector<SpectrumIdentification> peptides = global_peptides;
   set<String> mods;
   mods.insert("Carbamidomethyl (C)"); // not present in the data
   IDFilter::removePeptidesWithMatchingModifications(peptides, mods);
@@ -669,7 +669,7 @@ START_SECTION((static void removePeptidesWithMatchingModifications(vector<Peptid
   mods.clear(); // filter any mod.
   IDFilter::removePeptidesWithMatchingModifications(peptides, mods);
   TEST_EQUAL(peptides[0].getHits().size(), 10);
-  for (vector<PeptideHit>::iterator it = peptides[0].getHits().begin();
+  for (vector<SpectrumMatch>::iterator it = peptides[0].getHits().begin();
        it != peptides[0].getHits().end(); ++it)
   {
     TEST_EQUAL(it->getSequence().isModified(), false);
@@ -679,7 +679,7 @@ START_SECTION((static void removePeptidesWithMatchingModifications(vector<Peptid
   mods.insert("Oxidation (M)"); // present in the data
   IDFilter::removePeptidesWithMatchingModifications(peptides, mods);
   TEST_EQUAL(peptides[0].getHits().size(), 10);
-  for (vector<PeptideHit>::iterator it = peptides[0].getHits().begin();
+  for (vector<SpectrumMatch>::iterator it = peptides[0].getHits().begin();
        it != peptides[0].getHits().end(); ++it)
   {
     TEST_EQUAL(it->getSequence().isModified(), false);
@@ -687,9 +687,9 @@ START_SECTION((static void removePeptidesWithMatchingModifications(vector<Peptid
 }
 END_SECTION
 
-START_SECTION((static void keepPeptidesWithMatchingModifications(vector<PeptideIdentification>& peptides, const set<String>& modifications)))
+START_SECTION((static void keepPeptidesWithMatchingModifications(vector<SpectrumIdentification>& peptides, const set<String>& modifications)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
+  vector<SpectrumIdentification> peptides = global_peptides;
   set<String> mods;
   mods.insert("Oxidation (M)");
   IDFilter::keepPeptidesWithMatchingModifications(peptides, mods);
@@ -718,12 +718,12 @@ START_SECTION((static void keepPeptidesWithMatchingModifications(vector<PeptideI
 }
 END_SECTION
 
-START_SECTION((static void removePeptidesWithMatchingSequences(vector<PeptideIdentification>& peptides, const vector<PeptideIdentification>& bad_peptides, bool ignore_mods = false)))
+START_SECTION((static void removePeptidesWithMatchingSequences(vector<SpectrumIdentification>& peptides, const vector<SpectrumIdentification>& bad_peptides, bool ignore_mods = false)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
-  vector<PeptideHit>& peptide_hits = peptides[0].getHits();
-  vector<PeptideIdentification> bad_peptides(1);
-  vector<PeptideHit>& bad_hits = bad_peptides[0].getHits();
+  vector<SpectrumIdentification> peptides = global_peptides;
+  vector<SpectrumMatch>& peptide_hits = peptides[0].getHits();
+  vector<SpectrumIdentification> bad_peptides(1);
+  vector<SpectrumMatch>& bad_hits = bad_peptides[0].getHits();
   bad_hits.resize(8);
   bad_hits[0].setSequence(AASequence::fromString("LHASGITVTEIPVTATNFK"));
   bad_hits[1].setSequence(AASequence::fromString("MRSLGYVAVISAVATDTDK"));
@@ -761,12 +761,12 @@ START_SECTION((static void removePeptidesWithMatchingSequences(vector<PeptideIde
 }
 END_SECTION
 
-START_SECTION((static void keepPeptidesWithMatchingSequences(vector<PeptideIdentification>& peptides, const vector<PeptideIdentification>& good_peptides, bool ignore_mods = false)))
+START_SECTION((static void keepPeptidesWithMatchingSequences(vector<SpectrumIdentification>& peptides, const vector<SpectrumIdentification>& good_peptides, bool ignore_mods = false)))
 {
-  vector<PeptideIdentification> peptides = global_peptides;
-  vector<PeptideHit>& peptide_hits = peptides[0].getHits();
-  vector<PeptideIdentification> good_peptides(1);
-  vector<PeptideHit>& good_hits = good_peptides[0].getHits();
+  vector<SpectrumIdentification> peptides = global_peptides;
+  vector<SpectrumMatch>& peptide_hits = peptides[0].getHits();
+  vector<SpectrumIdentification> good_peptides(1);
+  vector<SpectrumMatch>& good_hits = good_peptides[0].getHits();
   good_hits.resize(3);
   good_hits[0].setSequence(AASequence::fromString("TGCDTWGQGTLVTVSSASTK"));
   good_hits[1].setSequence(AASequence::fromString("TLCHHDATFDNLVWTPK"));
@@ -807,8 +807,8 @@ END_SECTION
 
 START_SECTION((static void keepUniquePeptidesPerProtein(vector<PeptideIdentification>& peptides)))
 {
-  vector<PeptideIdentification> peptides(1);
-  vector<PeptideHit>& hits = peptides[0].getHits();
+  vector<SpectrumIdentification> peptides(1);
+  vector<SpectrumMatch>& hits = peptides[0].getHits();
   hits.resize(4);
   hits[0].setMetaValue("protein_references", "non-unique");
   hits[1].setMetaValue("protein_references", "unmatched");
@@ -822,10 +822,10 @@ END_SECTION
 
 START_SECTION((static void removeDuplicatePeptideHits(vector<PeptideIdentification>& peptides)))
 {
-  vector<PeptideIdentification> peptides(1, global_peptides[0]);
-  vector<PeptideHit>& hits = peptides[0].getHits();
+  vector<SpectrumIdentification> peptides(1, global_peptides[0]);
+  vector<SpectrumMatch>& hits = peptides[0].getHits();
   hits.clear();
-  PeptideHit hit;
+  SpectrumMatch hit;
   hit.setSequence(AASequence::fromString("DFPIANGER"));
   hit.setCharge(1);
   hit.setScore(0.3);
@@ -854,7 +854,7 @@ END_SECTION
 START_SECTION((template <class PeakT> static void filterHitsByScore(MSExperiment<PeakT>& experiment, double peptide_threshold_score, double protein_threshold_score)))
 {
   MSExperiment<> experiment;
-  vector<PeptideIdentification> ids(1, global_peptides[0]);
+  vector<SpectrumIdentification> ids(1, global_peptides[0]);
 
   ids[0].assignRanks();
 
@@ -866,10 +866,10 @@ START_SECTION((template <class PeakT> static void filterHitsByScore(MSExperiment
   experiment[3].setPeptideIdentifications(ids);
 
   IDFilter::filterHitsByScore(experiment, 31.8621, 0);
-  PeptideIdentification& identification = experiment[3].getPeptideIdentifications()[0];
+  SpectrumIdentification& identification = experiment[3].getPeptideIdentifications()[0];
   TEST_EQUAL(identification.getScoreType(), "Mascot");
 
-  vector<PeptideHit>& peptide_hits = identification.getHits();
+  vector<SpectrumMatch>& peptide_hits = identification.getHits();
   TEST_EQUAL(peptide_hits.size(), 5);
   TEST_EQUAL(peptide_hits[0].getSequence().toString(),
                     "FINFGVNVEVLSRFQTK");
@@ -897,7 +897,7 @@ END_SECTION
 START_SECTION((template <class PeakT> static void filterHitsBySignificance(MSExperiment<PeakT>& experiment, double peptide_threshold_fraction, double protein_threshold_fraction)))
 {
   MSExperiment<> experiment;
-  vector<PeptideIdentification> ids(1, global_peptides[0]);
+  vector<SpectrumIdentification> ids(1, global_peptides[0]);
 
   ids[0].assignRanks();
 
@@ -909,10 +909,10 @@ START_SECTION((template <class PeakT> static void filterHitsBySignificance(MSExp
   experiment[3].setPeptideIdentifications(ids);
 
   IDFilter::filterHitsBySignificance(experiment, 1.0, 1.0);
-  PeptideIdentification& identification = experiment[3].getPeptideIdentifications()[0];
+  SpectrumIdentification& identification = experiment[3].getPeptideIdentifications()[0];
   TEST_EQUAL(identification.getScoreType(), "Mascot");
 
-  vector<PeptideHit>& peptide_hits = identification.getHits();
+  vector<SpectrumMatch>& peptide_hits = identification.getHits();
   TEST_EQUAL(peptide_hits.size(), 5);
   TEST_EQUAL(peptide_hits[0].getSequence().toString(),
                     "FINFGVNVEVLSRFQTK");
@@ -940,7 +940,7 @@ END_SECTION
 START_SECTION((template <class PeakT> static void keepNBestHits(MSExperiment<PeakT>& experiment, Size n)))
 {
   MSExperiment<> experiment;
-  vector<PeptideIdentification> ids(1, global_peptides[0]);
+  vector<SpectrumIdentification> ids(1, global_peptides[0]);
 
   ids[0].assignRanks();
 
@@ -952,10 +952,10 @@ START_SECTION((template <class PeakT> static void keepNBestHits(MSExperiment<Pea
   experiment[3].setPeptideIdentifications(ids);
 
   IDFilter::keepNBestHits(experiment, 3);
-  PeptideIdentification& identification = experiment[3].getPeptideIdentifications()[0];
+  SpectrumIdentification& identification = experiment[3].getPeptideIdentifications()[0];
   TEST_EQUAL(identification.getScoreType(), "Mascot");
 
-  vector<PeptideHit>& peptide_hits = identification.getHits();
+  vector<SpectrumMatch>& peptide_hits = identification.getHits();
   TEST_EQUAL(peptide_hits.size(), 3);
   TEST_EQUAL(peptide_hits[0].getSequence().toString(),
                     "FINFGVNVEVLSRFQTK");
@@ -976,7 +976,7 @@ START_SECTION((template<class PeakT> static void keepHitsMatchingProteins(MSExpe
 {
   MSExperiment<> experiment;
   vector<FASTAFile::FASTAEntry> proteins;
-  vector<PeptideIdentification> peptides = global_peptides;
+  vector<SpectrumIdentification> peptides = global_peptides;
 
   proteins.push_back(FASTAFile::FASTAEntry("Q824A5", "first desription",
                                            "LHASGITVTEIPVTATNFK"));
@@ -994,7 +994,7 @@ START_SECTION((template<class PeakT> static void keepHitsMatchingProteins(MSExpe
   TEST_EQUAL(experiment[3].getPeptideIdentifications()[0].getScoreType(),
              "Mascot");
 
-  vector<PeptideHit>& peptide_hits =
+  vector<SpectrumMatch>& peptide_hits =
     experiment[3].getPeptideIdentifications()[0].getHits();
   TEST_EQUAL(peptide_hits.size(), 2);
   TEST_EQUAL(peptide_hits[0].getSequence().toString(), 

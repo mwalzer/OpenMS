@@ -293,7 +293,7 @@ namespace OpenMS
     for (Size i = 0; i < feature_maps_[0].size(); ++i)
     {
       Feature& f = feature_maps_[0][i];
-      PeptideIdentification& pi = f.getPeptideIdentifications()[0];
+      SpectrumIdentification& pi = f.getPeptideIdentifications()[0];
       // search for closest scan index:
       SimTypes::MSSimExperiment::ConstIterator it_rt = experiment_.RTBegin(f.getRT());
       SignedSize scan_index = distance<SimTypes::MSSimExperiment::ConstIterator>(experiment_.begin(), it_rt);
@@ -419,7 +419,7 @@ namespace OpenMS
     return peak_map_;
   }
 
-  void MSSim::getMS2Identifications(vector<ProteinIdentification>& proteins, vector<PeptideIdentification>& peptides) const
+  void MSSim::getMS2Identifications(vector<ProteinIdentification>& proteins, vector<SpectrumIdentification>& peptides) const
   {
     // test if we have a feature map at all .. if not, no simulation was performed
     if (feature_maps_.empty()) return;
@@ -440,7 +440,7 @@ namespace OpenMS
       if (ms_it->getMSLevel() != 2) continue;
 
       // create matching PeptideIdentification
-      PeptideIdentification pep_ident;
+      SpectrumIdentification pep_ident;
       pep_ident.setHigherScoreBetter(true);
       pep_ident.setRT(ms_it->getRT());
       // we follow the solution used throughout OpenMS .. take the first precursor

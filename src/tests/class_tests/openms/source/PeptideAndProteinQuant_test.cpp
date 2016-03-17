@@ -90,10 +90,10 @@ START_SECTION((void readQuantData(ConsensusMap& consensus)))
 }
 END_SECTION
 
-START_SECTION((void readQuantData(vector<ProteinIdentification>& proteins, vector<PeptideIdentification>& peptides)))
+START_SECTION((void readQuantData(vector<ProteinIdentification>& proteins, vector<SpectrumIdentification>& peptides)))
 {
   vector<ProteinIdentification> proteins;
-  vector<PeptideIdentification> peptides;
+  vector<SpectrumIdentification> peptides;
   IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("ProteinQuantifier_input.idXML"), proteins, peptides);
   TEST_EQUAL(quantifier_identifications.getPeptideResults().empty(), true);
   quantifier_identifications.readQuantData(proteins, peptides);

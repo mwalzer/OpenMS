@@ -359,19 +359,19 @@ namespace OpenMS
   }
 
   /// non-mutable access to the unassigned peptide identifications
-  const std::vector<PeptideIdentification>& ConsensusMap::getUnassignedPeptideIdentifications() const
+  const std::vector<SpectrumIdentification>& ConsensusMap::getUnassignedPeptideIdentifications() const
   {
     return unassigned_peptide_identifications_;
   }
 
   /// mutable access to the unassigned peptide identifications
-  std::vector<PeptideIdentification>& ConsensusMap::getUnassignedPeptideIdentifications()
+  std::vector<SpectrumIdentification>& ConsensusMap::getUnassignedPeptideIdentifications()
   {
     return unassigned_peptide_identifications_;
   }
 
   /// sets the unassigned peptide identifications
-  void ConsensusMap::setUnassignedPeptideIdentifications(const std::vector<PeptideIdentification>& unassigned_peptide_identifications)
+  void ConsensusMap::setUnassignedPeptideIdentifications(const std::vector<SpectrumIdentification>& unassigned_peptide_identifications)
   {
     unassigned_peptide_identifications_ = unassigned_peptide_identifications;
   }

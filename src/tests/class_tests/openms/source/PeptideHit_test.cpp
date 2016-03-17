@@ -58,10 +58,10 @@ AASequence sequence = AASequence::fromString("ARRAY");
 std::string sequence2 = "  ARRAY  ";
 Int charge = 2;
 
-PeptideHit* ptr = 0;
-PeptideHit* nullPointer = 0;
+SpectrumMatch* ptr = 0;
+SpectrumMatch* nullPointer = 0;
 START_SECTION((PeptideHit()))
-	ptr = new PeptideHit();
+	ptr = new SpectrumMatch();
 	TEST_NOT_EQUAL(ptr, nullPointer)
 END_SECTION
 
@@ -70,7 +70,7 @@ START_SECTION((virtual ~PeptideHit()))
 END_SECTION
 
 START_SECTION((PeptideHit(double score, UInt rank, Int charge, const AASequence &sequence)))
-	PeptideHit hit(score, rank, charge, sequence);
+	SpectrumMatch hit(score, rank, charge, sequence);
 	TEST_EQUAL(hit.getScore(), score)
 	TEST_EQUAL(hit.getRank(), rank)
 	TEST_EQUAL(hit.getCharge(), charge)
@@ -78,8 +78,8 @@ START_SECTION((PeptideHit(double score, UInt rank, Int charge, const AASequence 
 END_SECTION
 
 START_SECTION((PeptideHit& operator=(const PeptideHit& source)))
-	PeptideHit hit;
-	PeptideHit hit2(score, rank, charge, sequence);
+	SpectrumMatch hit;
+	SpectrumMatch hit2(score, rank, charge, sequence);
 	hit2.setMetaValue("label",17);
 	
 	hit = hit2;
@@ -92,13 +92,13 @@ START_SECTION((PeptideHit& operator=(const PeptideHit& source)))
 END_SECTION
 
 START_SECTION((PeptideHit(const PeptideHit& source)))
-	PeptideHit source;
+	SpectrumMatch source;
 	source.setScore(score);
 	source.setRank(rank);
 	source.setSequence(sequence);
 	source.setMetaValue("label",17);
 	
-  PeptideHit hit(source);
+  SpectrumMatch hit(source);
 	
 	TEST_EQUAL(hit.getScore(), source.getScore())
 	TEST_EQUAL(hit.getRank(), source.getRank())
@@ -107,7 +107,7 @@ START_SECTION((PeptideHit(const PeptideHit& source)))
 END_SECTION
 
 START_SECTION((bool operator == (const PeptideHit& rhs) const))
-  PeptideHit hit, hit2;
+  SpectrumMatch hit, hit2;
   TEST_EQUAL(hit==hit2,true);
 
   hit.setScore(score);
@@ -128,7 +128,7 @@ START_SECTION((bool operator == (const PeptideHit& rhs) const))
 END_SECTION
 
 START_SECTION((bool operator != (const PeptideHit& rhs) const))
-  PeptideHit hit, hit2;
+  SpectrumMatch hit, hit2;
   TEST_EQUAL(hit!=hit2,false);
 
   hit.setScore(score);
@@ -149,34 +149,34 @@ START_SECTION((bool operator != (const PeptideHit& rhs) const))
 END_SECTION
 
 START_SECTION((double getScore() const ))
-	PeptideHit hit(score, rank, charge, sequence);
+	SpectrumMatch hit(score, rank, charge, sequence);
 	TEST_EQUAL(hit.getScore(), score)
 END_SECTION
 
 START_SECTION((UInt getRank() const))
-	PeptideHit hit(score, rank, charge, sequence);
+	SpectrumMatch hit(score, rank, charge, sequence);
 	TEST_EQUAL(hit.getRank(), rank)
 END_SECTION
 
 START_SECTION((const AASequence& getSequence() const))
-	PeptideHit hit(score, rank, charge, sequence);
+	SpectrumMatch hit(score, rank, charge, sequence);
 	TEST_EQUAL(hit.getSequence(), sequence)
 END_SECTION
 
 START_SECTION((void setRank(UInt newrank)))
-	PeptideHit hit;
+	SpectrumMatch hit;
 	hit.setRank(rank);
 	TEST_EQUAL(hit.getRank(), rank)
 END_SECTION
 
 START_SECTION((void setScore(double score)))
-	PeptideHit hit;
+	SpectrumMatch hit;
 	hit.setScore(score);
 	TEST_EQUAL(hit.getScore(), score)
 END_SECTION
 
 START_SECTION((void setSequence(const AASequence& sequence)))
-	PeptideHit hit;
+	SpectrumMatch hit;
 	hit.setSequence(sequence);
 	TEST_EQUAL(hit.getSequence(), sequence)
 	//hit.setSequence(sequence2);
@@ -186,7 +186,7 @@ END_SECTION
 
         ;
 START_SECTION((void setPeptideEvidences(const vector<PeptideEvidence> & peptide_evidences)))
-     PeptideHit hit;
+     SpectrumMatch hit;
      vector<PeptideEvidence> pes(2, PeptideEvidence());
      pes[0].setProteinAccession("ACC392");
      pes[1].setProteinAccession("ACD392");
@@ -198,7 +198,7 @@ END_SECTION
 
 
 START_SECTION((const std::set<String>& extractProteinAccessions() const))
-     PeptideHit hit;
+     SpectrumMatch hit;
      vector<PeptideEvidence> pes(2, PeptideEvidence());
      pes[0].setProteinAccession("ACC392");
      pes[1].setProteinAccession("ACD392");
@@ -209,14 +209,14 @@ START_SECTION((const std::set<String>& extractProteinAccessions() const))
 END_SECTION
 
 START_SECTION((Int getCharge() const))
-	PeptideHit hit;
+	SpectrumMatch hit;
 	
 	hit.setCharge(-43);
 	TEST_EQUAL(-43, hit.getCharge())
 END_SECTION
 
 START_SECTION((void setCharge(Int charge)))
-	PeptideHit hit;
+	SpectrumMatch hit;
 	
 	hit.setCharge(-43);
 	TEST_EQUAL(-43, hit.getCharge())
@@ -247,27 +247,27 @@ START_SECTION((char getAAAfter() const))
 	TEST_EQUAL(hit.getAAAfter(), 'R')
 END_SECTION
 */
-START_SECTION(([PeptideHit::ScoreLess] template < typename Arg > bool operator()(const Arg &a, const Arg &b)))
+START_SECTION(([SpectrumMatch::ScoreLess] template < typename Arg > bool operator()(const Arg &a, const Arg &b)))
 {
-  PeptideHit a,b;
+  SpectrumMatch a,b;
   a.setScore(10);
   b.setScore(20);
 
-  TEST_EQUAL(PeptideHit::ScoreLess().operator()(a,b), true)
-  TEST_EQUAL(PeptideHit::ScoreLess().operator()(b,a), false)
-  TEST_EQUAL(PeptideHit::ScoreLess().operator()(a,a), false)
+  TEST_EQUAL(SpectrumMatch::ScoreLess().operator()(a,b), true)
+  TEST_EQUAL(SpectrumMatch::ScoreLess().operator()(b,a), false)
+  TEST_EQUAL(SpectrumMatch::ScoreLess().operator()(a,a), false)
 }
 END_SECTION
 
-START_SECTION(([PeptideHit::ScoreMore] template < typename Arg > bool operator()(const Arg &a, const Arg &b)))
+START_SECTION(([SpectrumMatch::ScoreMore] template < typename Arg > bool operator()(const Arg &a, const Arg &b)))
 {
-  PeptideHit a,b;
+  SpectrumMatch a,b;
   a.setScore(20);
   b.setScore(10);
 
-  TEST_EQUAL(PeptideHit::ScoreMore().operator()(a,b), true)
-  TEST_EQUAL(PeptideHit::ScoreMore().operator()(b,a), false)
-  TEST_EQUAL(PeptideHit::ScoreMore().operator()(a,a), false)
+  TEST_EQUAL(SpectrumMatch::ScoreMore().operator()(a,b), true)
+  TEST_EQUAL(SpectrumMatch::ScoreMore().operator()(b,a), false)
+  TEST_EQUAL(SpectrumMatch::ScoreMore().operator()(a,a), false)
 }
 END_SECTION
 /////////////////////////////////////////////////////////////

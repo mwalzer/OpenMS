@@ -160,7 +160,7 @@ protected:
 
     if (!combined)
     {
-      vector<PeptideIdentification> fwd_pep, rev_pep, out_pep;
+      vector<SpectrumIdentification> fwd_pep, rev_pep, out_pep;
       vector<ProteinIdentification> fwd_prot, rev_prot;
       String document_id;
       IdXMLFile().load(fwd_in, fwd_prot, fwd_pep, document_id);
@@ -182,7 +182,7 @@ protected:
     else
     {
       vector<ProteinIdentification> prot_ids;
-      vector<PeptideIdentification> pep_ids;
+      vector<SpectrumIdentification> pep_ids;
       String document_id;
       IdXMLFile().load(in, prot_ids, pep_ids, document_id);
 

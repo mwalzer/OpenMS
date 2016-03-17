@@ -50,7 +50,7 @@ namespace OpenMS
   {
   }
 
-  void OMSSACSVFile::load(const String & filename, ProteinIdentification & /* protein_identification */, vector<PeptideIdentification> & id_data) const
+  void OMSSACSVFile::load(const String & filename, ProteinIdentification & /* protein_identification */, vector<SpectrumIdentification> & id_data) const
   {
     ifstream is(filename.c_str());
     if (!is)
@@ -97,7 +97,7 @@ namespace OpenMS
       {
         throw Exception::ParseError(__FILE__, __LINE__, __PRETTY_FUNCTION__, line, "number of columns should be 14 in line " + String(line_number));
       }
-      PeptideHit p;
+      SpectrumMatch p;
       p.setSequence(AASequence::fromString(split[2].trim()));
       p.setScore(split[13 + offset].trim().toDouble());
       p.setCharge(split[11 + offset].trim().toInt());
@@ -106,7 +106,7 @@ namespace OpenMS
       {
         // new id
         //id_data.push_back(IdentificationData());
-        id_data.push_back(PeptideIdentification());
+        id_data.push_back(SpectrumIdentification());
         id_data.back().setScoreType("OMSSA");
         actual_spectrum_number = (UInt)split[0].trim().toInt();
       }

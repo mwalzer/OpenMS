@@ -61,7 +61,7 @@ namespace OpenMS
     mod_def_set_ = rhs;
   }
 
-  void XTandemXMLFile::load(const String& filename, ProteinIdentification& protein_identification, vector<PeptideIdentification>& peptide_ids)
+  void XTandemXMLFile::load(const String& filename, ProteinIdentification& protein_identification, vector<SpectrumIdentification>& peptide_ids)
   {
     //File name for error message in XMLHandler
     file_ = filename;
@@ -76,30 +76,30 @@ namespace OpenMS
 
     // convert id -> peptide_hits into peptide hits list
     //vector<PeptideIdentification> peptide_identifications;
-    PeptideIdentification().metaRegistry().registerName("spectrum_id", "the id of the spectrum counting from 1");
-    for (map<UInt, vector<PeptideHit> >::const_iterator it = peptide_hits_.begin(); it != peptide_hits_.end(); ++it)
+    SpectrumIdentification().metaRegistry().registerName("spectrum_id", "the id of the spectrum counting from 1");
+    for (map<UInt, vector<SpectrumMatch> >::const_iterator it = peptide_hits_.begin(); it != peptide_hits_.end(); ++it)
     {
       // reduce the hits with the same sequence to one PeptideHit
-      map<String, vector<PeptideHit> > seq_to_hits;
-      for (vector<PeptideHit>::const_iterator it1 = it->second.begin(); it1 != it->second.end(); ++it1)
+      map<String, vector<SpectrumMatch> > seq_to_hits;
+      for (vector<SpectrumMatch>::const_iterator it1 = it->second.begin(); it1 != it->second.end(); ++it1)
       {
         seq_to_hits[it1->getSequence().toString()].push_back(*it1);
       }
 
-      PeptideIdentification id;
+      SpectrumIdentification id;
       // if (descriptions_.find(it->first) != descriptions_.end())
       // {
       // id.setMetaValue("Description", descriptions_[it->first]);
       // }
-      for (map<String, vector<PeptideHit> >::const_iterator it1 = seq_to_hits.begin(); it1 != seq_to_hits.end(); ++it1)
+      for (map<String, vector<SpectrumMatch> >::const_iterator it1 = seq_to_hits.begin(); it1 != seq_to_hits.end(); ++it1)
       {
-        const vector<PeptideHit>& peptide_hits = it->second;
+        const vector<SpectrumMatch>& peptide_hits = it->second;
         if (!peptide_hits.empty())
         {
           // store all peptide hits that identify the same sequence in a single peptide hit
-          PeptideHit hit = peptide_hits[0];
+          SpectrumMatch hit = peptide_hits[0];
           vector<PeptideEvidence> peptide_evidences;
-          for (vector<PeptideHit>::const_iterator it2 = peptide_hits.begin(); it2 != peptide_hits.end(); ++it2)
+          for (vector<SpectrumMatch>::const_iterator it2 = peptide_hits.begin(); it2 != peptide_hits.end(); ++it2)
           {
             const vector<PeptideEvidence> evidences = it2->getPeptideEvidences();
             for (vector<PeptideEvidence>::const_iterator e_it = evidences.begin(); e_it != evidences.end(); ++e_it)
@@ -156,7 +156,7 @@ namespace OpenMS
     if (tag_ == "domain")
     {
       PeptideEvidence pe;
-      PeptideHit hit;
+      SpectrumMatch hit;
       hit.metaRegistry().registerName("E-Value", "E-Value of hit");
       hit.metaRegistry().registerName("nextscore", "next_score of hit");
       // get nextscore

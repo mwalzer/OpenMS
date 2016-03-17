@@ -106,26 +106,26 @@ START_SECTION((void postDigestHook(SimTypes::FeatureMapSimVector &)))
   FeatureMap fm1, fm2, fm3;
 
   // create peptide
-  PeptideHit pep_hit(1.0, 1, 0, AASequence::fromString("AAHJK"));
+  SpectrumMatch pep_hit(1.0, 1, 0, AASequence::fromString("AAHJK"));
   PeptideEvidence pe1;
   pe1.setProteinAccession("p1");
   pep_hit.setPeptideEvidences(vector<PeptideEvidence>(1, pe1));
-  PeptideIdentification pep_id;
+  SpectrumIdentification pep_id;
   pep_id.insertHit(pep_hit);
   // --
-  PeptideHit pep_hit2(1.0, 1, 0, AASequence::fromString("EEEEPPPK"));
+  SpectrumMatch pep_hit2(1.0, 1, 0, AASequence::fromString("EEEEPPPK"));
   PeptideEvidence pe2;
   pe2.setProteinAccession("p2");
   pep_hit2.setPeptideEvidences(vector<PeptideEvidence>(1, pe2));
 
-  PeptideIdentification pep_id2;
+  SpectrumIdentification pep_id2;
   pep_id2.insertHit(pep_hit2);
   // --
-  PeptideHit pep_hit3(1.0, 1, 0, AASequence::fromString("EEEEPPPK")); // same peptide as #2, but from different protein
+  SpectrumMatch pep_hit3(1.0, 1, 0, AASequence::fromString("EEEEPPPK")); // same peptide as #2, but from different protein
   PeptideEvidence pe3;
   pe3.setProteinAccession("p3");
   pep_hit3.setPeptideEvidences(vector<PeptideEvidence>(1, pe3));
-  PeptideIdentification pep_id3;
+  SpectrumIdentification pep_id3;
   pep_id3.insertHit(pep_hit3);
 
   // generate Feature

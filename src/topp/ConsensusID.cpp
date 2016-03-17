@@ -228,9 +228,9 @@ protected:
     for (typename MapType::Iterator map_it = input_map.begin();
          map_it != input_map.end(); ++map_it)
     {
-      vector<PeptideIdentification>& ids = map_it->getPeptideIdentifications();
+      vector<SpectrumIdentification>& ids = map_it->getPeptideIdentifications();
       vector<Size> times_seen(number_of_runs);
-      for (vector<PeptideIdentification>::iterator pep_it = ids.begin(); 
+      for (vector<SpectrumIdentification>::iterator pep_it = ids.begin(); 
            pep_it != ids.end(); ++pep_it)
       {
         ++times_seen[id_mapping[pep_it->getIdentifier()]];
@@ -299,7 +299,7 @@ protected:
     if (in_type == FileTypes::IDXML)
     {
       vector<ProteinIdentification> prot_ids;
-      vector<PeptideIdentification> pep_ids;
+      vector<SpectrumIdentification> pep_ids;
       String document_id;
       IdXMLFile().load(in, prot_ids, pep_ids, document_id);
 
@@ -314,7 +314,7 @@ protected:
         id_mapping[prot_ids[i].getIdentifier()] = i;
       }
 
-      for (vector<PeptideIdentification>::iterator pep_it = pep_ids.begin();
+      for (vector<SpectrumIdentification>::iterator pep_it = pep_ids.begin();
            pep_it != pep_ids.end(); ++pep_it)
       {
         String run_id = pep_it->getIdentifier();
@@ -357,7 +357,7 @@ protected:
         consensus->apply(it->getPeptideIdentifications(), prot_ids.size());
         if (!it->getPeptideIdentifications().empty())
         {
-          PeptideIdentification& pep_id = it->getPeptideIdentifications()[0];
+          SpectrumIdentification& pep_id = it->getPeptideIdentifications()[0];
           // hits may be empty due to filtering (parameter "min_support");
           // in that case skip to avoid a warning from "IDXMLFile::store":
           if (!pep_id.getHits().empty())

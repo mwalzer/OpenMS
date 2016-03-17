@@ -129,8 +129,8 @@ START_SECTION(([EXTRA] Prediction Test - HPLC with relative RTs))
   for (StringList::const_iterator it=peps.begin(); it!=peps.end(); ++it)
   {
     Feature f;
-    PeptideIdentification pep_id;
-    pep_id.insertHit(PeptideHit(1.0, 1, 1, AASequence::fromString(*it)));
+    SpectrumIdentification pep_id;
+    pep_id.insertHit(SpectrumMatch(1.0, 1, 1, AASequence::fromString(*it)));
     f.getPeptideIdentifications().push_back(pep_id);
     f.setIntensity(10);
     svm_rt_features.push_back(f);
@@ -183,8 +183,8 @@ START_SECTION((void createExperiment(SimTypes::MSSimExperiment & experiment)))
   for (StringList::const_iterator it=peps.begin(); it!=peps.end(); ++it)
   {
     Feature f;
-    PeptideIdentification pep_id;
-    pep_id.insertHit(PeptideHit(1.0, 1, 1, AASequence::fromString(*it)));
+    SpectrumIdentification pep_id;
+    pep_id.insertHit(SpectrumMatch(1.0, 1, 1, AASequence::fromString(*it)));
     f.getPeptideIdentifications().push_back(pep_id);
     f.setIntensity(10);
     svm_rt_features.push_back(f);
@@ -230,8 +230,8 @@ START_SECTION(([EXTRA] Prediction Test - No RT column))
   for (StringList::const_iterator it=peps.begin(); it!=peps.end(); ++it)
   {
     Feature f;
-    PeptideIdentification pep_id;
-    pep_id.insertHit(PeptideHit(1.0, 1, 1, AASequence::fromString(*it)));
+    SpectrumIdentification pep_id;
+    pep_id.insertHit(SpectrumMatch(1.0, 1, 1, AASequence::fromString(*it)));
     f.getPeptideIdentifications().push_back(pep_id);
     f.setIntensity(10);
     no_rt_features.push_back(f);
@@ -279,8 +279,8 @@ START_SECTION(([EXTRA] Prediction Test - HPLC with absolute RTs))
   for (StringList::const_iterator it=abs_peps.begin(); it!=abs_peps.end(); ++it)
   {
     Feature f;
-    PeptideIdentification pep_id;
-    pep_id.insertHit(PeptideHit(1.0, 1, 1, AASequence::fromString(*it)));
+    SpectrumIdentification pep_id;
+    pep_id.insertHit(SpectrumMatch(1.0, 1, 1, AASequence::fromString(*it)));
     f.getPeptideIdentifications().push_back(pep_id);
     f.setIntensity(10);
     features.push_back(f);

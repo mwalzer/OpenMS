@@ -145,7 +145,7 @@ public:
       std::vector<Size> * reindexed_peptides;
       std::vector<Size> * reindexed_proteins;
       enum type  {PeptideIdent, Consensus} input_type;
-      std::vector<PeptideIdentification> * peptide_identification;
+      std::vector<SpectrumIdentification> * peptide_identification;
       ConsensusMap * consensus_map;
     };
 
@@ -165,7 +165,7 @@ public:
 
       @param peptide_identifications Vector of PeptideIdentification in case idXML is given as input
     */
-    void resolveID(std::vector<PeptideIdentification> & peptide_identifications);
+    void resolveID(std::vector<SpectrumIdentification> & peptide_identifications);
 
     /**
       @brief NOT IMPLEMENTED YET
@@ -227,7 +227,7 @@ public:
       @param msd_groups
       @param peptide_nodes
     */
-    void countTargetDecoy(std::vector<MSDGroup> & msd_groups, std::vector<PeptideIdentification> & peptide_nodes);
+    void countTargetDecoy(std::vector<MSDGroup> & msd_groups, std::vector<SpectrumIdentification> & peptide_nodes);
 
     void clearResult();
 
@@ -236,10 +236,10 @@ public:
     const  std::vector<ResolverResult> & getResults();
 
     /// overloaded functions -- return a const reference to a PeptideIdentification object or a peptideHit either from a consensusMap or a vector<PeptideIdentification>
-    static const PeptideIdentification & getPeptideIdentification(const ConsensusMap & consensus, const PeptideEntry * peptide);
-    static const PeptideHit & getPeptideHit(const ConsensusMap & consensus, const PeptideEntry * peptide);
-    static const PeptideIdentification & getPeptideIdentification(const std::vector<PeptideIdentification> & peptide_nodes, const PeptideEntry * peptide);
-    static const PeptideHit & getPeptideHit(const std::vector<PeptideIdentification> & peptide_nodes, const PeptideEntry * peptide);
+    static const SpectrumIdentification & getPeptideIdentification(const ConsensusMap & consensus, const PeptideEntry * peptide);
+    static const SpectrumMatch & getPeptideHit(const ConsensusMap & consensus, const PeptideEntry * peptide);
+    static const SpectrumIdentification & getPeptideIdentification(const std::vector<SpectrumIdentification> & peptide_nodes, const PeptideEntry * peptide);
+    static const SpectrumMatch & getPeptideHit(const std::vector<SpectrumIdentification> & peptide_nodes, const PeptideEntry * peptide);
 
 private:
 
@@ -256,7 +256,7 @@ private:
     /// helper function for findPeptideEntry.
     Size binarySearchNodes_(String & seq, std::vector<PeptideEntry> & nodes, Size start, Size end);
     /// includes all MS/MS derived peptides into the graph --idXML
-    Size includeMSMSPeptides_(std::vector<PeptideIdentification> & peptide_identifications, std::vector<PeptideEntry> & peptide_nodes);
+    Size includeMSMSPeptides_(std::vector<SpectrumIdentification> & peptide_identifications, std::vector<PeptideEntry> & peptide_nodes);
     /// TODO include run information for each peptide
     /// includes all MS/MS derived peptides into the graph --consensusXML
     Size includeMSMSPeptides_(ConsensusMap & consensus, std::vector<PeptideEntry> & peptide_nodes);

@@ -83,7 +83,7 @@ public:
         @throw ParseError is thrown if the given file could not be parsed
         @throw ElementNotFound is thrown if a annotated modification cannot be found in ModificationsDB (PSI-MOD definitions)
     */
-    void load(const String & filename, std::vector<PeptideIdentification> & ids, RichPeakMap & exp);
+    void load(const String & filename, std::vector<SpectrumIdentification> & ids, RichPeakMap & exp);
 
     /**
         @brief Stores a map in a MSPFile file.

@@ -78,7 +78,7 @@ namespace OpenMS
 
   // Initialization of global variables (= graph)
   void PeptideProteinResolution::buildGraph(const ProteinIdentification& protein,
-                      const vector<PeptideIdentification>& peptides)
+                      const vector<SpectrumIdentification>& peptides)
   {
     // Construct intermediate mapping of single protein accessions
     // to indist. protein groups
@@ -95,13 +95,13 @@ namespace OpenMS
     }
     
     // Go through PeptideIDs and construct a bidirectional mapping
-    for (vector<PeptideIdentification>::const_iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::const_iterator pep_it = peptides.begin();
          pep_it != peptides.end();
          ++pep_it)
     {
       Size pep_index = pep_it - peptides.begin();
       
-      PeptideHit best_hit = pep_it->getHits()[0];
+      SpectrumMatch best_hit = pep_it->getHits()[0];
       const vector<PeptideEvidence> pepev = best_hit.getPeptideEvidences();
       
       for (vector<PeptideEvidence>::const_iterator pepev_it = pepev.begin();
@@ -119,7 +119,7 @@ namespace OpenMS
 
   // "Main" function
   void PeptideProteinResolution::resolveGraph(ProteinIdentification& protein,
-                  vector<PeptideIdentification>& peptides)
+                  vector<SpectrumIdentification>& peptides)
   {
     //Debugging
     Size old_size = indist_prot_grp_to_pep_.size();
@@ -289,7 +289,7 @@ namespace OpenMS
   void PeptideProteinResolution::resolveConnectedComponent(
                                 ConnectedComponent& conn_comp,
                                 ProteinIdentification& protein,
-                                vector<PeptideIdentification>& peptides)
+                                vector<SpectrumIdentification>& peptides)
   {
   /* TODO for resolving ties:
    while grpit not at end
@@ -337,7 +337,7 @@ namespace OpenMS
          indist_prot_grp_to_pep_[*grp_it].begin();
          pepid_it != indist_prot_grp_to_pep_[*grp_it].end(); ++pepid_it)
       {  
-        vector<PeptideHit> pep_id_hits = peptides[*pepid_it].getHits();
+        vector<SpectrumMatch> pep_id_hits = peptides[*pepid_it].getHits();
         vector<PeptideEvidence> best_hit_ev =
         pep_id_hits[0].getPeptideEvidences();
        

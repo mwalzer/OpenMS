@@ -116,12 +116,12 @@ protected:
   {
     IdXMLFile idXML_file;
     vector<ProteinIdentification> protein_identifications;
-    vector<PeptideIdentification> identifications;
+    vector<SpectrumIdentification> identifications;
     vector<FASTAFile::FASTAEntry> proteins;
     vector<double> statistics;
     vector<Size> counts;
     vector<Size> mod_counts;
-    vector<PeptideHit> temp_hits;
+    vector<SpectrumMatch> temp_hits;
     vector<Size> coverage;
     Size spectrum_count = 0;
     map<String, Size> unique_peptides;
@@ -169,7 +169,7 @@ protected:
 
           set<String> accession;
           accession.insert(proteins[j].identifier);
-          temp_hits = PeptideIdentification::getReferencingHits(identifications[i].getHits(), accession);
+          temp_hits = SpectrumIdentification::getReferencingHits(identifications[i].getHits(), accession);
 
           if (temp_hits.size() == 1)
           {

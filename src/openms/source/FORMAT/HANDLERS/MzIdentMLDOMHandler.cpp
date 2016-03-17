@@ -61,7 +61,7 @@ namespace OpenMS
     //TODO remodel CVTermList
     //TODO extend CVTermlist with CVCollection functionality for complete replacement??
     //TODO general id openms struct for overall parameter for one id run
-    MzIdentMLDOMHandler::MzIdentMLDOMHandler(const vector<ProteinIdentification>& pro_id, const vector<PeptideIdentification>& pep_id, const String& version, const ProgressLogger& logger) :
+    MzIdentMLDOMHandler::MzIdentMLDOMHandler(const vector<ProteinIdentification>& pro_id, const vector<SpectrumIdentification>& pep_id, const String& version, const ProgressLogger& logger) :
       logger_(logger),
       //~ ms_exp_(0),
       pro_id_(0),
@@ -94,7 +94,7 @@ namespace OpenMS
 
     }
 
-    MzIdentMLDOMHandler::MzIdentMLDOMHandler(vector<ProteinIdentification>& pro_id, vector<PeptideIdentification>& pep_id, const String& version, const ProgressLogger& logger) :
+    MzIdentMLDOMHandler::MzIdentMLDOMHandler(vector<ProteinIdentification>& pro_id, vector<SpectrumIdentification>& pep_id, const String& version, const ProgressLogger& logger) :
       logger_(logger),
       //~ ms_exp_(0),
       pro_id_(&pro_id),
@@ -319,9 +319,9 @@ namespace OpenMS
           }
 
           set<AASequence> pepset;
-          for (vector<PeptideIdentification>::const_iterator pi = cpep_id_->begin(); pi != cpep_id_->end(); ++pi)
+          for (vector<SpectrumIdentification>::const_iterator pi = cpep_id_->begin(); pi != cpep_id_->end(); ++pi)
           {
-            for (vector<PeptideHit>::const_iterator ph = pi->getHits().begin(); ph != pi->getHits().end(); ++ph)
+            for (vector<SpectrumMatch>::const_iterator ph = pi->getHits().begin(); ph != pi->getHits().end(); ++ph)
             {
               list<String> pepevs;
               for (vector<OpenMS::PeptideEvidence>::const_iterator pev = ph->getPeptideEvidences().begin(); pev != ph->getPeptideEvidences().end(); ++pev)
@@ -780,7 +780,7 @@ namespace OpenMS
             }
             child = child->getNextElementSibling();
           }
-          SpectrumIdentification temp_struct = {spectra_data_ref, searchDatabase_ref, spectrumIdentificationProtocol_ref, spectrumIdentificationList_ref};
+          SpectrumIdentification_mzid temp_struct = {spectra_data_ref, searchDatabase_ref, spectrumIdentificationProtocol_ref, spectrumIdentificationList_ref};
           si_map_.insert(make_pair(id, temp_struct));
 
           pro_id_->push_back(ProteinIdentification());
@@ -1033,7 +1033,7 @@ namespace OpenMS
           }
 
           String search_engine, search_engine_version;
-          for (map<String, SpectrumIdentification>::const_iterator si_it = si_map_.begin(); si_it != si_map_.end(); ++si_it)
+          for (map<String, SpectrumIdentification_mzid>::const_iterator si_it = si_map_.begin(); si_it != si_map_.end(); ++si_it)
           {
             if (si_it->second.spectrum_identification_protocol_ref == id)
             {
@@ -1152,7 +1152,7 @@ namespace OpenMS
               String spectra_data_ref = XMLString::transcode(element_res->getAttribute(XMLString::transcode("spectraData_ref"))); //ref to the sourcefile, could be useful but now nowhere to store
               String spectrumID = XMLString::transcode(element_res->getAttribute(XMLString::transcode("spectrumID")));
               pair<CVTermList, map<String, DataValue> > params = parseParamGroup_(element_res->getChildNodes());
-              pep_id_->push_back(PeptideIdentification());
+              pep_id_->push_back(SpectrumIdentification());
               pep_id_->back().setHigherScoreBetter(false); //either a q-value or an e-value, only if neither available there will be another
               pep_id_->back().setMetaValue("spectrum_reference", spectrumID); // TODO @mths consider SpectrumIDFormat to get just a index number here
 
@@ -1207,7 +1207,7 @@ namespace OpenMS
       }
     }
 
-    void MzIdentMLDOMHandler::parseSpectrumIdentificationItemElement_(DOMElement* spectrumIdentificationItemElement, PeptideIdentification& spectrum_identification, String& spectrumIdentificationList_ref)
+    void MzIdentMLDOMHandler::parseSpectrumIdentificationItemElement_(DOMElement* spectrumIdentificationItemElement, SpectrumIdentification& spectrum_identification, String& spectrumIdentificationList_ref)
     {
       String id = XMLString::transcode(spectrumIdentificationItemElement->getAttribute(XMLString::transcode("id")));
       String name = XMLString::transcode(spectrumIdentificationItemElement->getAttribute(XMLString::transcode("name")));
@@ -1292,7 +1292,7 @@ namespace OpenMS
       if (scoretype) //else (i.e. no q/E/raw score or threshold not passed) no hit will be read TODO @mths: yielding no peptide hits will be error prone!!! what to do? remove and warn peptideidentifications with no hits inside?!
       {
         //build the PeptideHit from a SpectrumIdentificationItem
-        PeptideHit hit(score, rank, chargeState, pep_map_[peptide_ref]);
+        SpectrumMatch hit(score, rank, chargeState, pep_map_[peptide_ref]);
         for (Map<String, vector<CVTerm> >::ConstIterator cvs = params.first.getCVTerms().begin(); cvs != params.first.getCVTerms().end(); ++cvs)
         {
           for (vector<CVTerm>::const_iterator cv = cvs->second.begin(); cv != cvs->second.end(); ++cv)
@@ -1846,13 +1846,13 @@ namespace OpenMS
       current_sil->setAttribute(XMLString::transcode("numSequencesSearched"), XMLString::transcode("TBA"));
       // for now no FragmentationTable
 
-      for (vector<PeptideIdentification>::iterator pi = pep_id_->begin(); pi != pep_id_->end(); ++pi)
+      for (vector<SpectrumIdentification>::iterator pi = pep_id_->begin(); pi != pep_id_->end(); ++pi)
       {
         DOMElement* current_sr = current_sil->getOwnerDocument()->createElement(XMLString::transcode("SpectrumIdentificationResult"));
         current_sr->setAttribute(XMLString::transcode("id"), XMLString::transcode(String(UniqueIdGenerator::getUniqueId()).c_str()));
         current_sr->setAttribute(XMLString::transcode("spectrumID"), XMLString::transcode(String(UniqueIdGenerator::getUniqueId()).c_str()));
         current_sr->setAttribute(XMLString::transcode("spectraData_ref"), XMLString::transcode("SD1"));
-        for (vector<PeptideHit>::iterator ph = pi->getHits().begin(); ph != pi->getHits().end(); ++ph)
+        for (vector<SpectrumMatch>::iterator ph = pi->getHits().begin(); ph != pi->getHits().end(); ++ph)
         {
           DOMElement* current_si = current_sr->getOwnerDocument()->createElement(XMLString::transcode("SpectrumIdentificationItem"));
           current_si->setAttribute(XMLString::transcode("id"), XMLString::transcode(String(UniqueIdGenerator::getUniqueId()).c_str()));

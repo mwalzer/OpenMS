@@ -166,7 +166,7 @@ public:
       @param window_id in which window the file is opened if opened as a new layer (0 or default equals current
       @param spectrum_id determines the spectrum to show in 1D view.
     */
-    void addData(FeatureMapSharedPtrType feature_map, ConsensusMapSharedPtrType consensus_map, std::vector<PeptideIdentification>& peptides, ExperimentSharedPtrType peak_map, LayerData::DataType data_type, bool show_as_1d, bool show_options, bool as_new_window = true, const String& filename = "", const String& caption = "", UInt window_id = 0, Size spectrum_id = 0);
+    void addData(FeatureMapSharedPtrType feature_map, ConsensusMapSharedPtrType consensus_map, std::vector<SpectrumIdentification>& peptides, ExperimentSharedPtrType peak_map, LayerData::DataType data_type, bool show_as_1d, bool show_options, bool as_new_window = true, const String& filename = "", const String& caption = "", UInt window_id = 0, Size spectrum_id = 0);
 
     /// Opens all the files in the string list
     void loadFiles(const StringList& list, QSplashScreen* splash_screen);

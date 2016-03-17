@@ -106,9 +106,9 @@ START_SECTION((template < typename InputPeakType > void calibrateMapGlobally(con
 END_SECTION
 IdXMLFile id_file;
 std::vector<ProteinIdentification> prot_ids;
-std::vector<PeptideIdentification> pep_ids;
+std::vector<SpectrumIdentification> pep_ids;
 id_file.load(OPENMS_GET_TEST_DATA_PATH("InternalCalibration_1.idXML"),prot_ids,pep_ids);
-START_SECTION((template < typename InputPeakType > void calibrateMapGlobally(const MSExperiment< InputPeakType > &exp, MSExperiment< InputPeakType > &calibrated_exp, std::vector< PeptideIdentification > &ref_ids, String trafo_file_name="")))
+START_SECTION((template < typename InputPeakType > void calibrateMapGlobally(const MSExperiment< InputPeakType > &exp, MSExperiment< InputPeakType > &calibrated_exp, std::vector< SpectrumIdentification > &ref_ids, String trafo_file_name="")))
 {
   TOLERANCE_ABSOLUTE(0.000001)
   MSExperiment<> calibrated_exp;
@@ -139,7 +139,7 @@ START_SECTION((void calibrateMapGlobally(const FeatureMap &feature_map, FeatureM
 }
 END_SECTION
 id_file.load(OPENMS_GET_TEST_DATA_PATH("InternalCalibration_2.idXML"),prot_ids,pep_ids);
-START_SECTION((void calibrateMapGlobally(const FeatureMap &feature_map, FeatureMap &calibrated_feature_map, std::vector< PeptideIdentification > &ref_ids, String trafo_file_name="")))
+START_SECTION((void calibrateMapGlobally(const FeatureMap &feature_map, FeatureMap &calibrated_feature_map, std::vector< SpectrumIdentification > &ref_ids, String trafo_file_name="")))
 {
   FeatureMap calibrated_f_map;
   ptr->calibrateMapGlobally(f_map,calibrated_f_map,pep_ids);

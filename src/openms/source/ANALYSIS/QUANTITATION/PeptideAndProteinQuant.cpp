@@ -74,16 +74,16 @@ namespace OpenMS
   }
 
 
-  void PeptideAndProteinQuant::countPeptides_(vector<PeptideIdentification>&
+  void PeptideAndProteinQuant::countPeptides_(vector<SpectrumIdentification>&
                                               peptides)
   {
-    for (vector<PeptideIdentification>::iterator pep_it =
+    for (vector<SpectrumIdentification>::iterator pep_it =
            peptides.begin(); pep_it != peptides.end(); ++pep_it)
     {
       if (!pep_it->getHits().empty())
       {
         pep_it->sort();
-        const PeptideHit& hit = pep_it->getHits()[0];
+        const SpectrumMatch& hit = pep_it->getHits()[0];
         PeptideData& data = pep_quant_[hit.getSequence()];
         data.id_count++;
         data.abundances[hit.getCharge()]; // insert empty element for charge
@@ -95,20 +95,20 @@ namespace OpenMS
   }
 
 
-  PeptideHit PeptideAndProteinQuant::getAnnotation_(
-    vector<PeptideIdentification>& peptides)
+  SpectrumMatch PeptideAndProteinQuant::getAnnotation_(
+    vector<SpectrumIdentification>& peptides)
   {
     // hits in IDs must already be sorted by score! (done in "countPeptides_")
-    if (peptides.empty()) return PeptideHit();
+    if (peptides.empty()) return SpectrumMatch();
 
-    const PeptideHit& hit = peptides[0].getHits()[0];
-    for (vector<PeptideIdentification>::iterator pep_it = ++peptides.begin();
+    const SpectrumMatch& hit = peptides[0].getHits()[0];
+    for (vector<SpectrumIdentification>::iterator pep_it = ++peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
-      const PeptideHit& current = pep_it->getHits()[0];
+      const SpectrumMatch& current = pep_it->getHits()[0];
       if (current.getSequence() != hit.getSequence())
       {
-        return PeptideHit();
+        return SpectrumMatch();
       }
     }
     return hit;
@@ -116,9 +116,9 @@ namespace OpenMS
 
 
   void PeptideAndProteinQuant::quantifyFeature_(const FeatureHandle& feature,
-                                                const PeptideHit& hit)
+                                                const SpectrumMatch& hit)
   {
-    if (hit == PeptideHit())
+    if (hit == SpectrumMatch())
     {
       return; // annotation for the feature is ambiguous or missing
     }
@@ -130,7 +130,7 @@ namespace OpenMS
 
 
   void PeptideAndProteinQuant::quantifyPeptides(
-    const vector<PeptideIdentification>& peptides)
+    const vector<SpectrumIdentification>& peptides)
   {
     // first, use peptide-level results from protein inference:
     // - remove peptides not supported by inference results
@@ -139,10 +139,10 @@ namespace OpenMS
     // mapping: peptide seq. (unmodified) -> protein accessions
     // (in protXML, only unmodified peptides are listed)
     map<String, set<String> > pep_info;
-    for (vector<PeptideIdentification>::const_iterator pep_it = 
+    for (vector<SpectrumIdentification>::const_iterator pep_it = 
            peptides.begin(); pep_it != peptides.end(); ++pep_it)
     {
-      for (vector<PeptideHit>::const_iterator hit_it =
+      for (vector<SpectrumMatch>::const_iterator hit_it =
              pep_it->getHits().begin(); hit_it != pep_it->getHits().end();
            ++hit_it)
       {
@@ -481,7 +481,7 @@ namespace OpenMS
         continue;
       }
       countPeptides_(feat_it->getPeptideIdentifications());
-      PeptideHit hit = getAnnotation_(feat_it->getPeptideIdentifications());
+      SpectrumMatch hit = getAnnotation_(feat_it->getPeptideIdentifications());
       FeatureHandle handle(0, *feat_it);
       quantifyFeature_(handle, hit); // updates "stats_.quant_features"
     }
@@ -507,7 +507,7 @@ namespace OpenMS
         continue;
       }
       countPeptides_(cons_it->getPeptideIdentifications());
-      PeptideHit hit = getAnnotation_(cons_it->getPeptideIdentifications());
+      SpectrumMatch hit = getAnnotation_(cons_it->getPeptideIdentifications());
       for (ConsensusFeature::HandleSetType::const_iterator feat_it =
              cons_it->getFeatures().begin(); feat_it !=
            cons_it->getFeatures().end(); ++feat_it)
@@ -524,7 +524,7 @@ namespace OpenMS
 
   void PeptideAndProteinQuant::readQuantData(
     vector<ProteinIdentification>& proteins,
-    vector<PeptideIdentification>& peptides)
+    vector<SpectrumIdentification>& peptides)
   {
     updateMembers_(); // clear data
     stats_.n_samples = proteins.size();
@@ -541,11 +541,11 @@ namespace OpenMS
       identifiers[proteins[i].getIdentifier()] = i;
     }
 
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       if (pep_it->getHits().empty()) continue;
-      const PeptideHit& hit = pep_it->getHits()[0];
+      const SpectrumMatch& hit = pep_it->getHits()[0];
       stats_.quant_features++;
       const AASequence& seq = hit.getSequence();
       Size sample = identifiers[pep_it->getIdentifier()];

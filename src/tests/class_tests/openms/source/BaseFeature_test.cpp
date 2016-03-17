@@ -252,7 +252,7 @@ START_SECTION((bool operator==(const BaseFeature &rhs) const))
   p2.getPosition()[0] = 5;
   TEST_EQUAL(p1 == p2, true)
 
-  vector<PeptideIdentification> peptides(1);
+  vector<SpectrumIdentification> peptides(1);
   p1.setPeptideIdentifications(peptides);
   TEST_EQUAL(p1 == p2, false);
   p2.setPeptideIdentifications(peptides);
@@ -275,7 +275,7 @@ START_SECTION((bool operator!=(const BaseFeature& rhs) const))
   p2.getPosition()[0] = 5;
   TEST_EQUAL(p1 != p2, false)
 
-  vector<PeptideIdentification> peptides(1);
+  vector<SpectrumIdentification> peptides(1);
   p1.setPeptideIdentifications(peptides);
   TEST_EQUAL(p1 != p2, true);
   p2.setPeptideIdentifications(peptides);
@@ -351,18 +351,18 @@ END_SECTION
 
 START_SECTION((const std::vector<PeptideIdentification>& getPeptideIdentifications() const))
   BaseFeature tmp;
-  vector<PeptideIdentification> vec(tmp.getPeptideIdentifications());
+  vector<SpectrumIdentification> vec(tmp.getPeptideIdentifications());
   TEST_EQUAL(vec.size(), 0);
 END_SECTION
 
 START_SECTION((void setPeptideIdentifications(const std::vector<PeptideIdentification>& peptides)))
   BaseFeature tmp;
-  vector<PeptideIdentification> vec;
+  vector<SpectrumIdentification> vec;
 
   tmp.setPeptideIdentifications(vec);
   TEST_EQUAL(tmp.getPeptideIdentifications().size(), 0);
 
-  PeptideIdentification dbs;
+  SpectrumIdentification dbs;
   vec.push_back(dbs);
   tmp.setPeptideIdentifications(vec);
   TEST_EQUAL(tmp.getPeptideIdentifications().size(), 1);
@@ -377,27 +377,27 @@ END_SECTION
 
 START_SECTION((AnnotationState getAnnotationState() const))
   BaseFeature tmp;
-  vector<PeptideIdentification> vec;
+  vector<SpectrumIdentification> vec;
 
 
-  vector<PeptideIdentification>& ids = tmp.getPeptideIdentifications();
+  vector<SpectrumIdentification>& ids = tmp.getPeptideIdentifications();
 
   TEST_EQUAL(tmp.getAnnotationState(), BaseFeature::FEATURE_ID_NONE);
   ids.resize(1);
   TEST_EQUAL(tmp.getAnnotationState(), BaseFeature::FEATURE_ID_NONE);
 
-  PeptideHit hit;
+  SpectrumMatch hit;
   hit.setSequence(AASequence::fromString("ABCDE"));
-  ids[0].setHits(std::vector<PeptideHit>(1, hit));
+  ids[0].setHits(std::vector<SpectrumMatch>(1, hit));
   TEST_EQUAL(tmp.getAnnotationState(), BaseFeature::FEATURE_ID_SINGLE);
 
   ids.resize(2);
-  ids[1].setHits(std::vector<PeptideHit>(1, hit)); // same as first hit
+  ids[1].setHits(std::vector<SpectrumMatch>(1, hit)); // same as first hit
   //tmp.setPeptideIdentifications(ids);
   TEST_EQUAL(tmp.getAnnotationState(), BaseFeature::FEATURE_ID_MULTIPLE_SAME);
 
   hit.setSequence(AASequence::fromString("KRGH"));
-  ids[1].setHits(std::vector<PeptideHit>(1, hit)); // different to first hit
+  ids[1].setHits(std::vector<SpectrumMatch>(1, hit)); // different to first hit
   TEST_EQUAL(tmp.getAnnotationState(), BaseFeature::FEATURE_ID_MULTIPLE_DIVERGENT);
 
 

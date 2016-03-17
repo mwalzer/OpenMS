@@ -149,7 +149,7 @@ protected:
     // calculations
     //-------------------------------------------------------------
 
-    vector<PeptideIdentification> pep_ids;
+    vector<SpectrumIdentification> pep_ids;
     CompNovoIdentification comp_novo_id;
 
     // set the options
@@ -166,7 +166,7 @@ protected:
     String date_string = now.get();
     String identifier("CompNovo_" + date_string);
 
-    for (vector<PeptideIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
     {
       it->assignRanks();
       it->setIdentifier(identifier);

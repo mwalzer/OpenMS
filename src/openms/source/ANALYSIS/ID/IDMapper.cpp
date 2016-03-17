@@ -95,7 +95,7 @@ namespace OpenMS
     ignore_charge_ = param_.getValue("ignore_charge") == "true";
   }
 
-  void IDMapper::annotate(ConsensusMap& map, const std::vector<PeptideIdentification>& ids, const std::vector<ProteinIdentification>& protein_ids, bool measure_from_subelements, bool annotate_ids_with_subelements)
+  void IDMapper::annotate(ConsensusMap& map, const std::vector<SpectrumIdentification>& ids, const std::vector<ProteinIdentification>& protein_ids, bool measure_from_subelements, bool annotate_ids_with_subelements)
   {
     // validate "RT" and "MZ" metavalues exist
     checkHits_(ids);
@@ -172,7 +172,7 @@ namespace OpenMS
                 if (mapping[cm_index].count(i) == 0)
                 {
                   // Store the map index of the peptide feature in the id the feature was mapped to.
-                  PeptideIdentification id_pep = ids[i];
+                  SpectrumIdentification id_pep = ids[i];
                   if (annotate_ids_with_subelements)
                   {
                     id_pep.setMetaValue("map index", it_handle->getMapIndex());
@@ -230,7 +230,7 @@ namespace OpenMS
 
   }
   
-  void IDMapper::annotate(FeatureMap & map, const std::vector<PeptideIdentification> & ids, const std::vector<ProteinIdentification> & protein_ids, bool use_centroid_rt, bool use_centroid_mz)
+  void IDMapper::annotate(FeatureMap & map, const std::vector<SpectrumIdentification> & ids, const std::vector<ProteinIdentification> & protein_ids, bool use_centroid_rt, bool use_centroid_mz)
   {
     // std::cout << "Starting annotation..." << std::endl;
     checkHits_(ids); // check RT and m/z are present
@@ -327,7 +327,7 @@ namespace OpenMS
     
     // std::cout << "Finding matches..." << std::endl;
     // iterate over peptide IDs:
-    for (std::vector<PeptideIdentification>::const_iterator id_it =
+    for (std::vector<SpectrumIdentification>::const_iterator id_it =
          ids.begin(); id_it != ids.end(); ++id_it)
     {
       // std::cout << "Peptide ID: " << id_it - ids.begin() << std::endl;
@@ -453,7 +453,7 @@ namespace OpenMS
     throw Exception::InvalidValue(__FILE__, __LINE__, __PRETTY_FUNCTION__, "IDMapper::getAbsoluteTolerance_(): illegal internal state of measure_!", String(measure_));
   }
 
-  void IDMapper::checkHits_(const std::vector<PeptideIdentification>& ids) const
+  void IDMapper::checkHits_(const std::vector<SpectrumIdentification>& ids) const
   {
     for (Size i = 0; i < ids.size(); ++i)
     {
@@ -468,7 +468,7 @@ namespace OpenMS
     }
   }
 
-  void IDMapper::getIDDetails_(const PeptideIdentification& id, double& rt_pep, DoubleList& mz_values, IntList& charges, bool use_avg_mass) const
+  void IDMapper::getIDDetails_(const SpectrumIdentification& id, double& rt_pep, DoubleList& mz_values, IntList& charges, bool use_avg_mass) const
   {
     mz_values.clear();
     charges.clear();
@@ -481,7 +481,7 @@ namespace OpenMS
       mz_values.push_back(id.getMZ());
     }
 
-    for (vector<PeptideHit>::const_iterator hit_it = id.getHits().begin();
+    for (vector<SpectrumMatch>::const_iterator hit_it = id.getHits().begin();
          hit_it != id.getHits().end(); ++hit_it)
     {
       Int charge = hit_it->getCharge();

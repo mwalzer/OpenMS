@@ -76,7 +76,7 @@ namespace OpenMS
   {
   }
 
-  void PepXMLFile::store(const String& filename, std::vector<ProteinIdentification>& protein_ids, std::vector<PeptideIdentification>& peptide_ids, const String& mz_file, const String& mz_name, bool peptideprophet_analyzed)
+  void PepXMLFile::store(const String& filename, std::vector<ProteinIdentification>& protein_ids, std::vector<SpectrumIdentification>& peptide_ids, const String& mz_file, const String& mz_name, bool peptideprophet_analyzed)
   {
     ofstream f(filename.c_str());
     if (!f)
@@ -183,12 +183,12 @@ namespace OpenMS
     // register modifications
     set<String> aa_mods;
     set<String> n_term_mods, c_term_mods;
-    for (vector<PeptideIdentification>::const_iterator it = peptide_ids.begin();
+    for (vector<SpectrumIdentification>::const_iterator it = peptide_ids.begin();
          it != peptide_ids.end(); ++it)
     {
       if (it->getHits().size() > 0)
       {
-        PeptideHit h = *it->getHits().begin();
+        SpectrumMatch h = *it->getHits().begin();
 
         if (h.getSequence().isModified())
         {
@@ -260,16 +260,16 @@ namespace OpenMS
     }
 
     Int count(1);
-    for (vector<PeptideIdentification>::const_iterator it = peptide_ids.begin();
+    for (vector<SpectrumIdentification>::const_iterator it = peptide_ids.begin();
          it != peptide_ids.end(); ++it, ++count)
     {
       if (it->getHits().size() == 0)
       {
         continue;
       }
-      for (vector<PeptideHit>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
+      for (vector<SpectrumMatch>::const_iterator hit = it->getHits().begin(); hit != it->getHits().end(); ++hit)
       {
-        PeptideHit h = *hit;
+        SpectrumMatch h = *hit;
         AASequence seq = h.getSequence();
         double precursor_neutral_mass = seq.getMonoWeight();
 
@@ -429,7 +429,7 @@ namespace OpenMS
           //   </peptideprophet_result>
           // </analysis_result>
 
-          for (std::vector<PeptideHit::PepXMLAnalysisResult>::const_iterator ar_it = h.getAnalysisResults().begin();
+          for (std::vector<SpectrumMatch::PepXMLAnalysisResult>::const_iterator ar_it = h.getAnalysisResults().begin();
               ar_it != h.getAnalysisResults().end(); ++ar_it)
           {
             f << "\t\t\t<analysis_result analysis=\"" << ar_it->score_type << "\">" << "\n";
@@ -587,7 +587,7 @@ namespace OpenMS
   }
 
   void PepXMLFile::load(const String& filename, vector<ProteinIdentification>&
-                        proteins, vector<PeptideIdentification>& peptides,
+                        proteins, vector<SpectrumIdentification>& peptides,
                         const String& experiment_name)
   {
     SpectrumMetaDataLookup lookup;
@@ -595,7 +595,7 @@ namespace OpenMS
   }
 
   void PepXMLFile::load(const String& filename, vector<ProteinIdentification>&
-                        proteins, vector<PeptideIdentification>& peptides,
+                        proteins, vector<SpectrumIdentification>& peptides,
                         const String& experiment_name,
                         const SpectrumMetaDataLookup& lookup)
   {
@@ -848,7 +848,7 @@ namespace OpenMS
       current_sequence_ = attributeAsString_(attributes, "peptide");
       current_modifications_.clear();
       PeptideEvidence pe;
-      peptide_hit_ = PeptideHit();
+      peptide_hit_ = SpectrumMatch();
       peptide_hit_.setRank(attributeAsInt_(attributes, "hit_rank"));
       peptide_hit_.setCharge(charge_); // from parent "spectrum_query" tag
       String prev_aa, next_aa;
@@ -890,7 +890,7 @@ namespace OpenMS
     else if (element == "search_result") // parent: "spectrum_query"
     { 
       // creates a new PeptideIdentification
-      current_peptide_ = PeptideIdentification();
+      current_peptide_ = SpectrumIdentification();
       current_peptide_.setRT(rt_);
       current_peptide_.setMZ(mz_);
       current_peptide_.setBaseName(current_base_name_);
@@ -948,7 +948,7 @@ namespace OpenMS
     }
     else if (element == "analysis_result") // parent: "search_hit" 
     {
-      current_analysis_result_ = PeptideHit::PepXMLAnalysisResult();
+      current_analysis_result_ = SpectrumMatch::PepXMLAnalysisResult();
       current_analysis_result_.score_type = attributeAsString_(attributes, "analysis");
     }
     else if (element == "search_score_summary")

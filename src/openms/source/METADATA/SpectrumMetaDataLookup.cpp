@@ -179,13 +179,13 @@ namespace OpenMS
 
 
   bool SpectrumMetaDataLookup::addMissingRTsToPeptideIDs(
-    vector<PeptideIdentification>& peptides, const String& filename,
+    vector<SpectrumIdentification>& peptides, const String& filename,
     bool stop_on_error)
   {
     MSExperiment<> exp;
     SpectrumLookup lookup;
     bool success = true;
-    for (vector<PeptideIdentification>::iterator it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator it = peptides.begin();
          it != peptides.end(); ++it)
     {
       if (boost::math::isnan(it->getRT()))

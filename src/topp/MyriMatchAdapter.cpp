@@ -464,7 +464,7 @@ protected:
     String pep_file = tmp_dir + File::removeExtension(exp_name) + ".pepXML";
 
     vector<ProteinIdentification> protein_identifications;
-    vector<PeptideIdentification> peptide_identifications;
+    vector<SpectrumIdentification> peptide_identifications;
 
     MSExperiment<> exp;
     if (File::exists(pep_file))

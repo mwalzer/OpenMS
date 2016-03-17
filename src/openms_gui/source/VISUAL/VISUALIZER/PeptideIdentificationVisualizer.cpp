@@ -51,7 +51,7 @@ namespace OpenMS
 
   PeptideIdentificationVisualizer::PeptideIdentificationVisualizer(bool editable, QWidget * parent, MetaDataBrowser * caller) :
     BaseVisualizerGUI(editable, parent),
-    BaseVisualizer<PeptideIdentification>()
+    BaseVisualizer<SpectrumIdentification>()
   {
     pidv_caller_ = caller;
 
@@ -71,7 +71,7 @@ namespace OpenMS
     finishAdding_();
   }
 
-  void PeptideIdentificationVisualizer::load(PeptideIdentification & s, int tree_item_id)
+  void PeptideIdentificationVisualizer::load(SpectrumIdentification & s, int tree_item_id)
   {
     ptr_ = &s;
     temp_ = s;

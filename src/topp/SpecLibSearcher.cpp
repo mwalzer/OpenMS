@@ -187,13 +187,13 @@ protected:
     //-------------------------------------------------------------
 
     //library containing already identified peptide spectra
-    vector<PeptideIdentification> ids;
+    vector<SpectrumIdentification> ids;
     spectral_library.load(in_lib, ids, library);
 
     map<Size, vector<PeakSpectrum> > MSLibrary;
     {
       RichPeakMap::iterator s_it;
-      vector<PeptideIdentification>::iterator it;
+      vector<SpectrumIdentification>::iterator it;
       ModificationsDB* mdb = ModificationsDB::getInstance();
       for (s_it = library.begin(), it = ids.begin(); s_it < library.end(); ++s_it, ++it)
       {
@@ -243,7 +243,7 @@ protected:
         }
         if (variable_modifications_ok && fixed_modifications_ok)
         {
-          PeptideIdentification& translocate_pid = *it;
+          SpectrumIdentification& translocate_pid = *it;
           librar.getPeptideIdentifications().push_back(translocate_pid);
           librar.setPrecursors(s_it->getPrecursors());
           //library entry transformation
@@ -294,7 +294,7 @@ protected:
       time_t start_time = time(NULL);
       spectra.load(*in, query);
       //Will hold valuable hits
-      vector<PeptideIdentification> peptide_ids;
+      vector<SpectrumIdentification> peptide_ids;
       vector<ProteinIdentification> protein_ids;
       // Write parameters to ProteinIdentifcation
       ProteinIdentification prot_id;
@@ -310,7 +310,7 @@ protected:
       for (UInt j = 0; j < query.size(); ++j)
       {
         //Set identifier for each identifications
-        PeptideIdentification pid;
+        SpectrumIdentification pid;
         pid.setIdentifier("test");
         pid.setScoreType(compare_function);
         ProteinHit pr_hit;
@@ -385,7 +385,7 @@ protected:
                 float this_MZ  = library[i].getPrecursors()[0].getMZ() * precursor_mass_multiplier;
                 if (this_MZ >= min_MZ && max_MZ >= this_MZ && ((charge_one == true && library[i].getPeptideIdentifications()[0].getHits()[0].getCharge() == 1) || charge_one == false))
                 {
-                  PeptideHit hit = library[i].getPeptideIdentifications()[0].getHits()[0];
+                  SpectrumMatch hit = library[i].getPeptideIdentifications()[0].getHits()[0];
                   PeakSpectrum& librar = library[i];
                   //Special treatment for SpectraST score as it computes a score based on the whole library
                   if (compare_function == "SpectraSTSimilarityScore")
@@ -422,7 +422,7 @@ protected:
         {
           if (!pid.empty() && !pid.getHits().empty())
           {
-            vector<PeptideHit> final_hits;
+            vector<SpectrumMatch> final_hits;
             final_hits.resize(pid.getHits().size());
             SpectraSTSimilarityScore* sp = static_cast<SpectraSTSimilarityScore*>(comparor);
             Size runner_up = 1;
@@ -451,7 +451,7 @@ protected:
         }
         if (top_hits != -1 && (UInt)top_hits < pid.getHits().size())
         {
-          vector<PeptideHit> hits;
+          vector<SpectrumMatch> hits;
           hits.resize(top_hits);
           for (Size i = 0; i < (UInt)top_hits; ++i)
           {

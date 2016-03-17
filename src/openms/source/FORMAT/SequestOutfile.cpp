@@ -90,7 +90,7 @@ namespace OpenMS
   }
 
   void SequestOutfile::load(const String& result_filename,
-                            vector<PeptideIdentification>& peptide_identifications,
+                            vector<SpectrumIdentification>& peptide_identifications,
                             ProteinIdentification& protein_identification,
                             const double p_value_threshold,
                             vector<double>& pvalues,
@@ -201,7 +201,7 @@ namespace OpenMS
       }
     }
 
-    PeptideIdentification peptide_identification;
+    SpectrumIdentification peptide_identification;
     peptide_identification.setMZ(precursor_mz_value);
     peptide_identification.setIdentifier(identifier);
     peptide_identification.setSignificanceThreshold(p_value_threshold);
@@ -222,7 +222,7 @@ namespace OpenMS
     for (Size viewed_peptides = 0; viewed_peptides < displayed_peptides; )
     {
       PeptideEvidence peptide_evidence;
-      PeptideHit peptide_hit;
+      SpectrumMatch peptide_hit;
       ProteinHit protein_hit;
 
       ++line_number;

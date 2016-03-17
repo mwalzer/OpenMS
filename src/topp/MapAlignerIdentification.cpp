@@ -223,7 +223,7 @@ private:
       else if (filetype == FileTypes::IDXML)
       {
         vector<ProteinIdentification> proteins;
-        vector<PeptideIdentification> peptides;
+        vector<SpectrumIdentification> peptides;
         IdXMLFile().load(reference_file, proteins, peptides);
         algorithm.setReference(peptides);
       }
@@ -326,7 +326,7 @@ private:
     else if (in_type == FileTypes::IDXML)
     {
       vector<vector<ProteinIdentification> > protein_ids(input_files.size());
-      vector<vector<PeptideIdentification> > peptide_ids(input_files.size());
+      vector<vector<SpectrumIdentification> > peptide_ids(input_files.size());
       IdXMLFile idxml_file;
       ProgressLogger progresslogger;
       progresslogger.setLogType(log_type_);

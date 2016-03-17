@@ -49,7 +49,7 @@ namespace OpenMS
 
   PeptideHitVisualizer::PeptideHitVisualizer(bool editable, QWidget * parent) :
     BaseVisualizerGUI(editable, parent),
-    BaseVisualizer<PeptideHit>()
+    BaseVisualizer<SpectrumMatch>()
   {
     addLineEdit_(peptidehit_score_, "Score");
     addLineEdit_(peptidehit_charge_, "Charge");

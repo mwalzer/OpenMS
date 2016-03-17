@@ -52,7 +52,7 @@ namespace OpenMS
   */
   class OPENMS_GUI_DLLAPI PeptideHitVisualizer :
     public BaseVisualizerGUI,
-    public BaseVisualizer<PeptideHit>
+    public BaseVisualizer<SpectrumMatch>
   {
     Q_OBJECT
 

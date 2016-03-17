@@ -117,8 +117,8 @@ protected:
   {
     vector<ProteinIdentification> protein_identifications;
 
-    vector<PeptideIdentification> identifications;
-    PeptideIdentification peptide_identification;
+    vector<SpectrumIdentification> identifications;
+    SpectrumIdentification peptide_identification;
     DateTime date_time = DateTime::now();
     String date_time_string = date_time.get();
     peptide_identification.setIdentifier("In-silico_digestion" + date_time_string);
@@ -172,7 +172,7 @@ protected:
     digestor.setMissedCleavages(missed_cleavages);
     search_parameters.digestion_enzyme = *EnzymesDB::getInstance()->getEnzyme(enzyme);
 
-    PeptideHit temp_peptide_hit;
+    SpectrumMatch temp_peptide_hit;
     PeptideEvidence temp_pe;
 
     protein_identifications[0].setSearchParameters(search_parameters);
@@ -216,7 +216,7 @@ protected:
             temp_peptide_hit.setSequence(temp_peptides[j]);
             peptide_identification.insertHit(temp_peptide_hit);
             identifications.push_back(peptide_identification);
-            peptide_identification.setHits(std::vector<PeptideHit>()); // clear
+            peptide_identification.setHits(std::vector<SpectrumMatch>()); // clear
           }
           else // for FASTA file output
           {

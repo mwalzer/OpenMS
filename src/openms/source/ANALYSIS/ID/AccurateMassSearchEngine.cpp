@@ -856,7 +856,7 @@ namespace OpenMS
          it_row != amr.end();
          ++it_row)
     {
-      PeptideHit hit;
+      SpectrumMatch hit;
       hit.setMetaValue("identifier", it_row->getMatchingHMDBids());
       StringList names;
       for (Size i = 0; i < it_row->getMatchingHMDBids().size(); ++i)

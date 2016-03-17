@@ -88,7 +88,7 @@ public:
     */
     void load(const String& filename,
               ProteinIdentification& protein_identification,
-              std::vector<PeptideIdentification>& id_data,
+              std::vector<SpectrumIdentification>& id_data,
               bool load_proteins = true,
               bool load_empty_hits = true);
 
@@ -115,17 +115,17 @@ private:
     void readMappingFile_();
 
     /// the identifications (storing the peptide hits)
-    std::vector<PeptideIdentification>* peptide_identifications_;
+    std::vector<SpectrumIdentification>* peptide_identifications_;
 
     ProteinHit actual_protein_hit_;
 
-    PeptideHit actual_peptide_hit_;
+    SpectrumMatch actual_peptide_hit_;
 
     PeptideEvidence actual_peptide_evidence_;
 
     std::vector<PeptideEvidence> actual_peptide_evidences_;
 
-    PeptideIdentification actual_peptide_id_;
+    SpectrumIdentification actual_peptide_id_;
 
     ProteinIdentification actual_protein_id_;
 

@@ -228,7 +228,7 @@ protected:
       return EXTERNAL_PROGRAM_ERROR;
     }
 
-    vector<PeptideIdentification> pep_ids;
+    vector<SpectrumIdentification> pep_ids;
     ProteinIdentification prot_id;
 
     if (!mascot_query_param.exists("skip_export") ||
@@ -263,10 +263,10 @@ protected:
       if (!getFlag_("keep_protein_links"))
       {
         // remove protein links from peptides
-        for (vector<PeptideIdentification>::iterator pep_it = pep_ids.begin();
+        for (vector<SpectrumIdentification>::iterator pep_it = pep_ids.begin();
              pep_it != pep_ids.end(); ++pep_it)
         {
-          for (vector<PeptideHit>::iterator hit_it = pep_it->getHits().begin();
+          for (vector<SpectrumMatch>::iterator hit_it = pep_it->getHits().begin();
                hit_it != pep_it->getHits().end(); ++hit_it)
           {
             hit_it->setPeptideEvidences(vector<PeptideEvidence>());

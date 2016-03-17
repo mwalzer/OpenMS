@@ -57,9 +57,9 @@ namespace OpenMS
   {
   }
 
-  PeptideHit AScore::compute(const PeptideHit & hit, PeakSpectrum & real_spectrum, double fragment_mass_tolerance, bool fragment_mass_unit_ppm, Size max_peptide_len, Size max_num_perm)
+  SpectrumMatch AScore::compute(const SpectrumMatch & hit, PeakSpectrum & real_spectrum, double fragment_mass_tolerance, bool fragment_mass_unit_ppm, Size max_peptide_len, Size max_num_perm)
   {
-    PeptideHit phospho = hit;
+    SpectrumMatch phospho = hit;
     
     //reset phospho
     phospho.setScore(-1);

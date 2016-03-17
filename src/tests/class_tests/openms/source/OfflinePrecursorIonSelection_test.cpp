@@ -62,7 +62,7 @@ START_SECTION(~OfflinePrecursorIonSelection())
 END_SECTION
 
 ptr = new OfflinePrecursorIonSelection();
-std::vector<PeptideIdentification> pep_ids;
+std::vector<SpectrumIdentification> pep_ids;
 std::vector<ProteinIdentification> prot_ids;
 //IdXMLFile().load(OPENMS_GET_TEST_DATA_PATH("OfflinePrecursorIonSelection_ids.idXML"),prot_ids,pep_ids);
 

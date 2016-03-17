@@ -224,7 +224,7 @@ public:
         accessions(accessions)
       {}
 
-      bool operator()(const PeptideHit& hit) const
+      bool operator()(const SpectrumMatch& hit) const
       {
         std::set<String> present_accessions = hit.extractProteinAccessions();
         for (std::set<String>::iterator it = present_accessions.begin();
@@ -429,7 +429,7 @@ public:
        @param ignore_mods Extract sequences without modifications?
     */
     static void extractPeptideSequences(
-      const std::vector<PeptideIdentification>& peptides, 
+      const std::vector<SpectrumIdentification>& peptides, 
       std::set<String>& sequences, bool ignore_mods = false);
 
     ///@}
@@ -452,7 +452,7 @@ public:
     /// Removes protein hits from @p proteins that are not referenced by a peptide in @p peptides
     static void removeUnreferencedProteins(
       std::vector<ProteinIdentification>& proteins,
-      const std::vector<PeptideIdentification>& peptides);
+      const std::vector<SpectrumIdentification>& peptides);
 
     /**
        @brief Removes references to missing proteins
@@ -462,7 +462,7 @@ public:
        If @p remove_peptides_without_reference is set, peptide hits without any remaining protein reference are removed.
     */
     static void updateProteinReferences(
-      std::vector<PeptideIdentification>& peptides,
+      std::vector<SpectrumIdentification>& peptides,
       const std::vector<ProteinIdentification>& proteins,
       bool remove_peptides_without_reference = false);
 
@@ -659,7 +659,7 @@ public:
        @param strict If set, keep the best hit only if its score is unique - i.e. ties are not allowed. (Otherwise all hits with the best score is kept.)
     */
     static void keepBestPeptideHits(
-      std::vector<PeptideIdentification>& peptides, bool strict = false);
+      std::vector<SpectrumIdentification>& peptides, bool strict = false);
 
     /**
        @brief Filters peptide identifications according to peptide sequence length.
@@ -670,7 +670,7 @@ public:
        @note The ranks of the hits may be invalidated.
     */
     static void filterPeptidesByLength(
-      std::vector<PeptideIdentification>& peptides, Size min_length,
+      std::vector<SpectrumIdentification>& peptides, Size min_length,
       Size max_length = UINT_MAX);
 
     /**
@@ -682,15 +682,15 @@ public:
        @note The ranks of the hits may be invalidated.
     */
     static void filterPeptidesByCharge(
-      std::vector<PeptideIdentification>& peptides, Int min_charge,
+      std::vector<SpectrumIdentification>& peptides, Int min_charge,
       Int max_charge);
 
     /// Filters peptide identifications by precursor RT, keeping only IDs in the given range
-    static void filterPeptidesByRT(std::vector<PeptideIdentification>& peptides,
+    static void filterPeptidesByRT(std::vector<SpectrumIdentification>& peptides,
                                    double min_rt, double max_rt);
 
     /// Filters peptide identifications by precursor m/z, keeping only IDs in the given range
-    static void filterPeptidesByMZ(std::vector<PeptideIdentification>& peptides,
+    static void filterPeptidesByMZ(std::vector<SpectrumIdentification>& peptides,
                                    double min_mz, double max_mz);
 
     /**
@@ -705,7 +705,7 @@ public:
        @note The ranks of the hits may be invalidated.
     */
     static void filterPeptidesByMZError(
-      std::vector<PeptideIdentification>& peptides, double mass_error, 
+      std::vector<SpectrumIdentification>& peptides, double mass_error, 
       bool unit_ppm);
 
 	  /**
@@ -720,17 +720,17 @@ public:
        @note The ranks of the hits may be invalidated.
     */
     static void filterPeptidesByRTPredictPValue(
-      std::vector<PeptideIdentification>& peptides,
+      std::vector<SpectrumIdentification>& peptides,
       const String& metavalue_key, double threshold = 0.05);
 
     /// Removes all peptide hits that have at least one of the given modifications
     static void removePeptidesWithMatchingModifications(
-      std::vector<PeptideIdentification>& peptides,
+      std::vector<SpectrumIdentification>& peptides,
       const std::set<String>& modifications);
 
     /// Keeps only peptide hits that have at least one of the given modifications
     static void keepPeptidesWithMatchingModifications(
-      std::vector<PeptideIdentification>& peptides,
+      std::vector<SpectrumIdentification>& peptides,
       const std::set<String>& modifications);
 
     /**
@@ -741,8 +741,8 @@ public:
        @note The ranks of the hits may be invalidated.
     */
     static void removePeptidesWithMatchingSequences(
-      std::vector<PeptideIdentification>& peptides,
-      const std::vector<PeptideIdentification>& bad_peptides,
+      std::vector<SpectrumIdentification>& peptides,
+      const std::vector<SpectrumIdentification>& bad_peptides,
       bool ignore_mods = false);
 
     /**
@@ -753,12 +753,12 @@ public:
        @note The ranks of the hits may be invalidated.
     */
     static void keepPeptidesWithMatchingSequences(
-      std::vector<PeptideIdentification>& peptides,
-      const std::vector<PeptideIdentification>& good_peptides,
+      std::vector<SpectrumIdentification>& peptides,
+      const std::vector<SpectrumIdentification>& good_peptides,
       bool ignore_mods = false);
 
    /// Removes all peptides that are not annotated as unique for a protein (by PeptideIndexer)
-    static void keepUniquePeptidesPerProtein(std::vector<PeptideIdentification>&
+    static void keepUniquePeptidesPerProtein(std::vector<SpectrumIdentification>&
                                              peptides);
 
     /**
@@ -766,7 +766,7 @@ public:
 
        Hits are considered duplicated if they compare as equal using PeptideHit::operator== (i.e. not only the sequences have to match!).
     */
-    static void removeDuplicatePeptideHits(std::vector<PeptideIdentification>&
+    static void removeDuplicatePeptideHits(std::vector<SpectrumIdentification>&
                                            peptides);
 
     ///@}
@@ -831,13 +831,13 @@ public:
     {
       // don't filter the protein hits by "N best" here - filter the peptides
       // and update the protein hits!
-      std::vector<PeptideIdentification> all_peptides; // IDs from all spectra
+      std::vector<SpectrumIdentification> all_peptides; // IDs from all spectra
 
       // filter peptide hits:
       for (typename MSExperiment<PeakT>::Iterator exp_it = experiment.begin();
            exp_it != experiment.end(); ++exp_it)
       {
-        std::vector<PeptideIdentification>& peptides = 
+        std::vector<SpectrumIdentification>& peptides = 
           exp_it->getPeptideIdentifications();
         keepNBestHits(peptides, n);
         removeEmptyIdentifications(peptides);

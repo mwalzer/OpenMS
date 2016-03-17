@@ -132,7 +132,7 @@ protected:
     PeakMap map;
     MzMLFile().load(in_spectra, map);
 
-    std::vector<PeptideIdentification> pep_ids;
+    std::vector<SpectrumIdentification> pep_ids;
     std::vector<ProteinIdentification> prot_ids;
     String tmp_str;
     IdXMLFile().load(in_identifications, prot_ids, pep_ids, tmp_str);

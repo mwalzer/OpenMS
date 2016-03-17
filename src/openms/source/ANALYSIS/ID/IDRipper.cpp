@@ -71,7 +71,7 @@ namespace OpenMS
     return *this;
   }
 
-  void IDRipper::rip(map<String, pair<vector<ProteinIdentification>, vector<PeptideIdentification> > >& ripped, vector<ProteinIdentification>& proteins, vector<PeptideIdentification>& peptides)
+  void IDRipper::rip(map<String, pair<vector<ProteinIdentification>, vector<SpectrumIdentification> > >& ripped, vector<ProteinIdentification>& proteins, vector<SpectrumIdentification>& peptides)
   {
     // Collect all protein hits
     vector<ProteinHit> all_protein_hits;
@@ -85,7 +85,7 @@ namespace OpenMS
 
     //store protein and peptides identifications for each file origin
 
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin(); pep_it != peptides.end(); ++pep_it)
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin(); pep_it != peptides.end(); ++pep_it)
     {
       // try to get file_origin, if not present ignore peptide identification
       const String& file_origin = pep_it->getMetaValue("file_origin").toString();
@@ -101,7 +101,7 @@ namespace OpenMS
         continue;
 
       // try to get peptide hits for peptide identification
-      const vector<PeptideHit>& peptide_hits = pep_it->getHits();
+      const vector<SpectrumMatch>& peptide_hits = pep_it->getHits();
       if (peptide_hits.empty())
         continue;
 
@@ -119,7 +119,7 @@ namespace OpenMS
       // TODO catch case that ProteinIdentification prot_ident is not found in the for-loop
 
 
-      map<String, pair<vector<ProteinIdentification>, vector<PeptideIdentification> > >::iterator it = ripped.find(file_);
+      map<String, pair<vector<ProteinIdentification>, vector<SpectrumIdentification> > >::iterator it = ripped.find(file_);
       // If file_origin already exists
       if (it != ripped.end())
       {
@@ -145,7 +145,7 @@ namespace OpenMS
           prot_ident.setHits(protein2accessions);
           prot_tmp.push_back(prot_ident);
         }
-        vector<PeptideIdentification>& pep_tmp = it->second.second;
+        vector<SpectrumIdentification>& pep_tmp = it->second.second;
         pep_tmp.push_back(*pep_it);
       }
       else // otherwise create new entry for file_origin
@@ -157,7 +157,7 @@ namespace OpenMS
         protein_idents.push_back(prot_ident);
 
         //create new peptide identification
-        vector<PeptideIdentification> peptide_idents;
+        vector<SpectrumIdentification> peptide_idents;
         peptide_idents.push_back(*pep_it);
 
         //create and insert new map entry
@@ -180,16 +180,16 @@ namespace OpenMS
     }
   }
 
-  void IDRipper::getProteinAccessions_(vector<String>& result, const vector<PeptideHit>& peptide_hits)
+  void IDRipper::getProteinAccessions_(vector<String>& result, const vector<SpectrumMatch>& peptide_hits)
   {
-    for (vector<PeptideHit>::const_iterator it = peptide_hits.begin(); it != peptide_hits.end(); ++it)
+    for (vector<SpectrumMatch>::const_iterator it = peptide_hits.begin(); it != peptide_hits.end(); ++it)
     {
       std::set<String> protein_accessions = it->extractProteinAccessions();
       result.insert(result.end(), protein_accessions.begin(), protein_accessions.end());
     }
   }
 
-  void IDRipper::getProteinIdentification_(ProteinIdentification& result, PeptideIdentification pep_ident, std::vector<ProteinIdentification>& prot_idents)
+  void IDRipper::getProteinIdentification_(ProteinIdentification& result, SpectrumIdentification pep_ident, std::vector<ProteinIdentification>& prot_idents)
   {
     const String& identifier = pep_ident.getIdentifier();
 

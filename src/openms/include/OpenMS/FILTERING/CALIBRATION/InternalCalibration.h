@@ -113,7 +113,7 @@ public:
      @param trafo_file_name file where the transformation function of the calibration is stored
     */
     template <typename InputPeakType>
-    void calibrateMapGlobally(const MSExperiment<InputPeakType> & exp, MSExperiment<InputPeakType> & calibrated_exp, std::vector<PeptideIdentification> & ref_ids, String trafo_file_name = "");
+    void calibrateMapGlobally(const MSExperiment<InputPeakType> & exp, MSExperiment<InputPeakType> & calibrated_exp, std::vector<SpectrumIdentification> & ref_ids, String trafo_file_name = "");
 
     /**
      @brief Calibrate an annotated feature map with one calibration function for the whole map.
@@ -134,7 +134,7 @@ public:
      @param ref_ids the reference peptide identifications
      @param trafo_file_name file where the transformation function of the calibration is stored
     */
-    void calibrateMapGlobally(const FeatureMap & feature_map, FeatureMap & calibrated_feature_map, std::vector<PeptideIdentification> & ref_ids, String trafo_file_name = "");
+    void calibrateMapGlobally(const FeatureMap & feature_map, FeatureMap & calibrated_feature_map, std::vector<SpectrumIdentification> & ref_ids, String trafo_file_name = "");
 
 
 
@@ -148,7 +148,7 @@ protected:
     void makeLinearRegression_(std::vector<double> & observed_masses, std::vector<double> & theoretical_masses);
 
     /// check if reference ids contain RT and MZ information as meta values
-    void checkReferenceIds_(std::vector<PeptideIdentification> & pep_ids);
+    void checkReferenceIds_(std::vector<SpectrumIdentification> & pep_ids);
 
     /// check if reference ids contain RT and MZ information as meta values
     void checkReferenceIds_(const FeatureMap & feature_map);
@@ -253,7 +253,7 @@ protected:
   template <typename InputPeakType>
   void InternalCalibration::calibrateMapGlobally(const MSExperiment<InputPeakType> & exp,
                                                  MSExperiment<InputPeakType> & calibrated_exp,
-                                                 std::vector<PeptideIdentification> & ref_ids, String trafo_file_name)
+                                                 std::vector<SpectrumIdentification> & ref_ids, String trafo_file_name)
   {
     bool use_ppm = param_.getValue("mz_tolerance_unit") == "ppm" ? true : false;
     double mz_tolerance = param_.getValue("mz_tolerance");

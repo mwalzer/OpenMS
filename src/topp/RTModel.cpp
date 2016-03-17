@@ -294,13 +294,13 @@ protected:
   ExitCodes main_(Int, const char**)
   {
     vector<ProteinIdentification> protein_identifications;
-    vector<PeptideIdentification> identifications;
+    vector<SpectrumIdentification> identifications;
     vector<ProteinIdentification> protein_identifications_negative;
-    vector<PeptideIdentification> identifications_negative;
+    vector<SpectrumIdentification> identifications_negative;
     vector<String> training_peptides;
     vector<AASequence> training_modified_peptides;
     vector<double> training_retention_times;
-    PeptideHit temp_peptide_hit;
+    SpectrumMatch temp_peptide_hit;
     SVMWrapper svm;
     svm.setLogType(log_type_);
     LibSVMEncoder encoder;
@@ -657,7 +657,7 @@ protected:
             writeLog_("For one spectrum there should not be more than one peptide."
                       "Please use the IDFilter with the -best:strict option to achieve this. Aborting!");
             writeLog_("Hits: ");
-            for (vector<PeptideHit>::const_iterator it = identifications[i].getHits().begin();
+            for (vector<SpectrumMatch>::const_iterator it = identifications[i].getHits().begin();
                  it != identifications[i].getHits().end();
                  ++it)
             {
@@ -819,7 +819,7 @@ protected:
             writeLog_("For one spectrum there should not be more than one peptide."
                       "Please use the IDFilter with the -best:strict option to achieve this. Aborting!");
             writeLog_("Hits: ");
-            for (vector<PeptideHit>::const_iterator it = identifications_negative[i].getHits().begin();
+            for (vector<SpectrumMatch>::const_iterator it = identifications_negative[i].getHits().begin();
                  it != identifications_negative[i].getHits().end();
                  ++it)
             {

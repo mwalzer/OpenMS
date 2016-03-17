@@ -1067,7 +1067,7 @@ namespace OpenMS
     ConsensusMapType* consensus_map = new ConsensusMapType();
     ConsensusMapSharedPtrType consensus_map_sptr(consensus_map);
 
-    vector<PeptideIdentification> peptides;
+    vector<SpectrumIdentification> peptides;
 
     LayerData::DataType data_type;
 
@@ -1092,8 +1092,8 @@ namespace OpenMS
           throw Exception::MissingInformation(__FILE__, __LINE__, __PRETTY_FUNCTION__, "No peptide identifications found");
         }
         // check if RT (and sequence) information is present:
-        vector<PeptideIdentification> peptides_with_rt;
-        for (vector<PeptideIdentification>::const_iterator it =
+        vector<SpectrumIdentification> peptides_with_rt;
+        for (vector<SpectrumIdentification>::const_iterator it =
                peptides.begin(); it != peptides.end(); ++it)
         {
           if (!it->getHits().empty() && it->hasRT())
@@ -1164,7 +1164,7 @@ namespace OpenMS
     setCursor(Qt::ArrowCursor);
   }
 
-  void TOPPViewBase::addData(FeatureMapSharedPtrType feature_map, ConsensusMapSharedPtrType consensus_map, vector<PeptideIdentification>& peptides, ExperimentSharedPtrType peak_map, LayerData::DataType data_type, bool show_as_1d, bool show_options, bool as_new_window, const String& filename, const String& caption, UInt window_id, Size spectrum_id)
+  void TOPPViewBase::addData(FeatureMapSharedPtrType feature_map, ConsensusMapSharedPtrType consensus_map, vector<SpectrumIdentification>& peptides, ExperimentSharedPtrType peak_map, LayerData::DataType data_type, bool show_as_1d, bool show_options, bool as_new_window, const String& filename, const String& caption, UInt window_id, Size spectrum_id)
   {
     // initialize flags with defaults from the parameters
     bool maps_as_2d = ((String)param_.getValue("preferences:default_map_view") == "2d");
@@ -3035,7 +3035,7 @@ namespace OpenMS
     }
     else if (type == FileTypes::IDXML)
     {
-      vector<PeptideIdentification> identifications;
+      vector<SpectrumIdentification> identifications;
       vector<ProteinIdentification> protein_identifications;
 
       try
@@ -3193,7 +3193,7 @@ namespace OpenMS
       ExperimentSharedPtrType new_exp_sptr(new PeakMap(new_exp));
       FeatureMapSharedPtrType f_dummy(new FeatureMapType());
       ConsensusMapSharedPtrType c_dummy(new ConsensusMapType());
-      vector<PeptideIdentification> p_dummy;
+      vector<SpectrumIdentification> p_dummy;
       addData(f_dummy, c_dummy, p_dummy, new_exp_sptr, LayerData::DT_CHROMATOGRAM, false, true, true, "", seq_string + QString(" (theoretical)"));
 
       // ensure spectrum is drawn as sticks
@@ -3761,7 +3761,7 @@ namespace OpenMS
         FeatureMapSharedPtrType features = layer.getFeatureMap();
         ExperimentSharedPtrType peaks = layer.getPeakData();
         ConsensusMapSharedPtrType consensus = layer.getConsensusMap();
-        vector<PeptideIdentification> peptides = layer.peptides;
+        vector<SpectrumIdentification> peptides = layer.peptides;
 
         //add the data
         addData(features, consensus, peptides, peaks, layer.type, false, false, true, layer.filename, layer.name, new_id);
@@ -3779,7 +3779,7 @@ namespace OpenMS
           ExperimentSharedPtrType new_exp_sptr(new ExperimentType(new_exp));
           FeatureMapSharedPtrType f_dummy(new FeatureMapType());
           ConsensusMapSharedPtrType c_dummy(new ConsensusMapType());
-          vector<PeptideIdentification> p_dummy;
+          vector<SpectrumIdentification> p_dummy;
           addData(f_dummy, c_dummy, p_dummy, new_exp_sptr, LayerData::DT_CHROMATOGRAM, false, false, true, layer.filename, layer.name, new_id);
         }
       }

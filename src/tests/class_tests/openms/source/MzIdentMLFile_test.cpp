@@ -61,9 +61,9 @@ START_SECTION((~MzIdentMLFile()))
     delete ptr;
 END_SECTION
 
-START_SECTION(void load(const String& filename, std::vector<ProteinIdentification>& protein_ids, std::vector<PeptideIdentification>& peptide_ids) )
+START_SECTION(void load(const String& filename, std::vector<ProteinIdentification>& protein_ids, std::vector<SpectrumIdentification>& peptide_ids) )
   std::vector<ProteinIdentification> protein_ids;
-  std::vector<PeptideIdentification> peptide_ids;
+  std::vector<SpectrumIdentification> peptide_ids;
   std::vector<String> fm;
   fm.push_back("Carbamidomethyl (C)");
   MzIdentMLFile().load(OPENMS_GET_TEST_DATA_PATH("MzIdentMLFile_msgf_mini.mzid"), protein_ids, peptide_ids);
@@ -125,7 +125,7 @@ START_SECTION(void store(String filename, const std::vector<ProteinIdentificatio
 
   //store and load data from various sources, starting with idxml, contents already checked above, so checking integrity of the data over repeated r/w
   std::vector<ProteinIdentification> protein_ids, protein_ids2;
-  std::vector<PeptideIdentification> peptide_ids, peptide_ids2;
+  std::vector<SpectrumIdentification> peptide_ids, peptide_ids2;
   String input_path = OPENMS_GET_TEST_DATA_PATH("MzIdentMLFile_whole.mzid");
   MzIdentMLFile().load(input_path, protein_ids2, peptide_ids2);
   String filename;
@@ -234,7 +234,7 @@ END_SECTION
 
 START_SECTION(([EXTRA] multiple runs))
   std::vector<ProteinIdentification> protein_ids, protein_ids2;
-  std::vector<PeptideIdentification> peptide_ids, peptide_ids2;
+  std::vector<SpectrumIdentification> peptide_ids, peptide_ids2;
   String input_path = OPENMS_GET_TEST_DATA_PATH("MzIdentML_3runs.mzid");
   MzIdentMLFile().load(input_path, protein_ids2, peptide_ids2);
   String filename;
@@ -252,7 +252,7 @@ END_SECTION
 
 START_SECTION(([EXTRA] psm ranking))
   std::vector<ProteinIdentification> protein_ids;
-  std::vector<PeptideIdentification> peptide_ids;
+  std::vector<SpectrumIdentification> peptide_ids;
   String input_path = OPENMS_GET_TEST_DATA_PATH("MzIdentMLFile_whole.mzid");
   MzIdentMLFile().load(input_path, protein_ids, peptide_ids);
 
@@ -270,7 +270,7 @@ END_SECTION
 
 START_SECTION(([EXTRA] thresholds))
   std::vector<ProteinIdentification> protein_ids;
-  std::vector<PeptideIdentification> peptide_ids;
+  std::vector<SpectrumIdentification> peptide_ids;
   String input_path = OPENMS_GET_TEST_DATA_PATH("MzIdentMLFile_whole.mzid");
   MzIdentMLFile().load(input_path, protein_ids, peptide_ids);
 
@@ -287,7 +287,7 @@ START_SECTION(([EXTRA] thresholds))
       {
         TEST_EQUAL(peptide_ids[i].getHits()[j].getMetaValue("pass_threshold"),false)
       }
-      PeptideHit x = peptide_ids[i].getHits().back();
+      SpectrumMatch x = peptide_ids[i].getHits().back();
       x.removeMetaValue("pass_threshold");
       x.setSequence(AASequence::fromString("TESTER"));
       x.setScore(0.4);
@@ -324,7 +324,7 @@ START_SECTION(([EXTRA] thresholds))
 END_SECTION
 START_SECTION(([EXTRA] regression test for file loading on example files))
   std::vector<ProteinIdentification> protein_ids;
-  std::vector<PeptideIdentification> peptide_ids;
+  std::vector<SpectrumIdentification> peptide_ids;
   String input_path = OPENMS_GET_TEST_DATA_PATH("MzIdentMLFile_whole.mzid");
   MzIdentMLFile().load(input_path, protein_ids, peptide_ids);
   input_path = OPENMS_GET_TEST_DATA_PATH("Mascot_MSMS_example.mzid");

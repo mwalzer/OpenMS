@@ -142,10 +142,10 @@ namespace OpenMS
       {
         for (Size k = 0; k < feature_maps[i][j].getPeptideIdentifications().size(); ++k)   // peptide identifications
         {
-          std::vector<PeptideHit> peptide_hits;
+          std::vector<SpectrumMatch> peptide_hits;
           for (Size l = 0; l < feature_maps[i][j].getPeptideIdentifications()[k].getHits().size(); ++l)   // peptide hits
           {
-            PeptideHit peptide_hit = feature_maps[i][j].getPeptideIdentifications()[k].getHits()[l];
+            SpectrumMatch peptide_hit = feature_maps[i][j].getPeptideIdentifications()[k].getHits()[l];
 
             // first step: identifications having a XCorr smaller than the threshold are discarded
             if (double(peptide_hit.getMetaValue("XCorr")) > xcorr_threshold)
@@ -181,7 +181,7 @@ namespace OpenMS
         {
           for (Size l = 0; l < feature_maps[i][j].getPeptideIdentifications()[k].getHits().size(); ++l)   // peptide hits
           {
-            PeptideHit peptide_hit = feature_maps[i][j].getPeptideIdentifications()[k].getHits()[l];
+            SpectrumMatch peptide_hit = feature_maps[i][j].getPeptideIdentifications()[k].getHits()[l];
 
             // if the hit is not yet discarded, compute the denominator of the variance
             if (peptide_hit.getMetaValue("IDAlgorithm") == "true")
@@ -220,10 +220,10 @@ namespace OpenMS
       {
         for (Size k = 0; k < feature_maps[i][j].getPeptideIdentifications().size(); ++k)   // petide identifications
         {
-          std::vector<PeptideHit> peptide_hits;
+          std::vector<SpectrumMatch> peptide_hits;
           for (Size l = 0; l < feature_maps[i][j].getPeptideIdentifications()[k].getHits().size(); ++l)   // peptide hits
           {
-            PeptideHit peptide_hit = feature_maps[i][j].getPeptideIdentifications()[k].getHits()[l];
+            SpectrumMatch peptide_hit = feature_maps[i][j].getPeptideIdentifications()[k].getHits()[l];
 
             // if the hit is not yet discarded, test if standard deviation is to high or rt-mean_rt deviates by more than 2*standard deviation
             if (peptide_hit.getMetaValue("IDAlgorithm") == "true")
@@ -280,7 +280,7 @@ namespace OpenMS
         {
           for (Size l = 0; l < feature_maps[i][j].getPeptideIdentifications()[k].getHits().size(); ++l)   // peptide hits
           {
-            PeptideHit peptide_hit = feature_maps[i][j].getPeptideIdentifications()[k].getHits()[l];
+            SpectrumMatch peptide_hit = feature_maps[i][j].getPeptideIdentifications()[k].getHits()[l];
             if (peptide_hit.getMetaValue("IDAlgorithm") == "true")   // put all hits that are not yet discarded in a vector
             {
               double xcorr_pep;
@@ -572,10 +572,10 @@ namespace OpenMS
 
     for (std::vector<PepHit>::iterator iter = discarded_pephits.begin(); iter != discarded_pephits.end(); ++iter)
     {
-      std::vector<PeptideHit> peptide_hits;
+      std::vector<SpectrumMatch> peptide_hits;
       for (Size l = 0; l < feature_maps[iter->pep_map_nr][iter->pep_feature_nr].getPeptideIdentifications()[iter->pep_ident_nr].getHits().size(); ++l)   // peptide hits
       {
-        PeptideHit peptide_hit = feature_maps[iter->pep_map_nr][iter->pep_feature_nr].getPeptideIdentifications()[iter->pep_ident_nr].getHits()[l];
+        SpectrumMatch peptide_hit = feature_maps[iter->pep_map_nr][iter->pep_feature_nr].getPeptideIdentifications()[iter->pep_ident_nr].getHits()[l];
 
         if (l == iter->pep_hit_nr)   // ist das der hit, den ich im vektor habe?
         {

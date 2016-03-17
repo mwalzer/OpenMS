@@ -398,7 +398,7 @@ protected:
       }
       else if (ex_type == FileTypes::IDXML)
       {
-        std::vector<PeptideIdentification> pep_ids;
+        std::vector<SpectrumIdentification> pep_ids;
         std::vector<ProteinIdentification> prot_ids;
         IdXMLFile().load(exclude, prot_ids, pep_ids);
         try

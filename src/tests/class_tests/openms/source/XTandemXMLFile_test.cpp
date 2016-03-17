@@ -58,11 +58,11 @@ XTandemXMLFile xml_file;
 XTandemXMLFile* ptr;
 XTandemXMLFile* nullPointer = 0;
 ProteinIdentification protein_identification;
-vector<PeptideIdentification> peptide_identifications;
-vector<PeptideIdentification> peptide_identifications2;
+vector<SpectrumIdentification> peptide_identifications;
+vector<SpectrumIdentification> peptide_identifications2;
 String date_string_1;
 String date_string_2;
-PeptideHit peptide_hit;
+SpectrumMatch peptide_hit;
 
 START_SECTION((XTandemXMLFile()))
 	ptr = new XTandemXMLFile();
@@ -82,7 +82,7 @@ START_SECTION(void setModificationDefinitionsSet(const ModificationDefinitionsSe
 	NOT_TESTABLE
 END_SECTION
 
-START_SECTION(void load(const String& filename, ProteinIdentification& protein_identification, std::vector<PeptideIdentification>& id_data))
+START_SECTION(void load(const String& filename, ProteinIdentification& protein_identification, std::vector<SpectrumIdentification>& id_data))
 	ptr->load(OPENMS_GET_TEST_DATA_PATH("XTandemXMLFile_test.xml"), protein_identification, peptide_identifications);
 	TEST_EQUAL(peptide_identifications.size(), 303)
 	TEST_EQUAL(protein_identification.getHits().size(), 497)

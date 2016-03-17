@@ -170,7 +170,7 @@ END_SECTION
 
 START_SECTION((bool addMissingRTsToPeptideIDs(vector<PeptideIdentification>&, const String&, bool)))
 {
-  vector<PeptideIdentification> peptides(1);
+  vector<SpectrumIdentification> peptides(1);
   peptides[0].setRT(1.0);
   String filename = "this_file_does_not_exist.mzML";
   // no missing RTs -> no attempt to load mzML file:

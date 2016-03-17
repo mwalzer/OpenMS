@@ -53,7 +53,7 @@ namespace OpenMS
   {
   }
 
-  Size PSProteinInference::findMinimalProteinList(const std::vector<PeptideIdentification>& peptide_ids)
+  Size PSProteinInference::findMinimalProteinList(const std::vector<SpectrumIdentification>& peptide_ids)
   {
     // // first map peptides to proteins
     // std::map<String,vector<PeptideIdentification> > pep_prot_map;
@@ -164,12 +164,12 @@ namespace OpenMS
     return minimal_protein_list_accessions_.size();
   }
 
-  void PSProteinInference::calculateProteinProbabilities(const std::vector<PeptideIdentification>& ids)
+  void PSProteinInference::calculateProteinProbabilities(const std::vector<SpectrumIdentification>& ids)
   {
     accessions_.clear(); probabilities_.clear();
 
     // first map peptides to proteins
-    std::map<String, vector<PeptideIdentification> > pep_prot_map;
+    std::map<String, vector<SpectrumIdentification> > pep_prot_map;
     for (Size i = 0; i < ids.size(); ++i)
     {
       // consider only first peptide hit -> should be filtered before
@@ -187,7 +187,7 @@ namespace OpenMS
       for (std::set<String>::const_iterator a_it = accs.begin(); a_it != accs.end(); ++a_it)
       {
         // first check if protein has already a peptide with the same sequence stored
-        std::vector<PeptideIdentification>::iterator it = pep_prot_map[*a_it].begin();
+        std::vector<SpectrumIdentification>::iterator it = pep_prot_map[*a_it].begin();
         bool insert = true;
         for (; it != pep_prot_map[*a_it].end(); ++it)
         {
@@ -216,7 +216,7 @@ namespace OpenMS
     }
 
     // enter accessions in member vector
-    std::map<String, vector<PeptideIdentification> >::const_iterator map_it = pep_prot_map.begin();
+    std::map<String, vector<SpectrumIdentification> >::const_iterator map_it = pep_prot_map.begin();
     for (; map_it != pep_prot_map.end(); ++map_it)
       accessions_.push_back(map_it->first);
 

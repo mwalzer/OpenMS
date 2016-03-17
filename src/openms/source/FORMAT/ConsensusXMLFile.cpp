@@ -114,13 +114,13 @@ namespace OpenMS
     else if (tag == "PeptideIdentification")
     {
       act_cons_element_.getPeptideIdentifications().push_back(pep_id_);
-      pep_id_ = PeptideIdentification();
+      pep_id_ = SpectrumIdentification();
       last_meta_ = &act_cons_element_;
     }
     else if (tag == "UnassignedPeptideIdentification")
     {
       consensus_map_->getUnassignedPeptideIdentifications().push_back(pep_id_);
-      pep_id_ = PeptideIdentification();
+      pep_id_ = SpectrumIdentification();
       last_meta_ = consensus_map_;
     }
     else if (tag == "PeptideHit")
@@ -478,7 +478,7 @@ namespace OpenMS
     else if (tag == "PeptideHit")
     {
       setProgress(++progress_);
-      pep_hit_ = PeptideHit();
+      pep_hit_ = SpectrumMatch();
       peptide_evidences_ = vector<PeptideEvidence>();
       pep_hit_.setCharge(attributeAsInt_(attributes, "charge"));
       pep_hit_.setScore(attributeAsDouble_(attributes, "score"));
@@ -896,9 +896,9 @@ namespace OpenMS
     it_ = 0;
     last_meta_ = 0;
     prot_id_ = ProteinIdentification();
-    pep_id_ = PeptideIdentification();
+    pep_id_ = SpectrumIdentification();
     prot_hit_ = ProteinHit();
-    pep_hit_ = PeptideHit();
+    pep_hit_ = SpectrumMatch();
     proteinid_to_accession_.clear();
     accession_to_id_.clear();
     identifier_id_.clear();
@@ -909,7 +909,7 @@ namespace OpenMS
   }
 
   void
-  ConsensusXMLFile::writePeptideIdentification_(const String& filename, std::ostream& os, const PeptideIdentification& id, const String& tag_name,
+  ConsensusXMLFile::writePeptideIdentification_(const String& filename, std::ostream& os, const SpectrumIdentification& id, const String& tag_name,
                                                 UInt indentation_level)
   {
     String indent = String(indentation_level, '\t');

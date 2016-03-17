@@ -107,7 +107,7 @@ namespace OpenMS
   {
     String identifier;
     vector<ProteinIdentification> proteins;
-    vector<PeptideIdentification> peptides;
+    vector<SpectrumIdentification> peptides;
   };
 
   /// Write SomeStatistics to a stream.
@@ -498,7 +498,7 @@ protected:
         {
           ++spectrum_count;
           peptide_hit_count += id_data.peptides[i].getHits().size();
-          const vector<PeptideHit>& temp_hits = id_data.peptides[i].getHits();
+          const vector<SpectrumMatch>& temp_hits = id_data.peptides[i].getHits();
           // collect stats about modifications from TOP HIT!
           if (temp_hits[0].getSequence().isModified())
           {

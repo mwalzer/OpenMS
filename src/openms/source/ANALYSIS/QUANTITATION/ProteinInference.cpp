@@ -81,13 +81,13 @@ namespace OpenMS
       String accession = protein_ident.getHits()[i].getAccession();
 
       // consensus feature -> peptide hit
-      Map<size_t, PeptideHit> consensus_to_peptide;
+      Map<size_t, SpectrumMatch> consensus_to_peptide;
 
       // search for it in consensus elements:
       for (size_t i_cm = 0; i_cm < consensus_map.size(); ++i_cm)
       {
-        std::vector<PeptideHit> peptide_hits;
-        for (std::vector<PeptideIdentification>::iterator it_pepid = consensus_map[i_cm].getPeptideIdentifications().begin();
+        std::vector<SpectrumMatch> peptide_hits;
+        for (std::vector<SpectrumIdentification>::iterator it_pepid = consensus_map[i_cm].getPeptideIdentifications().begin();
              it_pepid != consensus_map[i_cm].getPeptideIdentifications().end();
              ++it_pepid)
         {
@@ -97,7 +97,7 @@ namespace OpenMS
 
           std::set<String> accessions;
           accessions.insert(accession);
-          std::vector<PeptideHit> peptide_hits_local = PeptideIdentification::getReferencingHits(it_pepid->getHits(), accessions);
+          std::vector<SpectrumMatch> peptide_hits_local = SpectrumIdentification::getReferencingHits(it_pepid->getHits(), accessions);
 
           if (peptide_hits_local.empty())
           {
@@ -139,7 +139,7 @@ namespace OpenMS
       // number of unique peptides pointing to current protein
       UInt coverage_count = (UInt)consensus_to_peptide.size();
 
-      for (Map<size_t, PeptideHit>::iterator it_pephits = consensus_to_peptide.begin();
+      for (Map<size_t, SpectrumMatch>::iterator it_pephits = consensus_to_peptide.begin();
            it_pephits != consensus_to_peptide.end();
            ++it_pephits)
       {
@@ -206,7 +206,7 @@ namespace OpenMS
 
   }
 
-  bool ProteinInference::sortByUnique_(std::vector<PeptideHit>& peptide_hits_local, const bool is_higher_score_better)
+  bool ProteinInference::sortByUnique_(std::vector<SpectrumMatch>& peptide_hits_local, const bool is_higher_score_better)
   {
     if (peptide_hits_local.empty())
       return false;
@@ -215,7 +215,7 @@ namespace OpenMS
     // -> take the best
     if (peptide_hits_local.size() > 1)
     {
-      std::sort(peptide_hits_local.begin(), peptide_hits_local.end(), PeptideHit::ScoreLess());
+      std::sort(peptide_hits_local.begin(), peptide_hits_local.end(), SpectrumMatch::ScoreLess());
       if (is_higher_score_better)
       {
         peptide_hits_local[0] = peptide_hits_local[peptide_hits_local.size() - 1];

@@ -74,7 +74,7 @@ namespace OpenMS
   void
   PepNovoOutfile::load(
     const std::string & result_filename,
-    vector<PeptideIdentification> & peptide_identifications,
+    vector<SpectrumIdentification> & peptide_identifications,
     ProteinIdentification & protein_identification,
     const double & score_threshold,
     const IndexPosMappingType & index_to_precursor,
@@ -84,7 +84,7 @@ namespace OpenMS
     // generally used variables
     StringList substrings;
     map<String, Int> columns;
-    PeptideHit peptide_hit;
+    SpectrumMatch peptide_hit;
 
     String
       line,
@@ -99,7 +99,7 @@ namespace OpenMS
     protein_identification.setDateTime(datetime);
 
     peptide_identifications.clear();
-    PeptideIdentification peptide_identification;
+    SpectrumIdentification peptide_identification;
     protein_identification = ProteinIdentification();
 
     // open the result
@@ -189,7 +189,7 @@ namespace OpenMS
         }
 
         //cout<<"INDEX: "<<index<<endl;
-        peptide_identification = PeptideIdentification();
+        peptide_identification = SpectrumIdentification();
         bool success = false;
         if (index_to_precursor.size()>0)
         {
@@ -280,7 +280,7 @@ namespace OpenMS
             }
             if (substrings[columns["RnkScr"]].toFloat() >= score_threshold)
             {
-              peptide_hit = PeptideHit();
+              peptide_hit = SpectrumMatch();
               peptide_hit.setCharge(substrings[columns["Charge"]].toInt());
               peptide_hit.setRank(substrings[columns["Index"]].toInt() + 1);
               peptide_hit.setScore(substrings[columns["RnkScr"]].toFloat());

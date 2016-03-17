@@ -264,18 +264,18 @@ namespace OpenMS
     if (feat1.getPeptideIdentifications().empty() || feat2.getPeptideIdentifications().empty())
       return true;
 
-    const vector<PeptideIdentification>& pep1 = feat1.getPeptideIdentifications();
-    const vector<PeptideIdentification>& pep2 = feat2.getPeptideIdentifications();
+    const vector<SpectrumIdentification>& pep1 = feat1.getPeptideIdentifications();
+    const vector<SpectrumIdentification>& pep2 = feat2.getPeptideIdentifications();
 
     set<String> best1, best2;
-    for (vector<PeptideIdentification>::const_iterator pep_it = pep1.begin(); pep_it != pep1.end(); ++pep_it)
+    for (vector<SpectrumIdentification>::const_iterator pep_it = pep1.begin(); pep_it != pep1.end(); ++pep_it)
     {
       if (pep_it->getHits().empty())
         continue; // shouldn't be the case
 
       best1.insert(getBestHitSequence_(*pep_it).toString());
     }
-    for (vector<PeptideIdentification>::const_iterator pep_it = pep2.begin(); pep_it != pep2.end(); ++pep_it)
+    for (vector<SpectrumIdentification>::const_iterator pep_it = pep2.begin(); pep_it != pep2.end(); ++pep_it)
     {
       if (pep_it->getHits().empty())
         continue; // shouldn't be the case
@@ -285,21 +285,21 @@ namespace OpenMS
     return best1 == best2;
   }
 
-  const AASequence& StablePairFinder::getBestHitSequence_(const PeptideIdentification& peptideIdentification) const
+  const AASequence& StablePairFinder::getBestHitSequence_(const SpectrumIdentification& peptideIdentification) const
   {
 
     if (peptideIdentification.isHigherScoreBetter())
     {
       return std::min_element(peptideIdentification.getHits().begin(),
                               peptideIdentification.getHits().end(),
-                              PeptideHit::ScoreMore()
+                              SpectrumMatch::ScoreMore()
                               )->getSequence();
     }
     else
     {
       return std::min_element(peptideIdentification.getHits().begin(),
                               peptideIdentification.getHits().end(),
-                              PeptideHit::ScoreLess()
+                              SpectrumMatch::ScoreLess()
                               )->getSequence();
     }
   }

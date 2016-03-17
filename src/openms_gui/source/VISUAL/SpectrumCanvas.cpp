@@ -436,7 +436,7 @@ namespace OpenMS
     return finishAdding_();
   }
 
-  bool SpectrumCanvas::addLayer(vector<PeptideIdentification> & peptides,
+  bool SpectrumCanvas::addLayer(vector<SpectrumIdentification> & peptides,
                                 const String & filename)
   {
     layers_.resize(layers_.size() + 1);
@@ -532,9 +532,9 @@ namespace OpenMS
       }
       else if (getLayer(layer_index).type == LayerData::DT_IDENT)
       {
-        const vector<PeptideIdentification> & peptides =
+        const vector<SpectrumIdentification> & peptides =
           getLayer(layer_index).peptides;
-        for (vector<PeptideIdentification>::const_iterator it =
+        for (vector<SpectrumIdentification>::const_iterator it =
                peptides.begin(); it != peptides.end(); ++it)
         {
           double rt = it->getRT();
@@ -822,7 +822,7 @@ namespace OpenMS
     }
   }
 
-  void SpectrumCanvas::getVisibleIdentifications(vector<PeptideIdentification> &
+  void SpectrumCanvas::getVisibleIdentifications(vector<SpectrumIdentification> &
                                                  peptides) const
   {
     //clear output experiment
@@ -837,7 +837,7 @@ namespace OpenMS
       double min_mz = getVisibleArea().minPosition()[0];
       double max_mz = getVisibleArea().maxPosition()[0];
       //copy features
-      for (vector<PeptideIdentification>::const_iterator it =
+      for (vector<SpectrumIdentification>::const_iterator it =
              layer.peptides.begin(); it != layer.peptides.end(); ++it)
       {
         double rt = it->getRT();
@@ -981,12 +981,12 @@ namespace OpenMS
   }
 
   double SpectrumCanvas::getIdentificationMZ_(const Size layer_index,
-                                                  const PeptideIdentification &
+                                                  const SpectrumIdentification &
                                                   peptide) const
   {
     if (getLayerFlag(layer_index, LayerData::I_PEPTIDEMZ))
     {
-      const PeptideHit & hit = peptide.getHits().front();
+      const SpectrumMatch & hit = peptide.getHits().front();
       Int charge = hit.getCharge();
       return hit.getSequence().getMonoWeight(Residue::Full, charge) / charge;
     }

@@ -293,7 +293,7 @@ namespace OpenMS
     spec_1d_->setIntensityMode(mode);
   }
 
-  bool IDEvaluationBase::getPoints(std::vector<PeptideIdentification>& peptides /* cannot be const, to avoid copy */,
+  bool IDEvaluationBase::getPoints(std::vector<SpectrumIdentification>& peptides /* cannot be const, to avoid copy */,
                                    const std::vector<double>& q_value_thresholds, MSSpectrum<>& points)
   {
     points.clear(true);
@@ -313,7 +313,7 @@ namespace OpenMS
     // get list of q-values and sort them
     std::vector<double> q_values;
     q_values.reserve(peptides.size());
-    for (vector<PeptideIdentification>::iterator it = peptides.begin(); it != peptides.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = peptides.begin(); it != peptides.end(); ++it)
     {
       it->assignRanks();
       if (it->getHits().size() > 0)
@@ -368,7 +368,7 @@ namespace OpenMS
     }
 
     std::vector<ProteinIdentification> prot_ids;
-    std::vector<PeptideIdentification> pep_ids;
+    std::vector<SpectrumIdentification> pep_ids;
     IdXMLFile().load(file_name, prot_ids, pep_ids);
     String ln = pep_ids[0].getScoreType(); // grab name here, since FDR-calculation will overwrite it with "q-value"
     bool ret = getPoints(pep_ids, q_value_thresholds_, points); // FDR calculation failed?

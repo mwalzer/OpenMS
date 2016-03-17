@@ -49,9 +49,9 @@ namespace OpenMS
 
 
   void ConsensusIDAlgorithmSimilarity::apply_(
-    vector<PeptideIdentification>& ids, SequenceGrouping& results)
+    vector<SpectrumIdentification>& ids, SequenceGrouping& results)
   {
-    for (vector<PeptideIdentification>::iterator id = ids.begin();
+    for (vector<SpectrumIdentification>::iterator id = ids.begin();
          id != ids.end(); ++id)
     {
       if (id->getScoreType() != "Posterior Error Probability")
@@ -62,10 +62,10 @@ namespace OpenMS
       }
     }
 
-    for (vector<PeptideIdentification>::iterator id1 = ids.begin();
+    for (vector<SpectrumIdentification>::iterator id1 = ids.begin();
          id1 != ids.end(); ++id1)
     {
-      for (vector<PeptideHit>::iterator hit1 = id1->getHits().begin();
+      for (vector<SpectrumMatch>::iterator hit1 = id1->getHits().begin();
            hit1 != id1->getHits().end(); ++hit1)
       {
         // have we scored this sequence already? if yes, skip:
@@ -80,7 +80,7 @@ namespace OpenMS
         // similarity scores and PEPs of best matches for all ID runs:
         vector<pair<double, double> > best_matches;
         best_matches.reserve(ids.size() - 1);
-        for (vector<PeptideIdentification>::iterator id2 = ids.begin();
+        for (vector<SpectrumIdentification>::iterator id2 = ids.begin();
              id2 != ids.end(); ++id2)
         {
           if (id1 == id2) continue;
@@ -91,7 +91,7 @@ namespace OpenMS
           // are better, same as similarity):
           vector<pair<double, double> > current_matches;
           current_matches.reserve(id2->getHits().size());
-          for (vector<PeptideHit>::iterator hit2 = id2->getHits().begin();
+          for (vector<SpectrumMatch>::iterator hit2 = id2->getHits().begin();
                hit2 != id2->getHits().end(); ++hit2)
           {
             double sim_score = getSimilarity_(hit1->getSequence(),

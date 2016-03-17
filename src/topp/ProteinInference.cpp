@@ -122,7 +122,7 @@ protected:
 
     // load identifications
     vector<ProteinIdentification> prot_ids;
-    vector<PeptideIdentification> pep_ids;
+    vector<SpectrumIdentification> pep_ids;
     IdXMLFile().load(in, prot_ids, pep_ids);
 
     // collect the different proteins (some of the protein hit copies are discarded)
@@ -141,10 +141,10 @@ protected:
     // count the sequences that match a protein accession
     // ProtAcc --> [charge, PepSeq]
     Map<String, Map<Size, set<String> > > acc_peptides;
-    for (vector<PeptideIdentification>::const_iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
+    for (vector<SpectrumIdentification>::const_iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
     {
       // for all peptide hits
-      for (vector<PeptideHit>::const_iterator it2 = it1->getHits().begin(); it2 != it1->getHits().end(); ++it2)
+      for (vector<SpectrumMatch>::const_iterator it2 = it1->getHits().begin(); it2 != it1->getHits().end(); ++it2)
       {
         String pep_seq;
         if (treat_modification_variants_separately)
@@ -197,11 +197,11 @@ protected:
     writeDebug_("Accepted " + String(accepted_proteins.size()) + " proteins.", 1);
 
     // remove peptides that are not accepted
-    for (vector<PeptideIdentification>::iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
+    for (vector<SpectrumIdentification>::iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
     {
-      vector<PeptideHit> peptide_hits = it1->getHits();
-      it1->setHits(vector<PeptideHit>());
-      for (vector<PeptideHit>::const_iterator it2 = peptide_hits.begin(); it2 != peptide_hits.end(); ++it2)
+      vector<SpectrumMatch> peptide_hits = it1->getHits();
+      it1->setHits(vector<SpectrumMatch>());
+      for (vector<SpectrumMatch>::const_iterator it2 = peptide_hits.begin(); it2 != peptide_hits.end(); ++it2)
       {
         set<String> protein_accessions = it2->extractProteinAccessions();
         for (set<String>::const_iterator it3 = protein_accessions.begin(); it3 != protein_accessions.end(); ++it3)
@@ -220,10 +220,10 @@ protected:
     prot_ids[0].setHits(accepted_protein_hits);
 
     // fix wrong accessions of the peptides (to proteins that were removed)
-    for (vector<PeptideIdentification>::iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
+    for (vector<SpectrumIdentification>::iterator it1 = pep_ids.begin(); it1 != pep_ids.end(); ++it1)
     {
-      vector<PeptideHit> peptide_ids = it1->getHits();
-      for (vector<PeptideHit>::iterator it2 = peptide_ids.begin(); it2 != peptide_ids.end(); ++it2)
+      vector<SpectrumMatch> peptide_ids = it1->getHits();
+      for (vector<SpectrumMatch>::iterator it2 = peptide_ids.begin(); it2 != peptide_ids.end(); ++it2)
       {
         vector<PeptideEvidence> filtered_evidence;
         vector<PeptideEvidence> old_evidence = it2->getPeptideEvidences();
@@ -242,7 +242,7 @@ protected:
 
     DateTime now = DateTime::now();
     String identifier(now.get() + "_TOPPProteinInference");
-    for (vector<PeptideIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
     {
       it->setIdentifier(identifier);
     }

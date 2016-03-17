@@ -45,7 +45,7 @@
 
 namespace OpenMS
 {
-  class PeptideIdentification;
+  class SpectrumIdentification;
   class ProteinIdentification;
   class String;
 

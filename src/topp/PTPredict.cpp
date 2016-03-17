@@ -105,9 +105,9 @@ protected:
   {
     IdXMLFile idXML_file;
     vector<ProteinIdentification> protein_identifications;
-    vector<PeptideIdentification> identifications;
+    vector<SpectrumIdentification> identifications;
     vector<String> peptides;
-    vector<PeptideHit> temp_peptide_hits;
+    vector<SpectrumMatch> temp_peptide_hits;
     SVMWrapper svm;
     LibSVMEncoder encoder;
     String allowed_amino_acid_characters = "ACDEFGHIKLMNPQRSTVWY";

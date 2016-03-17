@@ -889,7 +889,7 @@ namespace OpenMS
   void Spectrum2DCanvas::paintIdentifications_(Size layer_index, QPainter & painter)
   {
     const LayerData & layer = getLayer(layer_index);
-    vector<PeptideIdentification>::const_iterator pep_begin, pep_end;
+    vector<SpectrumIdentification>::const_iterator pep_begin, pep_end;
     if (layer.type == LayerData::DT_FEATURE)
     {
       pep_begin = layer.getFeatureMap()->getUnassignedPeptideIdentifications().begin();
@@ -1805,7 +1805,7 @@ namespace OpenMS
       lines.push_back("Charge: " + QString::number(charge));
       lines.push_back("Quality: " + QString::number(quality, 'f', 4));
       // peptide identifications
-      const PeptideIdentification* pis = NULL;
+      const SpectrumIdentification* pis = NULL;
       if ( f && f->getPeptideIdentifications().size() > 0 ) {
         pis = &f->getPeptideIdentifications()[0];
       }
@@ -3046,7 +3046,7 @@ namespace OpenMS
     }
   }
 
-  void Spectrum2DCanvas::mergeIntoLayer(Size i, vector<PeptideIdentification> & peptides)
+  void Spectrum2DCanvas::mergeIntoLayer(Size i, vector<SpectrumIdentification> & peptides)
   {
     OPENMS_PRECONDITION(i < layers_.size(), "Spectrum2DCanvas::mergeIntoLayer(i, peptides) index overflow");
     OPENMS_PRECONDITION(layers_[i].type == LayerData::DT_IDENT, "Spectrum2DCanvas::mergeIntoLayer(i, peptides) non-identification layer selected");

@@ -54,7 +54,7 @@ namespace OpenMS
     defaultsToParam_();
   }
 
-  void InternalCalibration::checkReferenceIds_(std::vector<PeptideIdentification>& pep_ids)
+  void InternalCalibration::checkReferenceIds_(std::vector<SpectrumIdentification>& pep_ids)
   {
     for (Size p_id = 0; p_id < pep_ids.size(); ++p_id)
     {
@@ -152,7 +152,7 @@ namespace OpenMS
     }
   }
 
-  void InternalCalibration::calibrateMapGlobally(const FeatureMap& feature_map, FeatureMap& calibrated_feature_map, std::vector<PeptideIdentification>& ref_ids, String trafo_file_name)
+  void InternalCalibration::calibrateMapGlobally(const FeatureMap& feature_map, FeatureMap& calibrated_feature_map, std::vector<SpectrumIdentification>& ref_ids, String trafo_file_name)
   {
     checkReferenceIds_(ref_ids);
 

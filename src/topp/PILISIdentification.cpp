@@ -251,7 +251,7 @@ protected:
     id_param.setValue("fixed_modifications", getStringOption_("fixed_modifications"));
     PILIS_id.setParameters(id_param);
 
-    vector<PeptideIdentification> ids;
+    vector<SpectrumIdentification> ids;
 
     // perform the ProteinIdentification of the given spectra
     UInt no(0);
@@ -266,7 +266,7 @@ protected:
       if (it->getMSLevel() == 2)
       {
         writeDebug_(String(no) + "/" + String(exp.size()), 1);
-        PeptideIdentification id;
+        SpectrumIdentification id;
 
         map<String, UInt> cand;
 
@@ -337,7 +337,7 @@ protected:
     {
       if (ids[i].getHits().size() > max_candidates)
       {
-        vector<PeptideHit> hits = ids[i].getHits();
+        vector<SpectrumMatch> hits = ids[i].getHits();
         hits.resize(max_candidates);
         ids[i].setHits(hits);
       }

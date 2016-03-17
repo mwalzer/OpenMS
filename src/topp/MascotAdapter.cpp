@@ -292,7 +292,7 @@ protected:
     StringList mods;
     StringList variable_mods;
     ProteinIdentification protein_identification;
-    vector<PeptideIdentification> identifications;
+    vector<SpectrumIdentification> identifications;
     IntList charges;
     StringList parts;
     double precursor_mass_tolerance(0);

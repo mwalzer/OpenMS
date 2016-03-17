@@ -158,7 +158,7 @@ protected:
     //-------------------------------------------------------------
     IdXMLFile file;
     vector<ProteinIdentification> protein_identifications;
-    vector<PeptideIdentification> identifications;
+    vector<SpectrumIdentification> identifications;
     String document_id;
     file.load(in_file, protein_identifications, identifications, document_id);
 

@@ -78,7 +78,7 @@ namespace OpenMS
   {
   }
 
-  void MSPFile::load(const String & filename, vector<PeptideIdentification> & ids, RichPeakMap & exp)
+  void MSPFile::load(const String & filename, vector<SpectrumIdentification> & ids, RichPeakMap & exp)
   {
     if (!File::exists(filename))
     {
@@ -144,8 +144,8 @@ namespace OpenMS
         String peptide = split2[0];
         // remove damn (O), also defined in 'Mods=' comment
         peptide.substitute("(O)", "");
-        PeptideIdentification id;
-        id.insertHit(PeptideHit(0, 0, split2[1].toInt(), AASequence::fromString(peptide)));
+        SpectrumIdentification id;
+        id.insertHit(SpectrumMatch(0, 0, split2[1].toInt(), AASequence::fromString(peptide)));
         ids.push_back(id);
         inst_type_correct = true;
       }
@@ -237,7 +237,7 @@ namespace OpenMS
                 cerr << "MSPFile: Error: ignoring modification: '" << line << "' in line " << line_number << "\n";
               }
             }
-            vector<PeptideHit> hits(ids.back().getHits());
+            vector<SpectrumMatch> hits(ids.back().getHits());
             hits.begin()->setSequence(peptide);
             ids.back().setHits(hits);
           }
@@ -321,7 +321,7 @@ namespace OpenMS
     {
       if (it->getPeptideIdentifications().size() > 0 && it->getPeptideIdentifications().begin()->getHits().size() > 0)
       {
-        PeptideHit hit = *it->getPeptideIdentifications().begin()->getHits().begin();
+        SpectrumMatch hit = *it->getPeptideIdentifications().begin()->getHits().begin();
         String peptide;
         for (AASequence::ConstIterator pit = hit.getSequence().begin(); pit != hit.getSequence().end(); ++pit)
         {

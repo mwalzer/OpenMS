@@ -246,17 +246,17 @@ namespace OpenMS
     return os;
   }
 
-  const std::vector<PeptideIdentification> & SpectrumSettings::getPeptideIdentifications() const
+  const std::vector<SpectrumIdentification> & SpectrumSettings::getPeptideIdentifications() const
   {
     return identification_;
   }
 
-  std::vector<PeptideIdentification> & SpectrumSettings::getPeptideIdentifications()
+  std::vector<SpectrumIdentification> & SpectrumSettings::getPeptideIdentifications()
   {
     return identification_;
   }
 
-  void SpectrumSettings::setPeptideIdentifications(const std::vector<PeptideIdentification> & identification)
+  void SpectrumSettings::setPeptideIdentifications(const std::vector<SpectrumIdentification> & identification)
   {
     identification_ = identification;
   }

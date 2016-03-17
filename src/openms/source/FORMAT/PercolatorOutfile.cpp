@@ -105,7 +105,7 @@ namespace OpenMS
 
   void PercolatorOutfile::load(const String& filename,
                                ProteinIdentification& proteins, 
-                               vector<PeptideIdentification>& peptides,
+                               vector<SpectrumIdentification>& peptides,
                                SpectrumMetaDataLookup& lookup,
                                enum ScoreType output_score)
   {
@@ -155,7 +155,7 @@ namespace OpenMS
         LOG_ERROR << msg << endl;
       }
       
-      PeptideHit hit;
+      SpectrumMatch hit;
       if (meta_data.precursor_charge != 0)
       {
         hit.setCharge(meta_data.precursor_charge);
@@ -165,7 +165,7 @@ namespace OpenMS
         ++no_charge; // maybe TODO: calculate charge from m/z and peptide mass?
       }
 
-      PeptideIdentification peptide;
+      SpectrumIdentification peptide;
       peptide.setIdentifier("id");
       if (!boost::math::isnan(meta_data.rt))
       {

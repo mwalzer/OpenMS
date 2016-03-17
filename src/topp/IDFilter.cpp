@@ -220,7 +220,7 @@ protected:
     String outputfile_name = getStringOption_("out");
 
     vector<ProteinIdentification> proteins;
-    vector<PeptideIdentification> peptides;
+    vector<SpectrumIdentification> peptides;
     IdXMLFile().load(inputfile_name, proteins, peptides);
 
     Size n_prot_ids = proteins.size();
@@ -316,7 +316,7 @@ protected:
     if (!whitelist_peptides.empty())
     {
       LOG_INFO << "Filtering by inclusion peptide whitelisting..." << endl;
-      vector<PeptideIdentification> inclusion_peptides;
+      vector<SpectrumIdentification> inclusion_peptides;
       vector<ProteinIdentification> inclusion_proteins; // ignored
       IdXMLFile().load(whitelist_peptides, inclusion_proteins,
                        inclusion_peptides);
@@ -365,7 +365,7 @@ protected:
     if (!blacklist_peptides.empty())
     {
       LOG_INFO << "Filtering by exclusion peptide blacklisting..." << endl;
-      vector<PeptideIdentification> exclusion_peptides;
+      vector<SpectrumIdentification> exclusion_peptides;
       vector<ProteinIdentification> exclusion_proteins; // ignored
       IdXMLFile().load(blacklist_peptides, exclusion_proteins,
                        exclusion_peptides);

@@ -77,10 +77,10 @@ public:
      */
     //@{
     /// performs an ProteinIdentification run on a PeakMap
-    void getIdentifications(std::vector<PeptideIdentification> & ids, const PeakMap & exp);
+    void getIdentifications(std::vector<SpectrumIdentification> & ids, const PeakMap & exp);
 
     /// performs an ProteinIdentification run on a PeakSpectrum
-    void getIdentification(PeptideIdentification & id, const PeakSpectrum & CID_spec, const PeakSpectrum & ETD_spec);
+    void getIdentification(SpectrumIdentification & id, const PeakSpectrum & CID_spec, const PeakSpectrum & ETD_spec);
     //@}
 
 

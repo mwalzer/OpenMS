@@ -222,7 +222,7 @@ protected:
     // read spectra file (if available)
     vector<RichPeakMap> exp;
     vector<vector<ProteinIdentification> > prot_ids;
-    vector<vector<PeptideIdentification> > pep_ids;
+    vector<vector<SpectrumIdentification> > pep_ids;
 
     if (!in.empty())
     {
@@ -298,7 +298,7 @@ protected:
           continue;
         }
 
-        PeptideHit hit;
+        SpectrumMatch hit;
 
         if (it2->getPeptideIdentifications().begin()->getHits().size() > 0)
         {

@@ -59,9 +59,9 @@ public:
     virtual ~PSProteinInference();
 
 
-    Size findMinimalProteinList(const std::vector<PeptideIdentification> & peptide_ids);
+    Size findMinimalProteinList(const std::vector<SpectrumIdentification> & peptide_ids);
 
-    void calculateProteinProbabilities(const std::vector<PeptideIdentification> & ids);
+    void calculateProteinProbabilities(const std::vector<SpectrumIdentification> & ids);
 
 //     double getProteinProbability(const String& acc,const std::vector<String>& accessions, const std::vector<double>& probabilities);
 

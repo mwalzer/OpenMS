@@ -40,7 +40,7 @@
 namespace OpenMS
 {
 
-  class PeptideIdentification;
+  class SpectrumIdentification;
 
   /**
     @brief A basic LC-MS feature.
@@ -153,13 +153,13 @@ public:
     bool operator!=(const BaseFeature& rhs) const;
 
     /// returns a const reference to the PeptideIdentification vector
-    const std::vector<PeptideIdentification>& getPeptideIdentifications() const;
+    const std::vector<SpectrumIdentification>& getPeptideIdentifications() const;
 
     /// returns a mutable reference to the PeptideIdentification vector
-    std::vector<PeptideIdentification>& getPeptideIdentifications();
+    std::vector<SpectrumIdentification>& getPeptideIdentifications();
 
     /// sets the PeptideIdentification vector
-    void setPeptideIdentifications(const std::vector<PeptideIdentification>& peptides);
+    void setPeptideIdentifications(const std::vector<SpectrumIdentification>& peptides);
 
     /// state of peptide identifications attached to this feature. If one ID has multiple hits, the output depends on the top-hit only
     AnnotationState getAnnotationState() const;
@@ -176,7 +176,7 @@ protected:
     WidthType width_;
 
     /// Peptide PeptideIdentifications belonging to the feature
-    std::vector<PeptideIdentification> peptides_;
+    std::vector<SpectrumIdentification> peptides_;
   };
 
 } // namespace OpenMS

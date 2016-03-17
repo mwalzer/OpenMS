@@ -54,7 +54,7 @@ namespace OpenMS
   {
   }
 
-  void OMSSAXMLFile::load(const String& filename, ProteinIdentification& protein_identification, vector<PeptideIdentification>& peptide_identifications, bool load_proteins, bool load_empty_hits)
+  void OMSSAXMLFile::load(const String& filename, ProteinIdentification& protein_identification, vector<SpectrumIdentification>& peptide_identifications, bool load_proteins, bool load_empty_hits)
   {
     // clear input (in case load() is called more than once)
     protein_identification = ProteinIdentification();
@@ -75,7 +75,7 @@ namespace OpenMS
 
     // post-processing
     set<String> accessions;
-    for (vector<PeptideIdentification>::iterator it = peptide_identifications.begin(); it != peptide_identifications.end(); ++it)
+    for (vector<SpectrumIdentification>::iterator it = peptide_identifications.begin(); it != peptide_identifications.end(); ++it)
     {
       it->setScoreType("OMSSA");
       it->setHigherScoreBetter(false);
@@ -84,7 +84,7 @@ namespace OpenMS
 
       if (load_proteins)
       {
-        for (vector<PeptideHit>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
+        for (vector<SpectrumMatch>::const_iterator pit = it->getHits().begin(); pit != it->getHits().end(); ++pit)
         {
           set<String> hit_accessions = pit->extractProteinAccessions();
           accessions.insert(hit_accessions.begin(), hit_accessions.end());
@@ -133,7 +133,7 @@ namespace OpenMS
       actual_peptide_evidence_ = PeptideEvidence();
       actual_peptide_evidences_.clear();
       actual_peptide_id_.insertHit(actual_peptide_hit_);
-      actual_peptide_hit_ = PeptideHit();
+      actual_peptide_hit_ = SpectrumMatch();
     }
     // end of peptide id
     else if (tag_ == "MSHitSet")
@@ -142,7 +142,7 @@ namespace OpenMS
       {
         peptide_identifications_->push_back(actual_peptide_id_);
       }
-      actual_peptide_id_ = PeptideIdentification();
+      actual_peptide_id_ = SpectrumIdentification();
     }
     else if (tag_ == "MSModHit")
     {

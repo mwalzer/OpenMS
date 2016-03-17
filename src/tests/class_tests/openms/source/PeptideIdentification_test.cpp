@@ -57,29 +57,29 @@ using namespace std;
 
 
 double peptide_significance_threshold = 42.3;
-std::vector<PeptideHit> peptide_hits;
-PeptideHit peptide_hit;
+std::vector<SpectrumMatch> peptide_hits;
+SpectrumMatch peptide_hit;
 ProteinIdentification protein_identification;
-vector<PeptideIdentification> identifications;
+vector<SpectrumIdentification> identifications;
 MascotXMLFile xml_file;
 
 peptide_hits.push_back(peptide_hit);
 
 
-PeptideIdentification* ptr = 0;
-PeptideIdentification* nullPointer = 0;
+SpectrumIdentification* ptr = 0;
+SpectrumIdentification* nullPointer = 0;
 START_SECTION((PeptideIdentification()))
-  ptr = new PeptideIdentification();
+  ptr = new SpectrumIdentification();
   TEST_NOT_EQUAL(ptr, nullPointer)
 END_SECTION
 
 START_SECTION((virtual ~PeptideIdentification()))
-  PeptideIdentification hits;
+  SpectrumIdentification hits;
   delete ptr;
 END_SECTION
 
 START_SECTION((PeptideIdentification(const PeptideIdentification& source)))
-  PeptideIdentification hits;
+  SpectrumIdentification hits;
   hits.setSignificanceThreshold(peptide_significance_threshold);
   hits.setHits(peptide_hits);
   hits.setMetaValue("label",17);
@@ -87,7 +87,7 @@ START_SECTION((PeptideIdentification(const PeptideIdentification& source)))
   hits.setScoreType("score_type");
   hits.setHigherScoreBetter(false);
 
-  PeptideIdentification hits2(hits);
+  SpectrumIdentification hits2(hits);
 
   TEST_EQUAL(hits.getSignificanceThreshold(), hits2.getSignificanceThreshold())
   TEST_EQUAL(hits.getHits().size() == 1, true)
@@ -99,7 +99,7 @@ START_SECTION((PeptideIdentification(const PeptideIdentification& source)))
 END_SECTION
 
 START_SECTION((PeptideIdentification& operator=(const PeptideIdentification& source)))
-  PeptideIdentification hits;
+  SpectrumIdentification hits;
   hits.setSignificanceThreshold(peptide_significance_threshold);
   hits.setHits(peptide_hits);
   hits.setMetaValue("label",17);
@@ -107,7 +107,7 @@ START_SECTION((PeptideIdentification& operator=(const PeptideIdentification& sou
   hits.setScoreType("score_type");
   hits.setHigherScoreBetter(false);
 
-  PeptideIdentification hits2;
+  SpectrumIdentification hits2;
   hits2 = hits;
 
   TEST_EQUAL(hits.getSignificanceThreshold(), hits2.getSignificanceThreshold())
@@ -120,7 +120,7 @@ START_SECTION((PeptideIdentification& operator=(const PeptideIdentification& sou
 END_SECTION
 
 START_SECTION((bool operator == (const PeptideIdentification& rhs) const))
-  PeptideIdentification search1, search2;
+  SpectrumIdentification search1, search2;
   TEST_EQUAL(search1 == search2, true)
 
   search1.setSignificanceThreshold(peptide_significance_threshold);
@@ -146,7 +146,7 @@ END_SECTION
 
 
 START_SECTION((bool operator != (const PeptideIdentification& rhs) const))
-  PeptideIdentification search1, search2;
+  SpectrumIdentification search1, search2;
   TEST_EQUAL(search1 != search2, false)
 
   search1.setSignificanceThreshold(peptide_significance_threshold);
@@ -158,7 +158,7 @@ END_SECTION
 
 
 START_SECTION((double getRT() const))
-	PeptideIdentification pi;
+	SpectrumIdentification pi;
 	TEST_EQUAL(pi.hasRT(), false);
 	pi.setRT(1024.0);
 	TEST_EQUAL(pi.getRT(), 1024.0);
@@ -173,7 +173,7 @@ START_SECTION(bool hasRT())
 END_SECTION
 
 START_SECTION((double getMZ() const))
-	PeptideIdentification pi;
+	SpectrumIdentification pi;
 	TEST_EQUAL(pi.hasMZ(), false);
 	pi.setMZ(1024.0);
 	TEST_EQUAL(pi.getMZ(), 1024.0);
@@ -186,72 +186,72 @@ END_SECTION
 
 
 START_SECTION((double getSignificanceThreshold() const))
-	PeptideIdentification hits;
+	SpectrumIdentification hits;
 	hits.setSignificanceThreshold(peptide_significance_threshold);
 	TEST_EQUAL(hits.getSignificanceThreshold(), peptide_significance_threshold)
 END_SECTION
 
 START_SECTION((const std::vector<PeptideHit>& getHits() const))
-  PeptideIdentification hits;
+  SpectrumIdentification hits;
   hits.insertHit(peptide_hit);
   TEST_EQUAL(hits.getHits().size() == 1, true)
   TEST_EQUAL(hits.getHits()[0] == peptide_hit, true)
 END_SECTION
 
 START_SECTION((void insertHit(const PeptideHit &hit)))
-  PeptideIdentification hits;
+  SpectrumIdentification hits;
   hits.insertHit(peptide_hit);
   TEST_EQUAL(hits.getHits().size() == 1, true)
   TEST_EQUAL(*(hits.getHits().begin()) == peptide_hit, true)
 END_SECTION
 
 START_SECTION((void setHits(const std::vector< PeptideHit > &hits)))
-  PeptideIdentification hits;
+  SpectrumIdentification hits;
   hits.setHits(peptide_hits);
   TEST_EQUAL(hits.getHits() == peptide_hits, true)
 END_SECTION
 
 START_SECTION((void setSignificanceThreshold(double value)))
-  PeptideIdentification hits;
+  SpectrumIdentification hits;
   hits.setSignificanceThreshold(peptide_significance_threshold);
   TEST_EQUAL(hits.getSignificanceThreshold(), peptide_significance_threshold)
 END_SECTION
 
 START_SECTION((String& getScoreType() const))
-	PeptideIdentification hits;
+	SpectrumIdentification hits;
 	TEST_EQUAL(hits.getScoreType(), "")
 END_SECTION
 
 START_SECTION((void setScoreType(const String& type)))
-	PeptideIdentification hits;
+	SpectrumIdentification hits;
 	hits.setScoreType("bla");
 	TEST_EQUAL(hits.getScoreType(), "bla")
 END_SECTION
 
 START_SECTION((bool isHigherScoreBetter() const))
-	PeptideIdentification hits;
+	SpectrumIdentification hits;
 	TEST_EQUAL(hits.isHigherScoreBetter(), true)
 END_SECTION
 
 START_SECTION((void setHigherScoreBetter(bool value)))
-  PeptideIdentification hits;
+  SpectrumIdentification hits;
   hits.setHigherScoreBetter(false);
   TEST_EQUAL(hits.isHigherScoreBetter(),false)
 END_SECTION
 
 START_SECTION((const String& getIdentifier() const))
-  PeptideIdentification hits;
+  SpectrumIdentification hits;
   TEST_EQUAL(hits.getIdentifier(),"")
 END_SECTION
 
 START_SECTION((void setIdentifier(const String& id)))
-  PeptideIdentification hits;
+  SpectrumIdentification hits;
   hits.setIdentifier("bla");
   TEST_EQUAL(hits.getIdentifier(),"bla")
 END_SECTION
 
 START_SECTION((bool empty() const))
-  PeptideIdentification hits;
+  SpectrumIdentification hits;
   TEST_EQUAL(hits.empty(), true)
 
   hits.setSignificanceThreshold(1);
@@ -271,8 +271,8 @@ START_SECTION((bool empty() const))
 END_SECTION
 
 START_SECTION((void sort()))
-  PeptideIdentification id;
-  PeptideHit hit;
+  SpectrumIdentification id;
+  SpectrumMatch hit;
   hit.setScore(23);
   hit.setSequence(AASequence::fromString("SECONDPROTEIN"));
   id.insertHit(hit);
@@ -307,8 +307,8 @@ START_SECTION((void sort()))
 END_SECTION
 
 START_SECTION((void assignRanks()))
-  PeptideIdentification id;
-  PeptideHit hit;
+  SpectrumIdentification id;
+  SpectrumMatch hit;
   hit.setScore(23);
   hit.setSequence(AASequence::fromString("SECONDPROTEIN"));
   id.insertHit(hit);
@@ -329,11 +329,11 @@ START_SECTION((void assignRanks()))
   TEST_EQUAL(id.getHits()[2].getRank(), 3)
 END_SECTION
 
-START_SECTION(static std::vector<PeptideHit> getReferencingHits(const std::vector<PeptideHit> & , const std::set<String> & accession))
+START_SECTION(static std::vector<SpectrumMatch> getReferencingHits(const std::vector<SpectrumMatch> & , const std::set<String> & accession))
 {
-  PeptideIdentification id;
-  PeptideHit hit;
-  vector< PeptideHit > peptide_hits;
+  SpectrumIdentification id;
+  SpectrumMatch hit;
+  vector< SpectrumMatch > peptide_hits;
 
   hit.setScore(23);
   hit.setSequence(AASequence::fromString("FIRSTPROTEIN"));
@@ -342,14 +342,14 @@ START_SECTION(static std::vector<PeptideHit> getReferencingHits(const std::vecto
   hit.addPeptideEvidence(pe);
   id.insertHit(hit);
 
-  hit = PeptideHit();
+  hit = SpectrumMatch();
   hit.setScore(10);
   hit.setSequence(AASequence::fromString("SECONDPROTEIN"));
   pe.setProteinAccession("TEST_PROTEIN2");
   hit.addPeptideEvidence(pe);
   id.insertHit(hit);
 
-  hit = PeptideHit();
+  hit = SpectrumMatch();
   hit.setScore(11);
   hit.setSequence(AASequence::fromString("THIRDPROTEIN"));
   pe.setProteinAccession("TEST_PROTEIN2");
@@ -358,21 +358,21 @@ START_SECTION(static std::vector<PeptideHit> getReferencingHits(const std::vecto
 
   set<String> query_accession;
   query_accession.insert("TEST_PROTEIN2");
-  peptide_hits = PeptideIdentification::getReferencingHits(id.getHits(), query_accession);
+  peptide_hits = SpectrumIdentification::getReferencingHits(id.getHits(), query_accession);
   TEST_EQUAL(peptide_hits.size(), 2)
   TEST_EQUAL(peptide_hits[0].getSequence(), AASequence::fromString("SECONDPROTEIN"))
   TEST_EQUAL(peptide_hits[1].getSequence(), AASequence::fromString("THIRDPROTEIN"))
 
   query_accession.insert("TEST_PROTEIN3");
-  peptide_hits = PeptideIdentification::getReferencingHits(id.getHits(), query_accession);
+  peptide_hits = SpectrumIdentification::getReferencingHits(id.getHits(), query_accession);
   TEST_EQUAL(peptide_hits.size(), 2)
   TEST_EQUAL(peptide_hits[0].getSequence(), AASequence::fromString("SECONDPROTEIN"))
   TEST_EQUAL(peptide_hits[1].getSequence(), AASequence::fromString("THIRDPROTEIN"))
 }
 {
-  PeptideIdentification id;
-  PeptideHit hit;
-  vector< PeptideHit > peptide_hits;
+  SpectrumIdentification id;
+  SpectrumMatch hit;
+  vector< SpectrumMatch > peptide_hits;
 
   hit.setScore(23);
   hit.setSequence(AASequence::fromString("FIRSTPROTEIN"));
@@ -381,14 +381,14 @@ START_SECTION(static std::vector<PeptideHit> getReferencingHits(const std::vecto
   hit.addPeptideEvidence(pe);
   id.insertHit(hit);
 
-  hit = PeptideHit();
+  hit = SpectrumMatch();
   hit.setScore(10);
   hit.setSequence(AASequence::fromString("SECONDPROTEIN"));
   pe.setProteinAccession("TEST_PROTEIN2");
   hit.addPeptideEvidence(pe);
   id.insertHit(hit);
 
-  hit = PeptideHit();
+  hit = SpectrumMatch();
   hit.setScore(11);
   hit.setSequence(AASequence::fromString("THIRDPROTEIN"));
   pe.setProteinAccession("TEST_PROTEIN3");
@@ -398,7 +398,7 @@ START_SECTION(static std::vector<PeptideHit> getReferencingHits(const std::vecto
   set<String> query_accession;
   query_accession.insert("TEST_PROTEIN2");
   query_accession.insert("TEST_PROTEIN3");
-  peptide_hits = PeptideIdentification::getReferencingHits(id.getHits(), query_accession);
+  peptide_hits = SpectrumIdentification::getReferencingHits(id.getHits(), query_accession);
   TEST_EQUAL(peptide_hits.size(), 2)
   TEST_EQUAL(peptide_hits[0].getSequence(), AASequence::fromString("SECONDPROTEIN"))
   TEST_EQUAL(peptide_hits[1].getSequence(), AASequence::fromString("THIRDPROTEIN"))

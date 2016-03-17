@@ -40,7 +40,7 @@
 
 namespace OpenMS
 {
-  class PeptideIdentification;
+  class SpectrumIdentification;
 
   /**
     @brief Base class for ion scoring implementation for de novo algorithms
@@ -70,9 +70,9 @@ public:
     /// assignment operator
     DeNovoAlgorithm & operator=(const DeNovoAlgorithm & rhs);
 
-    virtual void generateCandidates(std::vector<PeptideIdentification> & candidates, const std::vector<std::vector<DeNovoIonScoring::IonScore> > & ion_scores, const RichPeakMap & exp) = 0;
+    virtual void generateCandidates(std::vector<SpectrumIdentification> & candidates, const std::vector<std::vector<DeNovoIonScoring::IonScore> > & ion_scores, const RichPeakMap & exp) = 0;
 
-    virtual void generateCandidates(PeptideIdentification & candidates, std::vector<DeNovoIonScoring::IonScore> & ion_scores, const RichPeakSpectrum & spec) = 0;
+    virtual void generateCandidates(SpectrumIdentification & candidates, std::vector<DeNovoIonScoring::IonScore> & ion_scores, const RichPeakSpectrum & spec) = 0;
 
   };
 

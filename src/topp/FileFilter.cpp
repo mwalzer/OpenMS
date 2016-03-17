@@ -152,10 +152,10 @@ private:
     {
       String temp = feature.getPeptideIdentifications().begin()->getHits().begin()->getSequence().toString();
       //loop over all peptideIdentifications
-      for (vector<PeptideIdentification>::const_iterator pep_id_it = feature.getPeptideIdentifications().begin(); pep_id_it != feature.getPeptideIdentifications().end(); ++pep_id_it)
+      for (vector<SpectrumIdentification>::const_iterator pep_id_it = feature.getPeptideIdentifications().begin(); pep_id_it != feature.getPeptideIdentifications().end(); ++pep_id_it)
       {
         //loop over all peptideHits
-        for (vector<PeptideHit>::const_iterator pep_hit_it = pep_id_it->getHits().begin(); pep_hit_it != pep_id_it->getHits().end(); ++pep_hit_it)
+        for (vector<SpectrumMatch>::const_iterator pep_hit_it = pep_id_it->getHits().begin(); pep_hit_it != pep_id_it->getHits().end(); ++pep_hit_it)
         {
           if (pep_hit_it->getSequence().toString() != temp)
           {
@@ -167,12 +167,12 @@ private:
     //flag: keep_best_score_id
     if (keep_best_score_id && !feature.getPeptideIdentifications().empty())
     {
-      PeptideIdentification temp = feature.getPeptideIdentifications().front();
+      SpectrumIdentification temp = feature.getPeptideIdentifications().front();
       //loop over all peptideIdentifications
-      for (vector<PeptideIdentification>::const_iterator pep_id_it = feature.getPeptideIdentifications().begin(); pep_id_it != feature.getPeptideIdentifications().end(); ++pep_id_it)
+      for (vector<SpectrumIdentification>::const_iterator pep_id_it = feature.getPeptideIdentifications().begin(); pep_id_it != feature.getPeptideIdentifications().end(); ++pep_id_it)
       {
         //loop over all peptideHits
-        for (vector<PeptideHit>::const_iterator pep_hit_it = pep_id_it->getHits().begin(); pep_hit_it != pep_id_it->getHits().end(); ++pep_hit_it)
+        for (vector<SpectrumMatch>::const_iterator pep_hit_it = pep_id_it->getHits().begin(); pep_hit_it != pep_id_it->getHits().end(); ++pep_hit_it)
         {
           if ((pep_id_it->isHigherScoreBetter() && pep_hit_it->getScore() > temp.getHits().front().getScore()) ||
               (!pep_id_it->isHigherScoreBetter() && pep_hit_it->getScore() < temp.getHits().front().getScore()))
@@ -181,7 +181,7 @@ private:
           }
         }
       }
-      feature.setPeptideIdentifications(vector<PeptideIdentification>(1, temp));
+      feature.setPeptideIdentifications(vector<SpectrumIdentification>(1, temp));
       // not filtering sequences or accessions
       if (sequences.empty() && accessions.empty())
       {
@@ -194,10 +194,10 @@ private:
       bool sequen = false;
       bool access = false;
       //loop over all peptideIdentifications
-      for (vector<PeptideIdentification>::const_iterator pep_id_it = feature.getPeptideIdentifications().begin(); pep_id_it != feature.getPeptideIdentifications().end(); ++pep_id_it)
+      for (vector<SpectrumIdentification>::const_iterator pep_id_it = feature.getPeptideIdentifications().begin(); pep_id_it != feature.getPeptideIdentifications().end(); ++pep_id_it)
       {
         //loop over all peptideHits
-        for (vector<PeptideHit>::const_iterator pep_hit_it = pep_id_it->getHits().begin(); pep_hit_it != pep_id_it->getHits().end(); ++pep_hit_it)
+        for (vector<SpectrumMatch>::const_iterator pep_hit_it = pep_id_it->getHits().begin(); pep_hit_it != pep_id_it->getHits().end(); ++pep_hit_it)
         {
           //loop over all sequence entries of the StringList
           for (StringList::const_iterator seq_it = sequences.begin(); seq_it != sequences.end(); ++seq_it)
@@ -1061,7 +1061,7 @@ protected:
   ExitCodes filterByBlackList(MapType& exp, const String& id_blacklist, bool blacklist_imperfect, double rt_tol, double mz_tol)
   {
     vector<ProteinIdentification> protein_ids;
-    vector<PeptideIdentification> peptide_ids;
+    vector<SpectrumIdentification> peptide_ids;
     IdXMLFile().load(id_blacklist, protein_ids, peptide_ids);
 
     // translate idXML entries into something more handy

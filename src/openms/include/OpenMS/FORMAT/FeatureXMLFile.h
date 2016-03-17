@@ -118,7 +118,7 @@ protected:
     void writeFeature_(const String& filename, std::ostream& os, const Feature& feat, const String& identifier_prefix, UInt64 identifier, UInt indentation_level);
 
     /// Writes a peptide identification to a stream (for assigned/unassigned peptide identifications)
-    void writePeptideIdentification_(const String& filename, std::ostream& os, const PeptideIdentification& id, const String& tag_name, UInt indentation_level);
+    void writePeptideIdentification_(const String& filename, std::ostream& os, const SpectrumIdentification& id, const String& tag_name, UInt indentation_level);
 
 
     /**
@@ -166,11 +166,11 @@ protected:
     /// Temporary protein ProteinIdentification
     ProteinIdentification prot_id_;
     /// Temporary peptide ProteinIdentification
-    PeptideIdentification pep_id_;
+    SpectrumIdentification pep_id_;
     /// Temporary protein hit
     ProteinHit prot_hit_;
     /// Temporary peptide hit
-    PeptideHit pep_hit_;
+    SpectrumMatch pep_hit_;
     /// Map from protein id to accession
     Map<String, String> proteinid_to_accession_;
     /// Map from search identifier concatenated with protein accession to id

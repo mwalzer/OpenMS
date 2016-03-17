@@ -104,14 +104,14 @@ START_SECTION((void selectFragments(std::vector< RichPeak1D > &selected_peaks, c
 	precursors.push_back(prec);
 	spec.setPrecursors(precursors);
 
-	PeptideHit hit;
+	SpectrumMatch hit;
 	hit.setCharge(1);
 	hit.setSequence(AASequence::fromString("DFPIANGER"));
-	vector<PeptideHit> hits;
+	vector<SpectrumMatch> hits;
 	hits.push_back(hit);
-	PeptideIdentification id;
+	SpectrumIdentification id;
 	id.setHits(hits);
-	vector<PeptideIdentification> ids;
+	vector<SpectrumIdentification> ids;
 	ids.push_back(id);
 	spec.setPeptideIdentifications(ids);
 

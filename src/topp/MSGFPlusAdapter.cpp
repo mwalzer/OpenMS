@@ -388,7 +388,7 @@ protected:
     }
   }
   
-  String describeHit_(const PeptideHit& hit)
+  String describeHit_(const SpectrumMatch& hit)
   {
     return "peptide hit with sequence '" + hit.getSequence().toString() +
       "', charge " + String(hit.getCharge()) + ", score " + 
@@ -396,9 +396,9 @@ protected:
   }
 
   // Set the MS-GF+ e-value (MS:1002052) as new peptide identification score.
-  void switchScores_(PeptideIdentification& id)
+  void switchScores_(SpectrumIdentification& id)
   {
-    for (vector<PeptideHit>::iterator hit_it = id.getHits().begin(); hit_it != id.getHits().end(); ++hit_it)
+    for (vector<SpectrumMatch>::iterator hit_it = id.getHits().begin(); hit_it != id.getHits().end(); ++hit_it)
     {
       // MS:1002052 == MS-GF spectral E-value
       if (!hit_it->metaValueExists("MS:1002052"))
@@ -617,7 +617,7 @@ protected:
         protein_id.setScoreType(""); // MS-GF+ doesn't assign protein scores
     
         // store all peptide identifications in a map, the key is the scan number
-        map<int, PeptideIdentification> peptide_identifications;
+        map<int, SpectrumIdentification> peptide_identifications;
         set<String> prot_accessions;
     
         // iterate over the rows of the TSV file
@@ -682,11 +682,11 @@ protected:
     
           bool hit_exists = false;
           // if the PeptideIdentification doesn't exist yet, a new one will be created:
-          PeptideIdentification& pep_ident = peptide_identifications[scan_number];
+          SpectrumIdentification& pep_ident = peptide_identifications[scan_number];
           if (!pep_ident.getHits().empty()) // previously existing PeptideIdentification
           {
             // do we have a peptide hit with this sequence already?
-            for (vector<PeptideHit>::iterator hit_it = pep_ident.getHits().begin();
+            for (vector<SpectrumMatch>::iterator hit_it = pep_ident.getHits().begin();
                  hit_it != pep_ident.getHits().end(); ++hit_it)
             {
               if (hit_it->getSequence() == seq) // yes!
@@ -712,7 +712,7 @@ protected:
             double score = elements[12].toDouble();
             UInt rank = 0; // set to 0 at the moment
             Int charge = elements[7].toInt();
-            PeptideHit hit(score, rank, charge, seq);
+            SpectrumMatch hit(score, rank, charge, seq);
             hit.addPeptideEvidence(evidence);
             pep_ident.insertHit(hit);
           }
@@ -730,9 +730,9 @@ protected:
         protein_ids.push_back(protein_id);
     
         // iterate over map and create a vector of peptide identifications
-        vector<PeptideIdentification> peptide_ids;
-        PeptideIdentification pep;
-        for (map<int, PeptideIdentification>::iterator it = peptide_identifications.begin();
+        vector<SpectrumIdentification> peptide_ids;
+        SpectrumIdentification pep;
+        for (map<int, SpectrumIdentification>::iterator it = peptide_identifications.begin();
              it != peptide_identifications.end(); ++it)
         {
           pep = it->second;
@@ -745,10 +745,10 @@ protected:
       else
       {
         vector<ProteinIdentification> protein_ids;
-        vector<PeptideIdentification> peptide_ids;
+        vector<SpectrumIdentification> peptide_ids;
         MzIdentMLFile().load(mzid_temp, protein_ids, peptide_ids);
         // set the MS-GF+ spectral e-value as new peptide identification score
-        for (vector<PeptideIdentification>::iterator pep_it = peptide_ids.begin(); pep_it != peptide_ids.end(); ++pep_it)
+        for (vector<SpectrumIdentification>::iterator pep_it = peptide_ids.begin(); pep_it != peptide_ids.end(); ++pep_it)
         {
           switchScores_(*pep_it);
         }

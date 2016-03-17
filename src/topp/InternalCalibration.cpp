@@ -147,7 +147,7 @@ protected:
     //-------------------------------------------------------------
 
     // get reference m/z values
-    std::vector<PeptideIdentification> pep_ids;
+    std::vector<SpectrumIdentification> pep_ids;
     vector<double> ref_masses;
     bool ids(false);
     if (ref != "")

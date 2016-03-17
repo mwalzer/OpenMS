@@ -98,12 +98,12 @@ public:
 
 protected:
   void mergePepXMLProtXML_(StringList filenames, vector<ProteinIdentification>&
-                           proteins, vector<PeptideIdentification>& peptides)
+                           proteins, vector<SpectrumIdentification>& peptides)
   {
     IdXMLFile idxml;
     idxml.load(filenames[0], proteins, peptides);
     vector<ProteinIdentification> pepxml_proteins, protxml_proteins;
-    vector<PeptideIdentification> pepxml_peptides, protxml_peptides;
+    vector<SpectrumIdentification> pepxml_peptides, protxml_peptides;
 
     if (proteins[0].getProteinGroups().empty()) // first idXML contains data from the pepXML
     {
@@ -190,7 +190,7 @@ protected:
   }
 
   void annotateFileOrigin_(vector<ProteinIdentification>& proteins,
-                           vector<PeptideIdentification>& peptides,
+                           vector<SpectrumIdentification>& peptides,
                            const String& filename)
   {
     for (vector<ProteinIdentification>::iterator prot_it = proteins.begin();
@@ -199,7 +199,7 @@ protected:
       prot_it->setMetaValue("file_origin", DataValue(filename));
     }
 
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       pep_it->setMetaValue("file_origin", DataValue(filename));
@@ -258,7 +258,7 @@ protected:
     //-------------------------------------------------------------
 
     vector<ProteinIdentification> proteins;
-    vector<PeptideIdentification> peptides;
+    vector<SpectrumIdentification> peptides;
 
     if (pepxml_protxml)
     {
@@ -268,7 +268,7 @@ protected:
     {
       bool annotate_file_origin = getFlag_("annotate_file_origin");
       map<String, ProteinIdentification> proteins_by_id;
-      vector<vector<PeptideIdentification> > peptides_by_file;
+      vector<vector<SpectrumIdentification> > peptides_by_file;
       StringList add_to_ids; // IDs from the "add_to" file (if any)
 
       if (!add_to.empty())
@@ -308,7 +308,7 @@ protected:
             // update fields:
             prot_it->setIdentifier(new_id);
             prot_it->setDateTime(date_time);
-            for (vector<PeptideIdentification>::iterator pep_it =
+            for (vector<SpectrumIdentification>::iterator pep_it =
                    peptides_by_file[i].begin(); pep_it !=
                  peptides_by_file[i].end(); ++pep_it)
             {
@@ -323,7 +323,7 @@ protected:
 
       if (add_to.empty()) // copy proteins from map into vector for writing
       {
-        for (vector<vector<PeptideIdentification> >::iterator pep_it =
+        for (vector<vector<SpectrumIdentification> >::iterator pep_it =
                peptides_by_file.begin(); pep_it != peptides_by_file.end();
              ++pep_it)
         {
@@ -346,8 +346,8 @@ protected:
         }
         // keep track of peptides that shouldn't be duplicated:
         set<AASequence> sequences;
-        vector<PeptideIdentification>& base_peptides = peptides_by_file[0];
-        for (vector<PeptideIdentification>::iterator pep_it =
+        vector<SpectrumIdentification>& base_peptides = peptides_by_file[0];
+        for (vector<SpectrumIdentification>::iterator pep_it =
                base_peptides.begin(); pep_it != base_peptides.end(); ++pep_it)
         {
           if (pep_it->getHits().empty()) continue;
@@ -357,17 +357,17 @@ protected:
         peptides.insert(peptides.end(), base_peptides.begin(),
                         base_peptides.end());
         // merge in data from other files:
-        for (vector<vector<PeptideIdentification> >::iterator file_it =
+        for (vector<vector<SpectrumIdentification> >::iterator file_it =
                ++peptides_by_file.begin(); file_it != peptides_by_file.end();
              ++file_it)
         {
           set<String> accessions; // keep track to avoid duplicates
-          for (vector<PeptideIdentification>::iterator pep_it =
+          for (vector<SpectrumIdentification>::iterator pep_it =
                  file_it->begin(); pep_it != file_it->end(); ++pep_it)
           {
             if (pep_it->getHits().empty()) continue;
             pep_it->sort();
-            const PeptideHit& hit = pep_it->getHits()[0];
+            const SpectrumMatch& hit = pep_it->getHits()[0];
             LOG_DEBUG << "peptide: " << hit.getSequence().toString() << endl;
             // skip ahead if peptide is not new:
             if (sequences.find(hit.getSequence()) != sequences.end()) continue;

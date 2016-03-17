@@ -283,7 +283,7 @@ namespace OpenMS
 
   void ITRAQLabeler::addModificationToPeptideHit_(Feature& feature, const String& modification, const Size& pos) const
   {
-    vector<PeptideHit> pep_hits(feature.getPeptideIdentifications()[0].getHits());
+    vector<SpectrumMatch> pep_hits(feature.getPeptideIdentifications()[0].getHits());
     AASequence modified_sequence(pep_hits[0].getSequence());
     modified_sequence.setModification(pos, modification);
     pep_hits[0].setSequence(modified_sequence);
@@ -297,7 +297,7 @@ namespace OpenMS
     //site="N-term"
     //site="K" - lysine
     String modification = (itraq_type_ == ItraqConstants::FOURPLEX ? "iTRAQ4plex" : "iTRAQ8plex");
-    vector<PeptideHit> pep_hits(feature.getPeptideIdentifications()[0].getHits());
+    vector<SpectrumMatch> pep_hits(feature.getPeptideIdentifications()[0].getHits());
     AASequence seq(pep_hits[0].getSequence());
     // N-term
     seq.setNTerminalModification(modification);

@@ -178,7 +178,7 @@ protected:
     // general variables and data
     //-------------------------------------------------------------
     FileHandler fh;
-    vector<PeptideIdentification> peptide_identifications;
+    vector<SpectrumIdentification> peptide_identifications;
     vector<ProteinIdentification> protein_identifications;
 
     //-------------------------------------------------------------
@@ -234,7 +234,7 @@ protected:
       // Now get to work ...
       for (vector<String>::const_iterator in_files_it = in_files.begin(); in_files_it != in_files.end(); ++in_files_it)
       {
-        vector<PeptideIdentification> peptide_ids_seq;
+        vector<SpectrumIdentification> peptide_ids_seq;
         ProteinIdentification protein_id_seq;
         vector<double> pvalues_seq;
         vector<String> in_file_vec;
@@ -396,7 +396,7 @@ protected:
           PeakMap exp;
           fh.getOptions().addMSLevel(2);
           fh.loadExperiment(exp_name, exp, FileTypes::MZML, log_type_, false, false);
-          for (vector<PeptideIdentification>::iterator it = peptide_identifications.begin(); it != peptide_identifications.end(); ++it)
+          for (vector<SpectrumIdentification>::iterator it = peptide_identifications.begin(); it != peptide_identifications.end(); ++it)
           {
             UInt id = (Int)it->getMetaValue("spectrum_id");
             --id; // native IDs were written 1-based
@@ -451,13 +451,13 @@ protected:
           // skip empty and comment lines
           if (it->empty() || it->hasPrefix("#")) continue;
 
-          PeptideIdentification pepid;
+          SpectrumIdentification pepid;
           StringList peps;
           it->split('\t', peps, false);
-          std::vector<PeptideHit> hits;
+          std::vector<SpectrumMatch> hits;
           for (StringList::const_iterator sit=peps.begin(); sit != peps.end(); ++sit)
           {
-            PeptideHit hit;
+            SpectrumMatch hit;
             hit.setSequence(AASequence::fromString(*sit));
             hits.push_back(hit);
           }
@@ -513,7 +513,7 @@ protected:
       {
         for (Size l = 0; l < peptide_identifications[i].getHits().size(); ++l)
         {
-          const PeptideHit& hit = peptide_identifications[i].getHits()[l];
+          const SpectrumMatch& hit = peptide_identifications[i].getHits()[l];
           String seq = hit.getSequence().toUnmodifiedString();
           std::set<String> prot = hit.extractProteinAccessions();
           fasta << ">" << seq

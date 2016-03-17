@@ -60,11 +60,11 @@ START_SECTION(~ProtXMLFile())
   delete ptr;
 END_SECTION
 
-START_SECTION(void load(const String &filename, ProteinIdentification &protein_ids, PeptideIdentification &peptide_ids))
+START_SECTION(void load(const String &filename, ProteinIdentification &protein_ids, SpectrumIdentification &peptide_ids))
 {
   ProtXMLFile f;
   ProteinIdentification proteins;
-  PeptideIdentification peptides;
+  SpectrumIdentification peptides;
   String prot_file;
 
         StringList ids = ListUtils::create<String>("16627578304933075941,13229490167902618598");
@@ -129,11 +129,11 @@ START_SECTION(void load(const String &filename, ProteinIdentification &protein_i
 }
 END_SECTION
 
-START_SECTION(void store(const String &filename, const ProteinIdentification &protein_ids, const PeptideIdentification &peptide_ids, const String &document_id=""))
+START_SECTION(void store(const String &filename, const ProteinIdentification &protein_ids, const SpectrumIdentification &peptide_ids, const String &document_id=""))
 {
   ProtXMLFile f;
   ProteinIdentification proteins;
-  PeptideIdentification peptides;
+  SpectrumIdentification peptides;
   TEST_EXCEPTION(Exception::NotImplemented, f.store("notimplemented.protXML", proteins, peptides ))
 }
 END_SECTION

@@ -214,7 +214,7 @@ protected:
       {
         IdXMLFile file;
         vector<ProteinIdentification> proteins;
-        vector<PeptideIdentification> peptides;
+        vector<SpectrumIdentification> peptides;
         file.load(in, proteins, peptides);
         bool store_original_rt = getFlag_("store_original_rt");
         MapAlignmentTransformer::transformRetentionTimes(peptides, trafo,

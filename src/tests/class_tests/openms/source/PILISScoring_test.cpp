@@ -76,19 +76,19 @@ START_SECTION(PILISScoring& operator = (const PILISScoring& source))
 END_SECTION
 
 START_SECTION(void getScores(std::vector<PeptideIdentification>& ids))
-	vector<PeptideIdentification> ids;
+	vector<SpectrumIdentification> ids;
 	vector<ProteinIdentification> prot_ids;
 	String document_id;
 	IdXMLFile().load(filename, prot_ids, ids, document_id);
 	ptr->getScores(ids);
-	for (vector<PeptideIdentification>::const_iterator it = ids.begin(); it != ids.end(); ++it)
+	for (vector<SpectrumIdentification>::const_iterator it = ids.begin(); it != ids.end(); ++it)
 	{
 		TEST_EQUAL(it->getScoreType(), "PILIS-E-value")
 	}
 END_SECTION
 
 START_SECTION(void getScore(PeptideIdentification& id))
-	vector<PeptideIdentification> ids;
+	vector<SpectrumIdentification> ids;
 	vector<ProteinIdentification> prot_ids;
 	String document_id;
 	IdXMLFile().load(filename, prot_ids, ids, document_id);

@@ -363,7 +363,7 @@ namespace OpenMS
           //cerr << "Evaluating...(#peptides=" << it->hits.size() << ") ";
           // for all hits
           vector<RichPeakSpectrum> sim_spectra_hits;
-          for (vector<PeptideHit>::const_iterator pit = it->hits.begin(); pit != it->hits.end(); ++pit)
+          for (vector<SpectrumMatch>::const_iterator pit = it->hits.begin(); pit != it->hits.end(); ++pit)
           {
             RichPeakSpectrum sim_spec;
             //cerr << "simulate " << pit->getSequence() << " " << pit->getCharge() << "..";

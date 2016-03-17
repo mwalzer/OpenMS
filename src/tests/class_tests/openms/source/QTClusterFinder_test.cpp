@@ -93,7 +93,7 @@ START_SECTION((void run(const std::vector<FeatureMap >& input_maps, ConsensusMap
   feat1.setUniqueId(0);
   feat2.setPosition(pos2);
   feat2.setUniqueId(1);
-  PeptideHit hit;
+  SpectrumMatch hit;
   hit.setSequence(AASequence::fromString("AAA"));
   feat1.getPeptideIdentifications().resize(1);
   feat1.getPeptideIdentifications()[0].insertHit(hit);

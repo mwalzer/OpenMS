@@ -42,7 +42,7 @@
 namespace OpenMS
 {
 
-  class PeptideHit;
+  class SpectrumMatch;
   class ConsensusMap;
 
   /**
@@ -90,7 +90,7 @@ protected:
                 const size_t protein_idenfication_index,
                 const UInt reference_map);
 
-    bool sortByUnique_(std::vector<PeptideHit>& peptide_hits_local, const bool is_higher_score_better);
+    bool sortByUnique_(std::vector<SpectrumMatch>& peptide_hits_local, const bool is_higher_score_better);
 
   }; // !class
 

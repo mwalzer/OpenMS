@@ -804,7 +804,7 @@ namespace OpenMS
         }
 
         ConsensusFeature cf(fm_out[f0_idx]);
-        cf.setPeptideIdentifications(vector<PeptideIdentification>()); // delete ID's as they are added later again
+        cf.setPeptideIdentifications(vector<SpectrumIdentification>()); // delete ID's as they are added later again
         cf.setQuality(0.0);
         cf.setUniqueId();
         cf.insert((UInt64) fm_out[f0_idx].getMetaValue("map_idx"), fm_out[f0_idx]);

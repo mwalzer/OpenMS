@@ -277,7 +277,7 @@ namespace OpenMS
     }
   }
 
-  void PrecursorIonSelection::rescore_(FeatureMap& features, std::vector<PeptideIdentification>& new_pep_ids,
+  void PrecursorIonSelection::rescore_(FeatureMap& features, std::vector<SpectrumIdentification>& new_pep_ids,
                                        PrecursorIonSelectionPreprocessing& preprocessed_db, PSProteinInference& protein_inference)
   {
     double min_protein_probability = param_.getValue("MIPFormulation:thresholds:min_protein_id_probability");
@@ -298,7 +298,7 @@ namespace OpenMS
 #ifdef PIS_DEBUG
       std::cout << new_pep_ids[i].getHits().size() << " hits" << std::endl;
 #endif
-      const std::vector<PeptideHit>& hits = new_pep_ids[i].getHits();
+      const std::vector<SpectrumMatch>& hits = new_pep_ids[i].getHits();
       // for all peptide hits
       for (UInt h = 0; h < hits.size(); ++h)
       {
@@ -400,7 +400,7 @@ namespace OpenMS
 
   }
 
-  void PrecursorIonSelection::rescore(FeatureMap& features, std::vector<PeptideIdentification>& new_pep_ids,
+  void PrecursorIonSelection::rescore(FeatureMap& features, std::vector<SpectrumIdentification>& new_pep_ids,
                                       std::vector<ProteinIdentification>& prot_ids,
                                       PrecursorIonSelectionPreprocessing& preprocessed_db, bool check_meta_values)
   {
@@ -411,7 +411,7 @@ namespace OpenMS
     std::cout << "checked for user params" << std::endl;
 #endif
     // filter significant peptide ids
-    std::vector<PeptideIdentification> filtered_pep_ids = filterPeptideIds_(new_pep_ids);
+    std::vector<SpectrumIdentification> filtered_pep_ids = filterPeptideIds_(new_pep_ids);
 #ifdef PIS_DEBUG
     std::cout << "filtered peptides ids" << std::endl;
 #endif
@@ -598,13 +598,13 @@ namespace OpenMS
 
   }
 
-  std::vector<PeptideIdentification> PrecursorIonSelection::filterPeptideIds_(std::vector<PeptideIdentification>& pep_ids)
+  std::vector<SpectrumIdentification> PrecursorIonSelection::filterPeptideIds_(std::vector<SpectrumIdentification>& pep_ids)
   {
-    std::vector<PeptideIdentification> filtered_pep_ids;
+    std::vector<SpectrumIdentification> filtered_pep_ids;
 
     for (UInt id_c = 0; id_c < pep_ids.size(); ++id_c)
     {
-      std::vector<PeptideHit> tmp_hits;
+      std::vector<SpectrumMatch> tmp_hits;
       if (pep_ids[id_c].getHits()[0].metaValueExists("Rank"))
       {
         for (UInt hit_c = 0; hit_c < pep_ids[id_c].getHits().size(); ++hit_c)
@@ -644,7 +644,7 @@ namespace OpenMS
 
       if (!tmp_hits.empty()) // if there were significant hits save them
       {
-        PeptideIdentification tmp_id = pep_ids[id_c];
+        SpectrumIdentification tmp_id = pep_ids[id_c];
         tmp_id.setHits(tmp_hits);
         filtered_pep_ids.push_back(tmp_id);
       }
@@ -658,7 +658,7 @@ namespace OpenMS
     prot_id_counter_.clear();
   }
 
-  void PrecursorIonSelection::simulateRun(FeatureMap& features, std::vector<PeptideIdentification>& pep_ids,
+  void PrecursorIonSelection::simulateRun(FeatureMap& features, std::vector<SpectrumIdentification>& pep_ids,
                                           std::vector<ProteinIdentification>& prot_ids,
                                           PrecursorIonSelectionPreprocessing& preprocessed_db,
                                           String path, MSExperiment<>& experiment, String precursor_path)
@@ -670,7 +670,7 @@ namespace OpenMS
       simulateRun_(features, pep_ids, prot_ids, preprocessed_db, path, precursor_path);
   }
 
-  void PrecursorIonSelection::simulateRun_(FeatureMap& features, std::vector<PeptideIdentification>& param_pep_ids,
+  void PrecursorIonSelection::simulateRun_(FeatureMap& features, std::vector<SpectrumIdentification>& param_pep_ids,
                                            std::vector<ProteinIdentification>& param_prot_ids,
                                            PrecursorIonSelectionPreprocessing& preprocessed_db,
                                            String path, String precursor_path)
@@ -702,7 +702,7 @@ namespace OpenMS
     // check if feature map has required user_params-> else add them
     checkForRequiredUserParams_(features);
 
-    std::vector<PeptideIdentification> filtered_pep_ids = filterPeptideIds_(param_pep_ids);
+    std::vector<SpectrumIdentification> filtered_pep_ids = filterPeptideIds_(param_pep_ids);
 
     // annotate map with ids
     // TODO: wirklich mit deltas? oder lieber ueber convex hulls? Anm v. Chris: IDMapper benutzt CH's + Deltas wenn CH vorhanden sind
@@ -732,7 +732,7 @@ namespace OpenMS
     Size precursors = 0;
     UInt iteration = 0;
     UInt pep_id_number = 0;
-    std::vector<PeptideIdentification> curr_pep_ids, all_pep_ids;
+    std::vector<SpectrumIdentification> curr_pep_ids, all_pep_ids;
     std::vector<ProteinIdentification> curr_prot_ids, all_prot_ids;
 
     std::ofstream* precs = 0;
@@ -772,7 +772,7 @@ namespace OpenMS
 
 
         // get their peptide ids
-        std::vector<PeptideIdentification>& pep_ids = new_features[c].getPeptideIdentifications();
+        std::vector<SpectrumIdentification>& pep_ids = new_features[c].getPeptideIdentifications();
 #ifdef PIS_DEBUG
         if (!pep_ids.empty())
         {
@@ -801,7 +801,7 @@ namespace OpenMS
           all_pep_ids.push_back(pep_ids[pep_id]);
           curr_pep_ids.push_back(pep_ids[pep_id]);
           // go through peptide hits
-          const std::vector<PeptideHit>& pep_hits = pep_ids[pep_id].getHits();
+          const std::vector<SpectrumMatch>& pep_hits = pep_ids[pep_id].getHits();
           for (UInt pep_hit = 0; pep_hit < pep_hits.size(); ++pep_hit)
           {
             // get their accessions
@@ -982,7 +982,7 @@ namespace OpenMS
   }
 
   void PrecursorIonSelection::simulateILPBasedIPSRun_(FeatureMap& features, MSExperiment<>& experiment,
-                                                      std::vector<PeptideIdentification>& param_pep_ids,
+                                                      std::vector<SpectrumIdentification>& param_pep_ids,
                                                       std::vector<ProteinIdentification>& prot_ids,
                                                       PrecursorIonSelectionPreprocessing& preprocessed_db,
                                                       String output_path, String precursor_path)
@@ -1002,7 +1002,7 @@ namespace OpenMS
 #ifdef PIS_DEBUG
     std::cout << param_pep_ids.size() << " ids before filtering\n";
 #endif
-    std::vector<PeptideIdentification> filtered_pep_ids = filterPeptideIds_(param_pep_ids);
+    std::vector<SpectrumIdentification> filtered_pep_ids = filterPeptideIds_(param_pep_ids);
 #ifdef PIS_DEBUG
     std::cout << filtered_pep_ids.size() << " ids \n";
 #endif
@@ -1087,7 +1087,7 @@ namespace OpenMS
     if (precursor_path != "")
       precs = new std::ofstream(precursor_path.c_str());
 
-    std::vector<PeptideIdentification> curr_pep_ids, all_pep_ids;
+    std::vector<SpectrumIdentification> curr_pep_ids, all_pep_ids;
     std::vector<ProteinIdentification> curr_prot_ids;
 #ifdef PIS_DEBUG
     std::cout << max_iteration_ << std::endl;
@@ -1140,7 +1140,7 @@ namespace OpenMS
         //          << " int: "<< new_features[c].getIntensity() <<std::endl;
         std::cout << "\n";
         // get their peptide ids
-        std::vector<PeptideIdentification>& pep_ids = new_features[c].getPeptideIdentifications();
+        std::vector<SpectrumIdentification>& pep_ids = new_features[c].getPeptideIdentifications();
 
         //#ifdef PIS_DEBUG
         if (pep_ids.size() > 0)
@@ -1313,7 +1313,7 @@ namespace OpenMS
     return prot_count;
   }
 
-  void PrecursorIonSelection::convertPeptideIdScores_(std::vector<PeptideIdentification>& pep_ids)
+  void PrecursorIonSelection::convertPeptideIdScores_(std::vector<SpectrumIdentification>& pep_ids)
   {
     for (Size i = 0; i < pep_ids.size(); ++i)
     {
@@ -1323,7 +1323,7 @@ namespace OpenMS
         {
           pep_ids[i].setScoreType("1-Posterior Error Probability");
           pep_ids[i].setHigherScoreBetter(true);
-          std::vector<PeptideHit> hits = pep_ids[i].getHits();
+          std::vector<SpectrumMatch> hits = pep_ids[i].getHits();
           for (Size j = 0; j < hits.size(); ++j)
           {
 #ifdef PIS_DEBUG

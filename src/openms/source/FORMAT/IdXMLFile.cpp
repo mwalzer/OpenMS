@@ -54,14 +54,14 @@ namespace OpenMS
   {
   }
 
-  void IdXMLFile::load(const String& filename, std::vector<ProteinIdentification>& protein_ids, std::vector<PeptideIdentification>& peptide_ids)
+  void IdXMLFile::load(const String& filename, std::vector<ProteinIdentification>& protein_ids, std::vector<SpectrumIdentification>& peptide_ids)
   {
     String document_id;
     load(filename, protein_ids, peptide_ids, document_id);
   }
 
   void IdXMLFile::load(const String& filename, std::vector<ProteinIdentification>& protein_ids,
-                       std::vector<PeptideIdentification>& peptide_ids, String& document_id)
+                       std::vector<SpectrumIdentification>& peptide_ids, String& document_id)
   {
     //Filename for error messages in XMLHandler
     file_ = filename;
@@ -83,13 +83,13 @@ namespace OpenMS
     param_ = ProteinIdentification::SearchParameters();
     id_ = "";
     prot_id_ = ProteinIdentification();
-    pep_id_ = PeptideIdentification();
+    pep_id_ = SpectrumIdentification();
     prot_hit_ = ProteinHit();
-    pep_hit_ = PeptideHit();
+    pep_hit_ = SpectrumMatch();
     proteinid_to_accession_.clear();
   }
 
-  void IdXMLFile::store(String filename, const std::vector<ProteinIdentification>& protein_ids, const std::vector<PeptideIdentification>& peptide_ids, const String& document_id)
+  void IdXMLFile::store(String filename, const std::vector<ProteinIdentification>& protein_ids, const std::vector<SpectrumIdentification>& peptide_ids, const String& document_id)
   {
     //open stream
     std::ofstream os(filename.c_str());
@@ -283,7 +283,7 @@ namespace OpenMS
         // write peptide hits
         for (Size j = 0; j < peptide_ids[l].getHits().size(); ++j)
         {
-          const PeptideHit& p_hit = peptide_ids[l].getHits()[j];
+          const SpectrumMatch& p_hit = peptide_ids[l].getHits()[j];
           os << "\t\t\t<PeptideHit";
           os << " score=\"" << precisionWrapper(p_hit.getScore()) << "\"";
           os << " sequence=\"" << p_hit.getSequence() << "\"";
@@ -364,9 +364,9 @@ namespace OpenMS
     param_ = ProteinIdentification::SearchParameters();
     id_ = "";
     prot_id_ = ProteinIdentification();
-    pep_id_ = PeptideIdentification();
+    pep_id_ = SpectrumIdentification();
     prot_hit_ = ProteinHit();
-    pep_hit_ = PeptideHit();
+    pep_hit_ = SpectrumMatch();
     proteinid_to_accession_.clear();
   }
 
@@ -455,7 +455,7 @@ namespace OpenMS
     // RUN
     else if (tag == "IdentificationRun")
     {
-      pep_id_ = PeptideIdentification();
+      pep_id_ = SpectrumIdentification();
       prot_id_ = ProteinIdentification();
 
       prot_id_.setSearchEngine(attributeAsString_(attributes, "search_engine"));
@@ -561,7 +561,7 @@ namespace OpenMS
     }
     else if (tag == "PeptideHit")
     {
-      pep_hit_ = PeptideHit();
+      pep_hit_ = SpectrumMatch();
       peptide_evidences_.clear();
 
       pep_hit_.setCharge(attributeAsInt_(attributes, "charge"));
@@ -767,7 +767,7 @@ namespace OpenMS
     else if (tag == "PeptideIdentification")
     {
       pep_ids_->push_back(pep_id_);
-      pep_id_ = PeptideIdentification();
+      pep_id_ = SpectrumIdentification();
       last_meta_  = 0;
     }
     else if (tag == "PeptideHit")

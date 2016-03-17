@@ -55,7 +55,7 @@ namespace OpenMS
 
   struct IDFilter::HasMinPeptideLength
   {
-    typedef PeptideHit argument_type; // for use as a predicate
+    typedef SpectrumMatch argument_type; // for use as a predicate
 
     Size length;
 
@@ -63,7 +63,7 @@ namespace OpenMS
       length(length)
     {}
     
-    bool operator()(const PeptideHit& hit) const
+    bool operator()(const SpectrumMatch& hit) const
     {
       return hit.getSequence().size() >= length;
     }
@@ -72,7 +72,7 @@ namespace OpenMS
 
   struct IDFilter::HasMinCharge
   {
-    typedef PeptideHit argument_type; // for use as a predicate
+    typedef SpectrumMatch argument_type; // for use as a predicate
 
     Int charge;
 
@@ -80,7 +80,7 @@ namespace OpenMS
       charge(charge)
     {}
 
-    bool operator()(const PeptideHit& hit) const
+    bool operator()(const SpectrumMatch& hit) const
     {
       return hit.getCharge() >= charge;
     }
@@ -89,7 +89,7 @@ namespace OpenMS
 
   struct IDFilter::HasLowMZError
   {
-    typedef PeptideHit argument_type; // for use as a predicate
+    typedef SpectrumMatch argument_type; // for use as a predicate
 
     double precursor_mz, tolerance;
 
@@ -99,7 +99,7 @@ namespace OpenMS
       if (unit_ppm) this->tolerance *= precursor_mz / 1.0e6;
     }
 
-    bool operator()(const PeptideHit& hit) const
+    bool operator()(const SpectrumMatch& hit) const
     {
       Int z = hit.getCharge();
       if (z == 0) z = 1;
@@ -112,7 +112,7 @@ namespace OpenMS
 
   struct IDFilter::HasMatchingModification
   {
-    typedef PeptideHit argument_type; // for use as a predicate
+    typedef SpectrumMatch argument_type; // for use as a predicate
 
     const set<String>& mods;
 
@@ -120,7 +120,7 @@ namespace OpenMS
       mods(mods)
     {}
 
-    bool operator()(const PeptideHit& hit) const
+    bool operator()(const SpectrumMatch& hit) const
     {
       const AASequence& seq = hit.getSequence();
       if (mods.empty()) return seq.isModified();
@@ -162,7 +162,7 @@ namespace OpenMS
 
   struct IDFilter::HasMatchingSequence
   {
-    typedef PeptideHit argument_type; // for use as a predicate
+    typedef SpectrumMatch argument_type; // for use as a predicate
 
     const set<String>& sequences;
     bool ignore_mods;
@@ -171,7 +171,7 @@ namespace OpenMS
       sequences(sequences), ignore_mods(ignore_mods)
     {}
 
-    bool operator()(const PeptideHit& hit) const
+    bool operator()(const SpectrumMatch& hit) const
     {
       const String& query = (ignore_mods ? 
                              hit.getSequence().toUnmodifiedString() :
@@ -183,9 +183,9 @@ namespace OpenMS
 
   struct IDFilter::HasNoEvidence
   {
-    typedef PeptideHit argument_type; // for use as a predicate
+    typedef SpectrumMatch argument_type; // for use as a predicate
 
-    bool operator()(const PeptideHit& hit) const
+    bool operator()(const SpectrumMatch& hit) const
     {
       return hit.getPeptideEvidences().empty();
     }
@@ -194,7 +194,7 @@ namespace OpenMS
 
   struct IDFilter::HasRTInRange
   {
-    typedef PeptideIdentification argument_type; // for use as a predicate
+    typedef SpectrumIdentification argument_type; // for use as a predicate
 
     double rt_min, rt_max;
 
@@ -202,7 +202,7 @@ namespace OpenMS
       rt_min(rt_min), rt_max(rt_max)
     {}
 
-    bool operator()(const PeptideIdentification& id) const
+    bool operator()(const SpectrumIdentification& id) const
     {
       double rt = id.getRT();
       return (rt >= rt_min) && (rt <= rt_max);
@@ -212,7 +212,7 @@ namespace OpenMS
 
   struct IDFilter::HasMZInRange
   {
-    typedef PeptideIdentification argument_type; // for use as a predicate
+    typedef SpectrumIdentification argument_type; // for use as a predicate
 
     double mz_min, mz_max;
 
@@ -220,7 +220,7 @@ namespace OpenMS
       mz_min(mz_min), mz_max(mz_max)
     {}
 
-    bool operator()(const PeptideIdentification& id) const
+    bool operator()(const SpectrumIdentification& id) const
     {
       double mz = id.getMZ();
       return (mz >= mz_min) && (mz <= mz_max);
@@ -229,13 +229,13 @@ namespace OpenMS
 
 
   void IDFilter::extractPeptideSequences(
-    const vector<PeptideIdentification>& peptides, set<String>& sequences,
+    const vector<SpectrumIdentification>& peptides, set<String>& sequences,
     bool ignore_mods)
   {
-    for (vector<PeptideIdentification>::const_iterator pep_it =
+    for (vector<SpectrumIdentification>::const_iterator pep_it =
            peptides.begin(); pep_it != peptides.end(); ++pep_it)
     {
-      for (vector<PeptideHit>::const_iterator hit_it = 
+      for (vector<SpectrumMatch>::const_iterator hit_it = 
              pep_it->getHits().begin(); hit_it != pep_it->getHits().end(); 
            ++hit_it)
       {
@@ -254,16 +254,16 @@ namespace OpenMS
 
   void IDFilter::removeUnreferencedProteins(
     vector<ProteinIdentification>& proteins,
-    const vector<PeptideIdentification>& peptides)
+    const vector<SpectrumIdentification>& peptides)
   {
     // collect accessions that are referenced by peptides for each ID run:
     map<String, set<String> > run_to_accessions;
-    for (vector<PeptideIdentification>::const_iterator pep_it = 
+    for (vector<SpectrumIdentification>::const_iterator pep_it = 
            peptides.begin(); pep_it != peptides.end(); ++pep_it)
     {
       const String& run_id = pep_it->getIdentifier();
       // extract protein accessions of each peptide hit:
-      for (vector<PeptideHit>::const_iterator hit_it = 
+      for (vector<SpectrumMatch>::const_iterator hit_it = 
              pep_it->getHits().begin(); hit_it != pep_it->getHits().end();
            ++hit_it)
       {
@@ -286,7 +286,7 @@ namespace OpenMS
 
 
   void IDFilter::updateProteinReferences(
-    vector<PeptideIdentification>& peptides,
+    vector<SpectrumIdentification>& peptides,
     const vector<ProteinIdentification>& proteins,
     bool remove_peptides_without_reference)
   {
@@ -304,14 +304,14 @@ namespace OpenMS
       }
     }
 
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       const String& run_id = pep_it->getIdentifier();
       const set<String>& accessions = run_to_accessions[run_id];
       struct HasMatchingAccession<PeptideEvidence> acc_filter(accessions);
       // check protein accessions of each peptide hit
-      for (vector<PeptideHit>::iterator hit_it = pep_it->getHits().begin();
+      for (vector<SpectrumMatch>::iterator hit_it = pep_it->getHits().begin();
            hit_it != pep_it->getHits().end(); ++hit_it)
       {
         // no non-const "PeptideHit::getPeptideEvidences" implemented, so we
@@ -372,19 +372,19 @@ namespace OpenMS
   }
 
 
-  void IDFilter::keepBestPeptideHits(vector<PeptideIdentification>& peptides,
+  void IDFilter::keepBestPeptideHits(vector<SpectrumIdentification>& peptides,
                                      bool strict)
   {
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
-      vector<PeptideHit>& hits = pep_it->getHits();
+      vector<SpectrumMatch>& hits = pep_it->getHits();
       if (hits.size() > 1)
       {
         pep_it->sort();
         double top_score = hits[0].getScore();
         bool higher_better = pep_it->isHigherScoreBetter();
-        struct HasGoodScore<PeptideHit> good_score(top_score, higher_better);
+        struct HasGoodScore<SpectrumMatch> good_score(top_score, higher_better);
         if (strict) // only one best score allowed
         {
           if (good_score(hits[1])) // two (or more) best-scoring hits
@@ -400,7 +400,7 @@ namespace OpenMS
         {
           // we could use keepMatchingHits() here, but it would be less
           // efficient (since the hits are already sorted by score):
-          for (vector<PeptideHit>::iterator hit_it = ++hits.begin();
+          for (vector<SpectrumMatch>::iterator hit_it = ++hits.begin();
                hit_it != hits.end(); ++hit_it)
           {
             if (!good_score(*hit_it))
@@ -415,13 +415,13 @@ namespace OpenMS
   }
 
 
-  void IDFilter::filterPeptidesByLength(vector<PeptideIdentification>& peptides,
+  void IDFilter::filterPeptidesByLength(vector<SpectrumIdentification>& peptides,
                                         Size min_length, Size max_length)
   {
     if (min_length > 0)
     {
       struct HasMinPeptideLength length_filter(min_length);
-      for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+      for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
            pep_it != peptides.end(); ++pep_it)
       {
         keepMatchingItems(pep_it->getHits(), length_filter);
@@ -431,7 +431,7 @@ namespace OpenMS
     if (max_length > min_length)
     {
       struct HasMinPeptideLength length_filter(max_length);
-      for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+      for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
            pep_it != peptides.end(); ++pep_it)
       {
         removeMatchingItems(pep_it->getHits(), length_filter);
@@ -440,11 +440,11 @@ namespace OpenMS
   }
 
 
-  void IDFilter::filterPeptidesByCharge(vector<PeptideIdentification>& peptides,
+  void IDFilter::filterPeptidesByCharge(vector<SpectrumIdentification>& peptides,
                                         Int min_charge, Int max_charge)
   {
     struct HasMinCharge charge_filter(min_charge);
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       keepMatchingItems(pep_it->getHits(), charge_filter);
@@ -453,7 +453,7 @@ namespace OpenMS
     if (max_charge > min_charge)
     {
       charge_filter = HasMinCharge(max_charge);
-      for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+      for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
            pep_it != peptides.end(); ++pep_it)
       {
         removeMatchingItems(pep_it->getHits(), charge_filter);
@@ -462,7 +462,7 @@ namespace OpenMS
   }
 
 
-  void IDFilter::filterPeptidesByRT(vector<PeptideIdentification>& peptides,
+  void IDFilter::filterPeptidesByRT(vector<SpectrumIdentification>& peptides,
                                     double min_rt, double max_rt)
   {
     struct HasRTInRange rt_filter(min_rt, max_rt);
@@ -470,7 +470,7 @@ namespace OpenMS
   }
 
 
-  void IDFilter::filterPeptidesByMZ(vector<PeptideIdentification>& peptides,
+  void IDFilter::filterPeptidesByMZ(vector<SpectrumIdentification>& peptides,
                                     double min_mz, double max_mz)
   {
     struct HasMZInRange mz_filter(min_mz, max_mz);
@@ -479,9 +479,9 @@ namespace OpenMS
 
 
   void IDFilter::filterPeptidesByMZError(
-    vector<PeptideIdentification>& peptides, double mass_error, bool unit_ppm)
+    vector<SpectrumIdentification>& peptides, double mass_error, bool unit_ppm)
   {
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       struct HasLowMZError error_filter(pep_it->getMZ(), mass_error, unit_ppm);
@@ -491,14 +491,14 @@ namespace OpenMS
 
 
   void IDFilter::filterPeptidesByRTPredictPValue(
-    vector<PeptideIdentification>& peptides, const String& metavalue_key,
+    vector<SpectrumIdentification>& peptides, const String& metavalue_key,
     double threshold)
   {
     Size n_initial = 0, n_metavalue = 0; // keep track of numbers of hits
-    struct HasMetaValue<PeptideHit> present_filter(metavalue_key, DataValue());
+    struct HasMetaValue<SpectrumMatch> present_filter(metavalue_key, DataValue());
     double cutoff = 1 - threshold; // why? - Hendrik
-    struct HasMaxMetaValue<PeptideHit> pvalue_filter(metavalue_key, cutoff);
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    struct HasMaxMetaValue<SpectrumMatch> pvalue_filter(metavalue_key, cutoff);
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       n_initial += pep_it->getHits().size();
@@ -519,11 +519,11 @@ namespace OpenMS
 
 
   void IDFilter::removePeptidesWithMatchingModifications(
-    vector<PeptideIdentification>& peptides, 
+    vector<SpectrumIdentification>& peptides, 
     const set<String>& modifications)
   {
     struct HasMatchingModification mod_filter(modifications);
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       removeMatchingItems(pep_it->getHits(), mod_filter);
@@ -532,11 +532,11 @@ namespace OpenMS
 
 
   void IDFilter::keepPeptidesWithMatchingModifications(
-    vector<PeptideIdentification>& peptides, 
+    vector<SpectrumIdentification>& peptides, 
     const set<String>& modifications)
   {
     struct HasMatchingModification mod_filter(modifications);
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       keepMatchingItems(pep_it->getHits(), mod_filter);
@@ -545,13 +545,13 @@ namespace OpenMS
 
 
   void IDFilter::removePeptidesWithMatchingSequences(
-    vector<PeptideIdentification>& peptides,
-    const vector<PeptideIdentification>& bad_peptides, bool ignore_mods)
+    vector<SpectrumIdentification>& peptides,
+    const vector<SpectrumIdentification>& bad_peptides, bool ignore_mods)
   {
     set<String> bad_seqs;
     extractPeptideSequences(bad_peptides, bad_seqs, ignore_mods);
     struct HasMatchingSequence seq_filter(bad_seqs, ignore_mods);
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       removeMatchingItems(pep_it->getHits(), seq_filter);
@@ -560,13 +560,13 @@ namespace OpenMS
 
 
   void IDFilter::keepPeptidesWithMatchingSequences(
-    vector<PeptideIdentification>& peptides,
-    const vector<PeptideIdentification>& good_peptides, bool ignore_mods)
+    vector<SpectrumIdentification>& peptides,
+    const vector<SpectrumIdentification>& good_peptides, bool ignore_mods)
   {
     set<String> good_seqs;
     extractPeptideSequences(good_peptides, good_seqs, ignore_mods);
     struct HasMatchingSequence seq_filter(good_seqs, ignore_mods);
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       keepMatchingItems(pep_it->getHits(), seq_filter);
@@ -574,15 +574,15 @@ namespace OpenMS
   }
 
 
-  void IDFilter::keepUniquePeptidesPerProtein(vector<PeptideIdentification>&
+  void IDFilter::keepUniquePeptidesPerProtein(vector<SpectrumIdentification>&
                                               peptides)
   {
     Size n_initial = 0, n_metavalue = 0; // keep track of numbers of hits
-    struct HasMetaValue<PeptideHit> present_filter("protein_references",
+    struct HasMetaValue<SpectrumMatch> present_filter("protein_references",
                                                    DataValue());
-    struct HasMetaValue<PeptideHit> unique_filter("protein_references", 
+    struct HasMetaValue<SpectrumMatch> unique_filter("protein_references", 
                                                   DataValue("unique"));
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       n_initial += pep_it->getHits().size();
@@ -603,16 +603,16 @@ namespace OpenMS
 
 
   // @TODO: generalize this to protein hits?
-  void IDFilter::removeDuplicatePeptideHits(vector<PeptideIdentification>&
+  void IDFilter::removeDuplicatePeptideHits(vector<SpectrumIdentification>&
                                             peptides)
   {
-    for (vector<PeptideIdentification>::iterator pep_it = peptides.begin();
+    for (vector<SpectrumIdentification>::iterator pep_it = peptides.begin();
          pep_it != peptides.end(); ++pep_it)
     {
       // there's no "PeptideHit::operator<" defined, so we can't use a set nor
       // "sort" + "unique" from the standard library:
-      vector<PeptideHit> filtered_hits;
-      for (vector<PeptideHit>::iterator hit_it = pep_it->getHits().begin();
+      vector<SpectrumMatch> filtered_hits;
+      for (vector<SpectrumMatch>::iterator hit_it = pep_it->getHits().begin();
            hit_it != pep_it->getHits().end(); ++hit_it)
       {
         if (find(filtered_hits.begin(), filtered_hits.end(), *hit_it) == 

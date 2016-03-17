@@ -83,7 +83,7 @@ namespace OpenMS
     if (in_type == FileTypes::IDXML)
     {
       vector<ProteinIdentification> proteins;
-      vector<PeptideIdentification> peptides;
+      vector<SpectrumIdentification> peptides;
 
       for (map<String, StringList>::iterator iter =  design2FilePath.begin(); iter != design2FilePath.end(); ++iter)
       {
@@ -189,11 +189,11 @@ namespace OpenMS
     }
   }
 
-  void QuantitativeExperimentalDesign::mergeIDFiles_(vector<ProteinIdentification>& proteins, vector<PeptideIdentification>& peptides, const String& experiment, StringList& file_paths)
+  void QuantitativeExperimentalDesign::mergeIDFiles_(vector<ProteinIdentification>& proteins, vector<SpectrumIdentification>& peptides, const String& experiment, StringList& file_paths)
   {
     set<String> used_ids;
     vector<ProteinIdentification> additional_proteins;
-    vector<PeptideIdentification> additional_peptides;
+    vector<SpectrumIdentification> additional_peptides;
 
     LOG_INFO << "Merge idXML-files:" << endl;
     for (StringList::iterator file_it = file_paths.begin(); file_it != file_paths.end(); ++file_it)
@@ -208,7 +208,7 @@ namespace OpenMS
         prot_it->setMetaValue("experiment", DataValue(experiment));
       }
 
-      for (vector<PeptideIdentification>::iterator pep_it =
+      for (vector<SpectrumIdentification>::iterator pep_it =
              additional_peptides.begin(); pep_it !=
            additional_peptides.end(); ++pep_it)
       {
@@ -236,7 +236,7 @@ namespace OpenMS
           // update fields:
           prot_it->setIdentifier(new_id);
           prot_it->setDateTime(date_time);
-          for (vector<PeptideIdentification>::iterator pep_it = additional_peptides.begin(); pep_it != additional_peptides.end(); ++pep_it)
+          for (vector<SpectrumIdentification>::iterator pep_it = additional_peptides.begin(); pep_it != additional_peptides.end(); ++pep_it)
           {
             if (pep_it->getIdentifier() == id)
               pep_it->setIdentifier(new_id);

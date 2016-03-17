@@ -252,7 +252,7 @@ protected:
     FeatureXMLFile f_file;
     f_file.load(in, f_map);
 
-    std::vector<PeptideIdentification> pep_ids;
+    std::vector<SpectrumIdentification> pep_ids;
     std::vector<ProteinIdentification> prot_ids;
     String document_id;
     IdXMLFile idxml_file;

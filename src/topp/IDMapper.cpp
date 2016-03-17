@@ -172,7 +172,7 @@ protected:
     // LOG_DEBUG << "Loading idXML..." << endl;
     String id = getStringOption_("id");
     vector<ProteinIdentification> protein_ids;
-    vector<PeptideIdentification> peptide_ids;
+    vector<SpectrumIdentification> peptide_ids;
     FileTypes::Type in_type = FileHandler::getType(id);
     if (in_type == FileTypes::IDXML)
     {

@@ -188,12 +188,12 @@ namespace OpenMS
     }
 
     const vector<ProteinIdentification>& prot_ids = map.getProteinIdentifications();
-    const vector<PeptideIdentification>& pep_ids = cf_it->getPeptideIdentifications();
+    const vector<SpectrumIdentification>& pep_ids = cf_it->getPeptideIdentifications();
 
-    for (vector<PeptideIdentification>::const_iterator p_it = pep_ids.begin(); p_it != pep_ids.end(); ++p_it)
+    for (vector<SpectrumIdentification>::const_iterator p_it = pep_ids.begin(); p_it != pep_ids.end(); ++p_it)
     {
-      const vector<PeptideHit>& hits = p_it->getHits();
-      for (vector<PeptideHit>::const_iterator h_it = hits.begin(); h_it != hits.end(); ++h_it)
+      const vector<SpectrumMatch>& hits = p_it->getHits();
+      for (vector<SpectrumMatch>::const_iterator h_it = hits.begin(); h_it != hits.end(); ++h_it)
       {
         const set<String>& accs = h_it->extractProteinAccessions();
         for (set<String>::const_iterator acc_it = accs.begin(); acc_it != accs.end(); ++acc_it)
