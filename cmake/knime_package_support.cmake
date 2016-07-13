@@ -128,6 +128,8 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -D SCRIPT_DIR=${SCRIPT_DIRECTORY} -DTOOLNAME=MyriMatchAdapter -DPARAM=myrimatch_executable -D CTD_PATH=${CTD_PATH} -P ${SCRIPT_DIRECTORY}remove_parameter_from_ctd.cmake
   # MSGFPlusAdapter
   COMMAND ${CMAKE_COMMAND} -D SCRIPT_DIR=${SCRIPT_DIRECTORY} -DTOOLNAME=MSGFPlusAdapter -DPARAM=executable -D CTD_PATH=${CTD_PATH} -P ${SCRIPT_DIRECTORY}remove_parameter_from_ctd.cmake
+  # PercolatorAdapter
+  COMMAND ${CMAKE_COMMAND} -D SCRIPT_DIR=${SCRIPT_DIRECTORY} -DTOOLNAME=PercolatorAdapter -DPARAM=executable -D CTD_PATH=${CTD_PATH} -P ${SCRIPT_DIRECTORY}remove_parameter_from_ctd.cmake
   # FidoAdapter
   COMMAND ${CMAKE_COMMAND} -D SCRIPT_DIR=${SCRIPT_DIRECTORY} -DTOOLNAME=FidoAdapter -DPARAM=fido_executable -D CTD_PATH=${CTD_PATH} -P ${SCRIPT_DIRECTORY}remove_parameter_from_ctd.cmake
   COMMAND ${CMAKE_COMMAND} -D SCRIPT_DIR=${SCRIPT_DIRECTORY} -DTOOLNAME=FidoAdapter -DPARAM=fidocp_executable -D CTD_PATH=${CTD_PATH} -P ${SCRIPT_DIRECTORY}remove_parameter_from_ctd.cmake
@@ -271,6 +273,8 @@ elseif(NOT EXISTS ${SEARCH_ENGINES_DIRECTORY}/OMSSA OR NOT EXISTS ${SEARCH_ENGIN
   message(FATAL_ERROR "The given search engine directory seems to have an invalid layout. Please check use the one from the SVN.")
 elseif(NOT EXISTS ${SEARCH_ENGINES_DIRECTORY}/Fido)
   message(FATAL_ERROR "The given search engine directory seems to have an invalid layout (Fido is missing). Please check use the one from the SVN.")
+elseif(NOT EXISTS ${SEARCH_ENGINES_DIRECTORY}/Percolator)
+  message(FATAL_ERROR "The given search engine directory seems to have an invalid layout (Percolator is missing). Please check use the one from the SVN.")
 elseif(NOT APPLE AND NOT EXISTS ${SEARCH_ENGINES_DIRECTORY}/MyriMatch)
   message(FATAL_ERROR "The given search engine directory seems to have an invalid layout. Please check use the one from the SVN.")
 endif()

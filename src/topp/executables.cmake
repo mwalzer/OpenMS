@@ -69,6 +69,7 @@ PeakPickerHiRes
 PeakPickerWavelet
 PepNovoAdapter
 PeptideIndexer
+PercolatorAdapter
 PhosphoScoring
 PILISIdentification
 PILISModelCV
