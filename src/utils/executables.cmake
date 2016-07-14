@@ -30,6 +30,7 @@ MSSimulator
 MzMLSplitter
 OpenMSInfo
 PeakPickerIterative
+PSMFeatureExtractor
 QCCalculator
 QCEmbedder
 QCExporter
@@ -46,7 +47,6 @@ SimpleSearchEngine
 SpecLibCreator
 SvmTheoreticalSpectrumGeneratorTrainer
 TransformationEvaluation
-TopPerc
 XMLValidator
 #SimpleSearchEngine
 #RNPxlSearch
