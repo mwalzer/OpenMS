@@ -79,7 +79,7 @@
 #include <cmath>
 
 using namespace std;
-  
+
 namespace OpenMS
 {
 
@@ -176,6 +176,7 @@ namespace OpenMS
     registerIntOption_("threads", "<n>", 1, "Sets the number of threads allowed to be used by the TOPP tool", false);
     registerStringOption_("write_ini", "<file>", "", "Writes the default configuration file", false);
     registerStringOption_("write_ctd", "<out_dir>", "", "Writes the common tool description file(s) (Toolname(s).ctd) to <out_dir>", false, true);
+    registerStringOption_("write_gxml", "<out_dir>", "", "Writes the galaxy tool xml file to <out_dir>", false, true);
     registerStringOption_("write_wsdl", "<file>", "", "Writes the default WSDL file", false, true);
     registerFlag_("no_progress", "Disables progress logging to command line", true);
     registerFlag_("force", "Overwrite tool specific checks.", true);
@@ -309,6 +310,16 @@ namespace OpenMS
       return writeWSDL_(wsdl_file);
     }
 
+    if (param_cmdline_.exists("write_gxml"))
+    {
+      if (!writeGXML_())
+      {
+        writeLog_("Error: Could not write galaxy xml file!");
+        return CANNOT_WRITE_OUTPUT_FILE;
+      }
+      return EXECUTION_OK;
+    }
+
     //-------------------------------------------------------------
     // load INI file
     //-------------------------------------------------------------
@@ -412,8 +423,8 @@ namespace OpenMS
 #ifdef ENABLE_UPDATE_CHECK
     // disable collection of usage statistics if environment variable is present
     char* disable_usage = getenv("OPENMS_DISABLE_UPDATE_CHECK");
- 
-    // only perform check if variable is not set or explicitly enabled by setting it to "OFF"  
+
+    // only perform check if variable is not set or explicitly enabled by setting it to "OFF"
     if (!test_mode_ && (disable_usage == NULL || strcmp(disable_usage, "OFF") == 0))
     {
       UpdateCheck::run(tool_name_, version_, debug_level_);
@@ -2295,7 +2306,7 @@ namespace OpenMS
       }
     }
   }
-  
+
   void TOPPBase::addDataProcessing_(FeatureMap& map, const DataProcessing& dp) const
   {
     map.getDataProcessing().push_back(dp);
@@ -2365,6 +2376,219 @@ namespace OpenMS
       file.write(ctd_str.c_str());
       file.close();
     }
+
+    return true;
+  }
+
+  bool TOPPBase::writeGXML_()
+  {
+    QString out_dir_str = String(param_cmdline_.getValue("write_gxml")).toQString();
+    if (out_dir_str == "")
+    {
+      out_dir_str = QDir::currentPath();
+    }
+    StringList type_list = ToolHandler::getTypes(tool_name_);
+    if (type_list.size() == 0)
+      type_list.push_back(""); // no type for most tools (except GenericWrapper)
+
+    QString write_gxml_file = out_dir_str + QDir::separator() + tool_name_.toQString() + ".xml";
+    outputFileWritable_(write_gxml_file, "write_gxml");
+
+    std::stringstream no_esc_ss;
+
+    //write header
+    no_esc_ss << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
+    no_esc_ss << "<tool id=\"" << tool_name_ << "-" << version_ << "\"" << " name=\"" << tool_name_ << "\"" << " version=\"" << version_ << "\" >" << endl;
+    no_esc_ss << "\t<description >" << Internal::XMLHandler::writeXMLEscape(tool_description_) << "</description>" << endl;
+
+    // prepare input and output tags and afterwards assemble the command tag and put everything together
+    StringList tag_inputs, tag_outputs;
+    StringList cpf;  // command parameter flags
+
+    string indentation = "\t\t\t";
+    Param param = getDefaultParameters_();
+
+    for (Param::ParamIterator it = param.begin(); it != param.end(); ++it)
+    {
+      string optional = "";
+      if (it->value.valueType() != DataValue::EMPTY_VALUE)
+      {
+        // only regular parameters go into galaxy xml for now (i.e. advanced omitted), these go later int <inputs><section>...</section></inputs>
+        if (it->tags.find("advanced") == it->tags.end())
+        {
+          // transform: our required -> theirs optional
+          if (it->tags.find("required") == it->tags.end())
+          {
+            optional = " optional=\"true\"";
+          }
+
+          DataValue::DataType value_type = it->value.valueType();
+          switch (value_type)
+          {  // only string and stringlist can be in- and out-files
+            case DataValue::STRING_VALUE:
+            case DataValue::STRING_LIST:
+                if (it->tags.find("input file") != it->tags.end())
+                {
+                  StringList formats;
+                  for (std::vector<String>::const_iterator otit = it->valid_strings.begin(); otit != it->valid_strings.end(); ++otit)
+                  {
+                    // trim any . or *
+                    String clean_and_valid_filetypes = *otit;
+                    clean_and_valid_filetypes.remove('*');
+                    if (clean_and_valid_filetypes.hasPrefix('.'))
+                        clean_and_valid_filetypes = clean_and_valid_filetypes.substr(1);
+                    formats.push_back(clean_and_valid_filetypes);
+                  }
+                  tag_inputs.push_back(indentation + "<param argument=\"-" + it->name +
+                                       "\" type=\"data\" label=\"input-file-" + it->name +
+                                       "\" format=\"" + ListUtils::concatenate(formats, ',') +
+                                       "\"" + optional);
+                  if (value_type == DataValue::STRING_LIST)
+                  {
+                    tag_inputs.back() = tag_inputs.back() + " multiple=\"true\"";
+                  }
+                  tag_inputs.back() = tag_inputs.back() + "/>";
+                  cpf.push_back("-" + it->name + " $input-file-" +  it->name);
+                }
+                else if (it->tags.find("output file") != it->tags.end())
+                {
+                  if (it->valid_strings.size() == 1)
+                  {
+                    String clean_and_valid_filetype = it->valid_strings.front();
+                    clean_and_valid_filetype.remove('*');
+                    if (clean_and_valid_filetype.hasPrefix('.'))
+                      clean_and_valid_filetype = clean_and_valid_filetype.substr(1);
+
+                    tag_outputs.push_back(indentation + "<data format=\""
+                                          + clean_and_valid_filetype
+                                          + "\" name=\"" + it->name + "\"/>");
+                  }
+                  else if (it->valid_strings.size() > 1)
+                  {
+                    StringList formats;
+                    for (std::vector<String>::const_iterator otit = it->valid_strings.begin(); otit != it->valid_strings.end(); ++otit)
+                    {
+                      // trim any . or *
+                      String clean_and_valid_filetypes = *otit;
+                      clean_and_valid_filetypes.remove('*');
+                      if (clean_and_valid_filetypes.hasPrefix('.'))
+                          clean_and_valid_filetypes = clean_and_valid_filetypes.substr(1);
+                      formats.push_back(clean_and_valid_filetypes);
+                    }
+                    tag_inputs.push_back(indentation + "<param name=\"output-file-type-" +
+                                         it->name + "\" type=\"select" +
+                                         "\" label=\"output-file-type-" + it->name + "\" >");
+                    tag_outputs.push_back(indentation + "<data format=\""
+                                          + formats.front()
+                                          + "\" name=\"output-file-" + it->name + "\" >");
+                    tag_outputs.push_back(indentation + "\t" + "<change_format>");
+                    for (std::vector<String>::const_iterator format = formats.begin(); format != formats.end(); ++format)
+                    {
+                      tag_inputs.push_back(indentation + "\t" + "<option value=\"" + *format + "\">" + Internal::XMLHandler::writeXMLEscape(*format) + "</option>");
+                      tag_outputs.push_back(indentation + "\t\t" + "<when input=\"output-file-type-" + it->name + "\" value=\"" + *format + "\" format=\"" + Internal::XMLHandler::writeXMLEscape(*format) + "\"/>");
+                    }
+                    tag_inputs.push_back(indentation + "</param>");
+                    tag_outputs.push_back(indentation + "\t" + "</change_format>");
+                    tag_outputs.push_back(indentation + "</data>");
+
+                    cpf.push_back("-" + it->name + " $output-file-" +  it->name);
+                  }
+                }
+                else
+                {
+                  // TODO? remove all empty value + optional
+                  // TODO? out_type + optional (& if outputfile has valid_strings.size() > 0)
+                  if (it->name == "out_type" && !optional.empty())
+                  {
+                    break;
+                  }
+                  tag_inputs.push_back(indentation + "<param argument=\"-" + it->name +
+                                       "\" value=\"" + it->value.toString() + "\" type=\"text" +
+                                       "\" label=\"" + it->name + "\"" + optional);
+                  if (value_type == DataValue::STRING_LIST)
+                  {
+                    tag_inputs.back() = tag_inputs.back() + " multiple=\"true\"";
+                  }
+                  if (it->valid_strings.size() != 0)
+                  {
+                    tag_inputs.back() = (tag_inputs.back() + ">");
+                    for (std::vector<String>::const_iterator otit = it->valid_strings.begin(); otit != it->valid_strings.end(); ++otit)
+                    {
+                      tag_inputs.push_back(indentation + "\t" + "<option value=\"" + *otit + "\">" + Internal::XMLHandler::writeXMLEscape(*otit) + "</option>");
+                    }
+                    tag_inputs.push_back(indentation + "</param>");
+                  }
+                  else
+                  {
+                    tag_inputs.back() = (tag_inputs.back() + "/>");
+                  }
+                  cpf.push_back("-" + it->name + " $" +  it->name);
+                }
+                break;
+
+            // all others are regular param fodder
+            case DataValue::INT_VALUE:
+                LOG_DEBUG << "INT_VALUE" << it->name << endl;
+                tag_inputs.push_back(indentation + "<param argument=\"-" + it->name +
+                                     "\" value=\"" + it->value.toString() + "\" type=\"integer" +
+                                     "\" label=\"" + it->name + "\"" + optional + "/>");
+                cpf.push_back("-" + it->name + " $" +  it->name);
+                break;
+
+            case DataValue::DOUBLE_VALUE:
+                tag_inputs.push_back(indentation + "<param argument=\"-" + it->name +
+                                     "\" value=\"" + it->value.toString() + "\" type=\"float" +
+                                     "\" label=\"" + it->name + "\"" + optional + "/>");
+                cpf.push_back("-" + it->name + " $" +  it->name);
+              break;
+
+            case DataValue::INT_LIST:
+                tag_inputs.push_back(indentation + "<param argument=\"-" + it->name +
+                                     "\" value=\"" + it->value.toString() + "\" type=\"integer" +
+                                     "\" label=\"" + it->name + "\"" + optional + " multiple=\"true\"" + "/>");
+                cpf.push_back("-" + it->name + " $" +  it->name);
+              break;
+
+            case DataValue::DOUBLE_LIST:
+                tag_inputs.push_back(indentation + "<param argument=\"-" + it->name +
+                                     "\" value=\"" + it->value.toString() + "\" type=\"float" +
+                                     "\" label=\"" + it->name + "\"" + optional + " multiple=\"true\"" + "/>");
+                cpf.push_back("-" + it->name + " $" +  it->name);
+              break;
+
+            default:
+                break;
+          }
+        }
+      }
+    }
+
+    // tie it all together
+    no_esc_ss << "\t<command>" << tool_name_  << " " << ListUtils::concatenate(cpf, " ") << endl;
+
+    indentation = "\t\t";
+    no_esc_ss << indentation << "<inputs>" << endl << ListUtils::concatenate(tag_inputs, "\n") << endl << indentation << "</inputs>" << endl;
+    no_esc_ss << indentation << "<outputs>" << endl << ListUtils::concatenate(tag_outputs, "\n") << endl << indentation << "</outputs>" << endl;
+
+    // end
+    no_esc_ss << "</tool>" << endl;
+
+    // for the test:
+    //validate written file
+//    XMLValidator validator;
+//    if (!validator.isValid(filename, File::find("???/???.xsd")))
+//    {
+//      writeLog_("Error: The written galaxy file does not validate against the XML schema. Please report this bug!");
+//      return INTERNAL_ERROR;
+//    }
+    //write to file
+    QFile file(write_gxml_file);
+    if (!file.open(QIODevice::WriteOnly))
+    {
+      return false;
+    }
+    file.write(no_esc_ss.str().c_str());
+    file.close();
 
     return true;
   }

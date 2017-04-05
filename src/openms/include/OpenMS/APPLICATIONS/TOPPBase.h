@@ -889,7 +889,10 @@ protected:
     /// Write common tool description (CTD) file
     bool writeCTD_();
 
-    /// Write WSDL file and validate it. Returns EXECUTION_OK or INTERNAL_ERROR (if validation failed)
+    /// Write galaxy tool description XML files
+    bool writeGXML_();
+
+      /// Write WSDL file and validate it. Returns EXECUTION_OK or INTERNAL_ERROR (if validation failed)
     ExitCodes writeWSDL_(const String& filename);
 
     /**
