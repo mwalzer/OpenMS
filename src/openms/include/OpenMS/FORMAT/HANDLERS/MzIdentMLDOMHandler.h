@@ -162,17 +162,7 @@ protected:
       static ProteinIdentification::SearchParameters findSearchParameters_(std::pair<CVTermList, std::map<String, DataValue> > as_params);
       //@}
 
-      /**@name Helper functions to build a DOM tree from the internal id structures*/
-      void buildCvList_(xercesc::DOMElement* cvElements);
-      void buildAnalysisSoftwareList_(xercesc::DOMElement* analysisSoftwareElements);
-      void buildSequenceCollection_(xercesc::DOMElement* sequenceCollectionElements);
-      void buildAnalysisCollection_(xercesc::DOMElement* analysisCollectionElements);
-      void buildAnalysisProtocolCollection_(xercesc::DOMElement* protocolElements);
-      void buildInputDataCollection_(xercesc::DOMElement* inputElements);
-      void buildEnclosedCV_(xercesc::DOMElement* parentElement, String encel, String acc, String name, String cvref);
-      void buildAnalysisDataCollection_(xercesc::DOMElement* analysisElements);
-      //@}
-
+      // REMOVED  FUNCTIONALITY FOR DOM WRITER /**@name Helper functions to build a DOM tree from the internal id structures*/
 
 private:
       MzIdentMLDOMHandler();
@@ -284,6 +274,8 @@ private:
       std::map<String, double> xl_mass_map_; //mapping Peptide id -> crosslink mass
       std::map<String, String> xl_mod_map_; //mapping peptide id -> cross-linking reagent name
 
+      OpenMS::String attrToString(xercesc::DOMElement* child, String attr);
+      void pruneDOMTree(xercesc::DOMNodeList* branches);
     };
   } // namespace Internal
 } // namespace OpenMS

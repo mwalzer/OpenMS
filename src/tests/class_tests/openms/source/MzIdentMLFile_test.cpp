@@ -134,12 +134,12 @@ START_SECTION(void store(String filename, const std::vector<ProteinIdentificatio
   MzIdentMLFile().store(filename, protein_ids2, peptide_ids2);
 
   MzIdentMLFile().load(filename, protein_ids, peptide_ids);
-  TEST_EQUAL(protein_ids.size(),protein_ids2.size())
-  TEST_EQUAL(protein_ids[0].getHits().size(),protein_ids2[0].getHits().size())
-  TEST_EQUAL(peptide_ids.size(),peptide_ids2.size())
-  TEST_EQUAL(peptide_ids[0].getHits().size(),peptide_ids2[0].getHits().size())
-  TEST_EQUAL(peptide_ids[1].getHits().size(),peptide_ids2[1].getHits().size())
-  TEST_EQUAL(peptide_ids[2].getHits().size(),peptide_ids2[2].getHits().size())
+  ABORT_IF(!(protein_ids.size() == protein_ids2.size()))
+  ABORT_IF(!(protein_ids[0].getHits().size() == protein_ids2[0].getHits().size()))
+  ABORT_IF(!(peptide_ids.size() == peptide_ids2.size()))
+  ABORT_IF(!(peptide_ids[0].getHits().size() == peptide_ids2[0].getHits().size()))
+  ABORT_IF(!(peptide_ids[1].getHits().size() == peptide_ids2[1].getHits().size()))
+  ABORT_IF(!(peptide_ids[2].getHits().size() == peptide_ids2[2].getHits().size()))
 
   /////////////// protein id 1 //////////////////
   TEST_EQUAL(protein_ids[0].getSearchEngine(),protein_ids2[0].getSearchEngine())
@@ -170,12 +170,12 @@ START_SECTION(void store(String filename, const std::vector<ProteinIdentificatio
 //  TEST_EQUAL(protein_ids[0].getProteinGroups().size(), 0);
 //  TEST_EQUAL(protein_ids[0].getIndistinguishableProteins().size(), 0);
 
-  //protein hit 1
-  TEST_EQUAL(protein_ids[0].getHits()[0].getAccession(),protein_ids2[0].getHits()[0].getAccession())
-  TEST_EQUAL(protein_ids[0].getHits()[0].getSequence(),protein_ids2[0].getHits()[0].getSequence())
-  //protein hit 2
-  TEST_EQUAL(protein_ids[0].getHits()[1].getAccession(),protein_ids2[0].getHits()[1].getAccession())
-  TEST_EQUAL(protein_ids[0].getHits()[1].getSequence(),protein_ids2[0].getHits()[1].getSequence())
+  for (size_t i = 0; i < protein_ids2.size(); ++i){
+    for (size_t j = 0; j < protein_ids2[0].getHits().size(); ++j){
+      TEST_EQUAL(protein_ids[i].getHits()[j].getAccession(),protein_ids2[i].getHits()[j].getAccession())
+      TEST_EQUAL(protein_ids[i].getHits()[j].getSequence(),protein_ids2[i].getHits()[j].getSequence())
+    }
+  }
 
   //peptide id 1
   TEST_EQUAL(peptide_ids[0].getScoreType(),peptide_ids2[0].getScoreType())
