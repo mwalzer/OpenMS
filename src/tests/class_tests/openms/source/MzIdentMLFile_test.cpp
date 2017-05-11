@@ -71,7 +71,10 @@ START_SECTION(void load(const String& filename, std::vector<ProteinIdentificatio
 
   TEST_EQUAL(protein_ids.size(),2)
   TEST_EQUAL(protein_ids[0].getHits().size(),2)
+  TEST_STRING_EQUAL(protein_ids[0].getSearchParameters().db,"database.fasta")
   TEST_EQUAL(protein_ids[1].getHits().size(),1)
+  TEST_STRING_EQUAL(protein_ids[1].getSearchParameters().db,".")
+
   TEST_EQUAL(peptide_ids.size(),5)
   TEST_EQUAL(peptide_ids[0].getHits().size(),1)
   TEST_EQUAL(peptide_ids[1].getHits().size(),1)

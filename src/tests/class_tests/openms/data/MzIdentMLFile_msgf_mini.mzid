@@ -13,10 +13,10 @@
     </AnalysisSoftware>
 </AnalysisSoftwareList>
 <SequenceCollection xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
-    <DBSequence accession="sp|P0A786|PYRB_ECOLI" searchDatabase_ref="SearchDB_1" length="311" id="DBSeq737845">
+    <DBSequence accession="sp|P0A786|PYRB_ECOLI" searchDatabase_ref="SearchDB_1" length="311" id="DBSeq1">
         <cvParam accession="MS:1001088" cvRef="PSI-MS" value="sp|P0A786|PYRB_ECOLI Aspartate carbamoyltransferase catalytic chain OS=Escherichia coli (strain K12) GN=pyrB PE=1 SV=2" name="protein description"/>
     </DBSequence>
-    <DBSequence accession="sp|P0A9K9|SLYD_ECOLI" searchDatabase_ref="SearchDB_1" length="196" id="DBSeq857296">
+    <DBSequence accession="sp|P0A9K9|SLYD_ECOLI" searchDatabase_ref="SearchDB_1" length="196" id="DBSeq2">
         <cvParam accession="MS:1001088" cvRef="PSI-MS" value="sp|P0A9K9|SLYD_ECOLI FKBP-type peptidyl-prolyl cis-trans isomerase SlyD OS=Escherichia coli (strain K12) GN=slyD PE=1 SV=1" name="protein description"/>
     </DBSequence>
     <DBSequence accession="sp|ABC|xyz" searchDatabase_ref="SearchDB_99" length="99" id="DBSeq99">
@@ -37,9 +37,9 @@
     <Peptide id="Pep99">
         <PeptideSequence>RIPLRIPLRIPLRIPLRIPLRIPLRIPLRIPL</PeptideSequence>
     </Peptide>
-    <PeptideEvidence isDecoy="false" post="L" pre="R" end="152" start="115" peptide_ref="Pep1" dBSequence_ref="DBSeq737845" id="PepEv_737959_1_115"/>
-    <PeptideEvidence isDecoy="false" post="F" pre="R" end="131" start="96" peptide_ref="Pep2" dBSequence_ref="DBSeq857296" id="PepEv_857391_2_96"/>
-    <PeptideEvidence isDecoy="true" post="K" pre="K" end="445" start="422" peptide_ref="Pep3" dBSequence_ref="DBSeq737845" id="PepEv_213263_3_422"/>
+    <PeptideEvidence isDecoy="false" post="L" pre="R" end="152" start="115" peptide_ref="Pep1" dBSequence_ref="DBSeq1" id="PepEv_737959_1_115"/>
+    <PeptideEvidence isDecoy="false" post="F" pre="R" end="131" start="96" peptide_ref="Pep2" dBSequence_ref="DBSeq2" id="PepEv_857391_2_96"/>
+    <PeptideEvidence isDecoy="true" post="K" pre="K" end="445" start="422" peptide_ref="Pep3" dBSequence_ref="DBSeq1" id="PepEv_213263_3_422"/>
     <PeptideEvidence isDecoy="true" post="K" pre="K" end="445" start="422" peptide_ref="Pep99" dBSequence_ref="DBSeq99" id="PepEv_99"/>
 </SequenceCollection>
 <AnalysisCollection xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
@@ -49,7 +49,7 @@
     </SpectrumIdentification>
     <SpectrumIdentification spectrumIdentificationList_ref="SI_LIST_99" spectrumIdentificationProtocol_ref="SearchProtocol_99" id="SpecIdent_99">
         <InputSpectra spectraData_ref="SID_1"/>
-        <SearchDatabaseRef searchDatabase_ref="SearchDB_1"/>
+        <SearchDatabaseRef searchDatabase_ref="SearchDB_99"/>
     </SpectrumIdentification>
 </AnalysisCollection>
 <AnalysisProtocolCollection xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
@@ -97,14 +97,22 @@
 </AnalysisProtocolCollection>
 <DataCollection xmlns="http://psidev.info/psi/pi/mzIdentML/1.1">
     <Inputs>
-        <SearchDatabase numDatabaseSequences="4303" location="database.fasta" id="SearchDB_1">
-            <FileFormat>
-                <cvParam accession="MS:1001348" cvRef="PSI-MS" name="FASTA format"/>
-            </FileFormat>
-            <DatabaseName>
-                <userParam name="database.fasta"/>
-            </DatabaseName>
-        </SearchDatabase>
+    <SearchDatabase numDatabaseSequences="4303" location="database.fasta" id="SearchDB_1">
+        <FileFormat>
+            <cvParam accession="MS:1001348" cvRef="PSI-MS" name="FASTA format"/>
+        </FileFormat>
+        <DatabaseName>
+            <userParam name="database.name"/>
+        </DatabaseName>
+    </SearchDatabase>
+    <SearchDatabase numDatabaseSequences="3" location="." id="SearchDB_99">
+        <FileFormat>
+            <cvParam accession="MS:1001348" cvRef="PSI-MS" name="FASTA format"/>
+        </FileFormat>
+        <DatabaseName>
+            <userParam name="missing.fasta.name"/>
+        </DatabaseName>
+    </SearchDatabase>
         <SpectraData location="ecoli.mzML" name="ecoli.mzML" id="SID_1">
             <FileFormat>
                 <cvParam accession="MS:1000584" cvRef="PSI-MS" name="mzML file"/>
