@@ -136,6 +136,7 @@ set(kernel_executables_list
   MSExperiment_test
   OnDiscMSExperiment_test
   MSSpectrum_test
+  MSSpectrumHelper_test
   Peak1D_test
   Peak2D_test
   PeakIndex_test
