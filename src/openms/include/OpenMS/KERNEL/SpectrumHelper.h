@@ -67,6 +67,20 @@ namespace OpenMS
     return it;
   }
 
+  /**
+    @brief static function to calculate the delta parts per million error of two values
+
+    @param reference_value the reference mz value ppm delta is calculated against (aka theoretical value)
+    @param experimental_value the measured mz value from which the delta to a theoretical value is to be calculated
+    @return double dppm value
+  */
+  static double getDeltaPpm(double reference_value, double experimental_value)
+  {
+    double error(experimental_value - reference_value);
+    error = error / (reference_value * (double)1e-6);
+    //~ error = (1-exp_mz/theo_mz) * (double)1e6;
+    return error;
+  }
 } // namespace OpenMS
 
 #endif // OPENMS_KERNEL_SPECTRUMHELPER_H

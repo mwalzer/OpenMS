@@ -183,6 +183,14 @@ START_SECTION((MSChromatogram::IntegerDataArrays::iterator getDataArrayByName(MS
         TEST_EQUAL(getDataArrayByName(ds.getIntegerDataArrays(), "f3") - ds.getIntegerDataArrays().begin(), 2);
 END_SECTION
 
+START_SECTION((double getDeltaPpm(double reference_value, double experimental_value)))
+        TOLERANCE_ABSOLUTE(1e-6)
+        TOLERANCE_RELATIVE(1.0 + 1e-6)
+
+        TEST_REAL_SIMILAR(getDeltaPpm(400.0, 400.1), 250.000);
+        TEST_REAL_SIMILAR(getDeltaPpm(400.0, 400.01), 25.000);
+        TEST_REAL_SIMILAR(getDeltaPpm(400.0, 400.001), 2.500);
+END_SECTION
 
 END_TEST
 
