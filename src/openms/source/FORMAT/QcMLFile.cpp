@@ -43,6 +43,7 @@
 #include <boost/range/algorithm/copy.hpp>
 
 using namespace std;
+using json = nlohmann::json;
 
 // TODO fix all the shadowed "const_iterator qpsit"
 #pragma clang diagnostic push
@@ -131,6 +132,108 @@ namespace OpenMS
 
     s += "/>\n";
 
+    return s;
+  }
+
+  QcMLFile::QualityMetric::QualityMetric() :
+    name(),
+    id(),
+    value(),
+    cvRef(),
+    cvAcc(),
+    content(),
+    content_name(),
+    content_id(),
+    content_value(),
+    content_cvRef(),
+    content_cvAcc(),
+    flag()
+  {
+  }
+
+  QcMLFile::QualityMetric::QualityMetric(const QualityMetric& rhs) :
+    name(rhs.name),
+    id(rhs.id),
+    value(rhs.value),
+    cvRef(rhs.cvRef),
+    cvAcc(rhs.cvAcc),
+    content(rhs.content),
+    content_name(rhs.content_name),
+    content_id(rhs.content_id),
+    content_value(rhs.content_value),
+    content_cvRef(rhs.content_cvRef),
+    content_cvAcc(rhs.content_cvAcc),
+    flag(rhs.flag)
+  {
+  }
+
+  QcMLFile::QualityMetric& QcMLFile::QualityMetric::operator=(const QualityMetric& rhs)
+  {
+    if (this != &rhs)
+    {
+      name = rhs.name;
+      id = rhs.id;
+      value = rhs.value;
+      cvRef = rhs.cvRef;
+      cvAcc = rhs.cvAcc;
+      content = rhs.content;
+      content_name = rhs.content_name;
+      content_id = rhs.content_id;
+      content_value = rhs.content_value;
+      content_cvRef = rhs.content_cvRef;
+      content_cvAcc = rhs.content_cvAcc;
+      flag = rhs.flag;
+    }
+    return *this;
+  }
+
+  bool QcMLFile::QualityMetric::operator<(const QualityMetric& rhs) const
+  {
+    return name.toQString() < rhs.name.toQString();
+  }
+
+  bool QcMLFile::QualityMetric::operator>(const QualityMetric& rhs) const
+  {
+    return name.toQString() > rhs.name.toQString();
+  }
+
+  bool QcMLFile::QualityMetric::operator==(const QualityMetric& rhs) const
+  {
+    return name.toQString() == rhs.name.toQString();
+  }
+
+  String QcMLFile::QualityMetric::toXMLString(UInt indentation_level) const
+  {
+    String indent = String(indentation_level, '\t');
+    String s = indent;
+    s += "<QualityMetric";
+    s += " name=\"" + name + "\"" + " ID=\"" + id + "\"" + " cvRef=\"" + cvRef + "\"" + " accession=\"" + cvAcc + "\"";
+    if (!flag.empty())
+    {
+      s += " flag=\"true\"";
+    }
+
+    if (value != "")
+    {
+      s += " value=\"" + value + "\"";
+      s += "/>\n";
+    }
+    else {
+      if (!content.empty())
+      {
+        s += ">\n";
+        s += indent + '\t';
+        s += "<content name=\"" + content_name + "\"" + " ID=\"" + content_id + "\"" + " cvRef=\"" + content_cvRef + "\"" + " accession=\"" + content_cvAcc + "\"";
+        s+= " value=\"" + content_value + "\" >";
+        json j_map(content);  // TODO map to json
+        s += j_map.dump();
+        s += "</content>\n";
+        s += indent;
+        s+="</QualityMetric>\n";
+      }
+      else
+        s += "/>\n";
+    }
     return s;
   }
 
@@ -299,13 +402,31 @@ namespace OpenMS
   }
 
   QcMLFile::QcMLFile() :
-    XMLHandler("", "0.7"), XMLFile("/SCHEMAS/qcml.xsd", "0.7"), ProgressLogger() //TODO keep version uptodate
+    XMLHandler("", "0.10"), XMLFile("/SCHEMAS/qcml.xsd", "0.10"), ProgressLogger() //TODO keep version uptodate
   {
   }
 
   QcMLFile::~QcMLFile()
   {
 
+  }
+
+  void QcMLFile::addRunQualityMetric(String run_id, QualityMetric qp)
+  {
+    // TODO warn that run has to be registered!
+    std::map<String, std::vector<QcMLFile::QualityMetric> >::const_iterator qpsit = runQualityQMs_.find(run_id); //if 'filename is a ID:'
+    if (qpsit != runQualityQMs_.end())
+    {
+      runQualityQMs_[run_id].push_back(qp);
+    }
+    else
+    {
+      std::map<String, String>::const_iterator qpsit = run_Name_ID_map_.find(run_id); //if 'filename' is a name
+      if (qpsit != run_Name_ID_map_.end())
+      {
+        runQualityQMs_[qpsit->second].push_back(qp);
+      }
+    }
   }
 
   void QcMLFile::addRunQualityParameter(String run_id, QualityParameter qp)
@@ -1047,17 +1168,6 @@ namespace OpenMS
     //~ progress_ = 0;
     //~ setProgress(++progress_);
 
-    using json = nlohmann::json;
-    auto j2 = R"(
-      {
-        "happy": true,
-        "pi": 3.141
-      }
-    )"_json;
-    auto j3 = json::parse("{ \"happy\": true, \"pi\": 3.141 }");
-    std::cout << j2.dump(4) << std::endl;
-    std::cout << j3.dump(4) << std::endl;
-
     //~ file should either contain the complete stylesheet injection (including the stylesheet file preamble, the DOCTYPE definition and the stylesheet itself) or be empty
     std::string xslt = "";
     std::string xslt_ref = "";
@@ -1098,110 +1208,126 @@ namespace OpenMS
     }
     os << "<qcML xmlns=\"https://github.com/qcML/qcml\" >\n"; //TODO creation date into schema!!
 
-    //content runs
-    std::set<String> keys;
-    for (std::map<String, std::vector<QualityParameter> >::const_iterator it = runQualityQPs_.begin(); it != runQualityQPs_.end(); ++it)
+    if (!runQualityQMs_.empty())
     {
-      keys.insert(it->first);
-    }
-    for (std::map<String, std::vector<Attachment> >::const_iterator it = runQualityAts_.begin(); it != runQualityAts_.end(); ++it)
-    {
-      keys.insert(it->first);
-    }
-
-    if (!keys.empty())
-    {
-      for (std::set<String>::const_iterator it = keys.begin(); it != keys.end(); ++it)
+      for (std::map<String, std::vector<QualityMetric> >::const_iterator qmsit = runQualityQMs_.begin(); qmsit != runQualityQMs_.end(); ++qmsit)
       {
-        os << "\t<runQuality ID=\"" << String(*it) << "\">\n";
-        std::map<String, std::vector<QualityParameter> >::const_iterator qpsit = runQualityQPs_.find(*it);
-        if (qpsit != runQualityQPs_.end())
+        os << "\t<runQuality ID=\"" << String(qmsit->first) << "\">\n";
+        for (std::vector<QualityMetric>::const_iterator qit = qmsit->second.begin(); qit != qmsit->second.end(); ++qit)
         {
-          for (std::vector<QcMLFile::QualityParameter>::const_iterator qit = qpsit->second.begin(); qit != qpsit->second.end(); ++qit)
-          {
-            os << qit->toXMLString(4);
-          }
-        }
-        std::map<String, std::vector<Attachment> >::const_iterator attit = runQualityAts_.find(*it);
-        if (attit != runQualityAts_.end())
-        {
-          for (std::vector<QcMLFile::Attachment>::const_iterator ait = attit->second.begin(); ait != attit->second.end(); ++ait)
-          {
-            os << ait->toXMLString(4); //TODO check integrity of reference to qp!
-          }
+          os << qit->toXMLString(4);
         }
         os << "\t</runQuality>\n";
       }
     }
-
-    //content sets
-    keys.clear();
-    for (std::map<String, std::vector<QualityParameter> >::const_iterator it = setQualityQPs_.begin(); it != setQualityQPs_.end(); ++it)
+    else  // for now exclusive QP or QM not both, QM has precendece
     {
-      keys.insert(it->first);
-    }
-    for (std::map<String, std::vector<Attachment> >::const_iterator it = setQualityAts_.begin(); it != setQualityAts_.end(); ++it)
-    {
-      keys.insert(it->first);
-    }
-
-    if (!keys.empty())
-    {
-      for (std::set<String>::const_iterator it = keys.begin(); it != keys.end(); ++it)
+      //content runs
+      std::set<String> keys;
+      for (std::map<String, std::vector<QualityParameter> >::const_iterator it = runQualityQPs_.begin(); it != runQualityQPs_.end(); ++it)
       {
-        os << "\t<setQuality ID=\"" << String(*it) << "\">\n";
-        //~ TODO warn if key has no entries in members_
+        keys.insert(it->first);
+      }
+      for (std::map<String, std::vector<Attachment> >::const_iterator it = runQualityAts_.begin(); it != runQualityAts_.end(); ++it)
+      {
+        keys.insert(it->first);
+      }
 
-        //document set members
-        std::map<String, std::set<String> >::const_iterator jt = setQualityQPs_members_.find(*it);
-
-        if (jt != setQualityQPs_members_.end())
+      if (!keys.empty())
+      {
+        for (std::set<String>::const_iterator it = keys.begin(); it != keys.end(); ++it)
         {
-          for (std::set<String>::const_iterator kt = jt->second.begin(); kt != jt->second.end(); ++kt)
+          os << "\t<runQuality ID=\"" << String(*it) << "\">\n";
+          std::map<String, std::vector<QualityParameter> >::const_iterator qpsit = runQualityQPs_.find(*it);
+          if (qpsit != runQualityQPs_.end())
           {
-            std::map<String, std::vector<QualityParameter> >::const_iterator rq = runQualityQPs_.find(*kt);
-            if (rq != runQualityQPs_.end())
+            for (std::vector<QcMLFile::QualityParameter>::const_iterator qit = qpsit->second.begin(); qit != qpsit->second.end(); ++qit)
             {
-                QcMLFile::QualityParameter qp;
-                qp.id = *kt; ///< Identifier
-                qp.name = "set name"; ///< Name
-                qp.cvRef = "QC"; ///< cv reference
-                qp.cvAcc = "QC:0000005";
-                for (std::vector<QualityParameter>::const_iterator qit = rq->second.begin(); qit != rq->second.end(); ++qit)
-                {
-                  ///<qualityParameter name="mzML file" ID="OTT0650-S44-A-Leber_1_run_name" cvRef="MS" accession="MS:1000577" value="OTT0650-S44-A-Leber_1"/>
-                  if (qit->cvAcc == "MS:1000577")
-                    qp.value = qit->value;
-                }
-                os << qp.toXMLString(4);
-            }
-            else
-            {
-              //TODO warn - no mzML file registered for this runQC
+              os << qit->toXMLString(4);
             }
           }
-        }
-
-        std::map<String, std::vector<QualityParameter> >::const_iterator qpsit = setQualityQPs_.find(*it);
-        if (qpsit != setQualityQPs_.end())
-        {
-          for (std::vector<QcMLFile::QualityParameter>::const_iterator qit = qpsit->second.begin(); qit != qpsit->second.end(); ++qit)
+          std::map<String, std::vector<Attachment> >::const_iterator attit = runQualityAts_.find(*it);
+          if (attit != runQualityAts_.end())
           {
-            os << qit->toXMLString(4);
+            for (std::vector<QcMLFile::Attachment>::const_iterator ait = attit->second.begin(); ait != attit->second.end(); ++ait)
+            {
+              os << ait->toXMLString(4); //TODO check integrity of reference to qp!
+            }
           }
+          os << "\t</runQuality>\n";
         }
+      }
 
-        std::map<String, std::vector<Attachment> >::const_iterator attit = setQualityAts_.find(*it);
-        if (attit != setQualityAts_.end())
+      //content sets
+      keys.clear();
+      for (std::map<String, std::vector<QualityParameter> >::const_iterator it = setQualityQPs_.begin(); it != setQualityQPs_.end(); ++it)
+      {
+        keys.insert(it->first);
+      }
+      for (std::map<String, std::vector<Attachment> >::const_iterator it = setQualityAts_.begin(); it != setQualityAts_.end(); ++it)
+      {
+        keys.insert(it->first);
+      }
+
+      if (!keys.empty())
+      {
+        for (std::set<String>::const_iterator it = keys.begin(); it != keys.end(); ++it)
         {
-          for (std::vector<QcMLFile::Attachment>::const_iterator ait = attit->second.begin(); ait != attit->second.end(); ++ait)
+          os << "\t<setQuality ID=\"" << String(*it) << "\">\n";
+          //~ TODO warn if key has no entries in members_
+
+          //document set members
+          std::map<String, std::set<String> >::const_iterator jt = setQualityQPs_members_.find(*it);
+
+          if (jt != setQualityQPs_members_.end())
           {
-            os << ait->toXMLString(4);
+            for (std::set<String>::const_iterator kt = jt->second.begin(); kt != jt->second.end(); ++kt)
+            {
+              std::map<String, std::vector<QualityParameter> >::const_iterator rq = runQualityQPs_.find(*kt);
+              if (rq != runQualityQPs_.end())
+              {
+                  QcMLFile::QualityParameter qp;
+                  qp.id = *kt; ///< Identifier
+                  qp.name = "set name"; ///< Name
+                  qp.cvRef = "QC"; ///< cv reference
+                  qp.cvAcc = "QC:0000005";
+                  for (std::vector<QualityParameter>::const_iterator qit = rq->second.begin(); qit != rq->second.end(); ++qit)
+                  {
+                    ///<qualityParameter name="mzML file" ID="OTT0650-S44-A-Leber_1_run_name" cvRef="MS" accession="MS:1000577" value="OTT0650-S44-A-Leber_1"/>
+                    if (qit->cvAcc == "MS:1000577")
+                      qp.value = qit->value;
+                  }
+                  os << qp.toXMLString(4);
+              }
+              else
+              {
+                //TODO warn - no mzML file registered for this runQC
+              }
+            }
           }
+
+          std::map<String, std::vector<QualityParameter> >::const_iterator qpsit = setQualityQPs_.find(*it);
+          if (qpsit != setQualityQPs_.end())
+          {
+            for (std::vector<QcMLFile::QualityParameter>::const_iterator qit = qpsit->second.begin(); qit != qpsit->second.end(); ++qit)
+            {
+              os << qit->toXMLString(4);
+            }
+          }
+
+          std::map<String, std::vector<Attachment> >::const_iterator attit = setQualityAts_.find(*it);
+          if (attit != setQualityAts_.end())
+          {
+            for (std::vector<QcMLFile::Attachment>::const_iterator ait = attit->second.begin(); ait != attit->second.end(); ++ait)
+            {
+              os << ait->toXMLString(4);
+            }
+          }
+          os << "\t</setQuality>\n";
         }
-        os << "\t</setQuality>\n";
       }
     }
+
     os <<  "\t<cvList>\n";
     os <<  "\t<cv uri=\"http://psidev.cvs.sourceforge.net/viewvc/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo\" ID=\"psi_cv_ref\" fullName=\"PSI-MS\" version=\"3.41.0\"/>\n";
     os <<  "\t<cv uri=\"https://github.com/qcML/qcML-development/blob/master/cv/qc-cv.obo\" ID=\"qc_cv_ref\" fullName=\"QC-CV\" version=\"0.1.1\"/>\n";

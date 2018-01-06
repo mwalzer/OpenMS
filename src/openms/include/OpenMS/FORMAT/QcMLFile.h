@@ -60,6 +60,34 @@ namespace OpenMS
     public ProgressLogger
   {
 public:
+    /// Representation of a quality metric (replaces param & attachment >v0.10)
+    struct OPENMS_DLLAPI QualityMetric
+    {
+      String name; ///< Name
+      String id; ///< Identifier
+      String value; ///< Value
+      String cvRef; ///< cv reference
+      String cvAcc; ///< cv accession
+      std::map<String, std::vector<String> > content; ///<content with unit as key
+      String content_name; ///< Name for content subelement
+      String content_id; ///< Identifier for content subelement
+      String content_value; ///< Value for content subelement
+      String content_cvRef; ///< cv reference for content subelement
+      String content_cvAcc; ///< cv accession for content subelement
+      String flag; ///< cv accession of the unit
+
+      QualityMetric();
+
+      QualityMetric(const QualityMetric& rhs);
+
+      QualityMetric& operator=(const QualityMetric& rhs);
+      bool operator==(const QualityMetric& rhs) const;
+      bool operator<(const QualityMetric& rhs) const;
+      bool operator>(const QualityMetric& rhs) const;
+
+      String toXMLString(UInt indentation_level) const;
+    };
+
     /// Representation of a quality parameter
     struct OPENMS_DLLAPI QualityParameter
     {
@@ -127,6 +155,8 @@ public:
     void registerRun(const String id, const String name);
     ///Registers a set in the qcml file with the respective mappings
     void registerSet(const String id, const String name, const std::set<String>& names);
+    ///Just adds a qualitymetric to run by the name r
+    void addRunQualityMetric(String r, QualityMetric qp);
     ///Just adds a qualityparameter to run by the name r
     void addRunQualityParameter(String r, QualityParameter qp);
     ///Just adds a attachment to run by the name r
@@ -182,6 +212,7 @@ protected:
     // Docu in base class
     void characters(const XMLCh * const chars, const XMLSize_t length) override;
 
+    std::map<String, std::vector< QualityMetric > > runQualityQMs_;
     std::map<String, std::vector< QualityParameter > > runQualityQPs_; //TODO run name attribute to schema of RunQuality
     std::map<String, std::vector< Attachment > > runQualityAts_;
     std::map<String, std::vector< QualityParameter > > setQualityQPs_;
@@ -193,6 +224,7 @@ protected:
     String tag_;
     UInt progress_;
     QualityParameter qp_;
+    QualityMetric qm_;
     Attachment at_;
     std::vector<String> row_;
     std::vector<String> header_;
@@ -200,6 +232,7 @@ protected:
     String run_id_;
     std::set<String> names_;
     std::vector<QualityParameter> qps_;
+    std::vector<QualityMetric> qms_;
     std::vector<Attachment> ats_;
 
   };
