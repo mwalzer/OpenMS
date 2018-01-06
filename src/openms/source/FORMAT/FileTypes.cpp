@@ -107,6 +107,7 @@ namespace OpenMS
     targetMap[FileTypes::MZIDENTML] = "mzid";
     targetMap[FileTypes::MZQUANTML] = "mzq";
     targetMap[FileTypes::QCML] = "qcml";
+    targetMap[FileTypes::JSON] = "json";
     targetMap[FileTypes::GELML] = "gelML";
     targetMap[FileTypes::TRAML] = "traML";
     targetMap[FileTypes::MSP] = "msp";

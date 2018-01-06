@@ -248,12 +248,16 @@ namespace OpenMS
       return FileTypes::MZIDENTML;
 
     //mzq (all lines)
-    if (all_simple.hasSubstring("<qcML"))
+    if (all_simple.hasSubstring("<MzQuant"))
       return FileTypes::MZQUANTML;
 
     //subject to change!
-    if (all_simple.hasSubstring("<MzQualityMLType"))
+    if (all_simple.hasSubstring("<qcML"))
       return FileTypes::QCML;
+
+    //subject to change!
+    if (all_simple.hasSubstring("{"))
+      return FileTypes::JSON;
 
     //pepXML (all lines)
     if (all_simple.hasSubstring("xmlns=\"http://regis-web.systemsbiology.net/pepXML\""))

@@ -411,20 +411,20 @@ namespace OpenMS
 
   }
 
-  void QcMLFile::addRunQualityMetric(String run_id, QualityMetric qp)
+  void QcMLFile::addRunQualityMetric(String run_id, QualityMetric qm)
   {
     // TODO warn that run has to be registered!
     std::map<String, std::vector<QcMLFile::QualityMetric> >::const_iterator qpsit = runQualityQMs_.find(run_id); //if 'filename is a ID:'
     if (qpsit != runQualityQMs_.end())
     {
-      runQualityQMs_[run_id].push_back(qp);
+      runQualityQMs_[run_id].push_back(qm);
     }
     else
     {
       std::map<String, String>::const_iterator qpsit = run_Name_ID_map_.find(run_id); //if 'filename' is a name
       if (qpsit != run_Name_ID_map_.end())
       {
-        runQualityQMs_[qpsit->second].push_back(qp);
+        runQualityQMs_[qpsit->second].push_back(qm);
       }
     }
   }
@@ -740,6 +740,37 @@ namespace OpenMS
     }
   }
 
+  std::string QcMLFile::exportContent(const String runname, const String metric, bool unpretty, bool is_name) const
+  {
+    std::map<String, std::vector<QcMLFile::QualityMetric> >::const_iterator qpsit = runQualityQMs_.find(runname);
+    if (qpsit != runQualityQMs_.end())
+    {
+      std::vector<QcMLFile::QualityMetric>::const_iterator it;
+      if (is_name)
+        it = std::find_if(qpsit->second.begin(), qpsit->second.end(), [&](QualityMetric const& m){ return m.name == metric; });
+      else
+        it = std::find_if(qpsit->second.begin(), qpsit->second.end(), [&](QualityMetric const& m){ return m.cvAcc == metric; });
+      if (it != qpsit->second.end())
+      {
+        if (!it->value.empty())
+        {
+          return "{\"" + it->cvAcc + "\":\"" + it->value + "\"}";
+        }
+        else
+        {
+          json j_map(it->content);
+          if ( unpretty )
+              return j_map.dump();
+          return j_map.dump(4);
+        }
+      }
+    }
+
+    //TODO set quality metrics
+
+    return "";
+  }
+
   String QcMLFile::exportAttachment(const String filename, const String qpname) const
   {
     std::map<String, std::vector<QcMLFile::Attachment> >::const_iterator qpsit = runQualityAts_.find(filename);
@@ -936,6 +967,7 @@ namespace OpenMS
     file_ = filename;
 
     runQualityQPs_.clear(); // clear
+    runQualityQMs_.clear(); // clear
     runQualityAts_.clear(); // clear
     setQualityQPs_.clear(); // clear
     setQualityAts_.clear(); // clear
@@ -981,9 +1013,46 @@ namespace OpenMS
       qps_.clear();
       ats_.clear();
       qp_ = QualityParameter();
+      qm_ = QualityMetric();
       at_ = Attachment();
       name_ = "";
       //for the run name wait for the qp with the right cv, otherwise use a uid
+    }
+    else if (tag_ == "QualityMetric")
+    {
+      optionalAttributeAsString_(qm_.value, attributes, "value");
+      optionalAttributeAsString_(qm_.flag, attributes, "flag");
+      qm_.cvRef = attributeAsString_(attributes, "cvRef");
+      qm_.cvAcc = attributeAsString_(attributes, "accession");
+      qm_.id = attributeAsString_(attributes, "ID");
+      qm_.name = attributeAsString_(attributes, "name");
+      if (parent_tag == "runQuality")
+      {
+        if (qm_.cvAcc == "MS:1000577") //no own qc cv
+        {
+          name_ = qm_.value;
+        }
+        //TODO add cvhandling for validation etc
+      }
+      else //setQuality
+      {
+        if (qm_.cvAcc == "MS:1000577") //TODO make sure these exist in runs later!
+        {
+          names_.insert(qm_.value);
+        }
+        if (qm_.cvAcc == "QC:0000058") //id: MS:1000577 name: raw data file  - with value of the file name of the run
+        {
+          name_ = qm_.value;
+        }
+      }
+    }
+    else if (tag_ == "content")
+    {
+      optionalAttributeAsString_(qm_.content_value, attributes, "value");
+      qm_.content_cvRef = attributeAsString_(attributes, "cvRef");
+      qm_.content_cvAcc = attributeAsString_(attributes, "accession");
+      qm_.content_id = attributeAsString_(attributes, "ID");
+      qm_.content_name = attributeAsString_(attributes, "name");
     }
     else if (tag_ == "qualityParameter")
     {
@@ -1063,6 +1132,11 @@ namespace OpenMS
       at_.binary += sm_.convert(chars);
       //~ at_.binary = "bla";
     }
+    else if (tag_ == "content")
+    {
+      //chars may be split to several chunks => concatenate them
+      content_chunks_ += sm_.convert(chars);
+    }
   }
 
   void QcMLFile::endElement(const XMLCh* const /*uri*/, const XMLCh* const /*local_name*/, const XMLCh* const qname)
@@ -1107,6 +1181,23 @@ namespace OpenMS
       }
       row_.clear();
     }
+    else if (tag_ == "QualityMetric")
+    {
+      if (!(qm_.cvAcc == "MS:1000577" && parent_tag == "setQuality")) //set members get treated differently!
+      {
+        qms_.push_back(qm_);
+        qm_ = QualityMetric();
+      }
+    }
+    else if (tag_ == "content")
+    {
+      if (!content_chunks_.empty()) //set members get treated differently!
+      {
+        auto j = json::parse(content_chunks_);
+        qm_.content = j.get< std::map<String, std::vector< String > > >();
+        content_chunks_ = String();
+      }
+    }
     else if (tag_ == "qualityParameter")
     {
       if (!(qp_.cvAcc == "MS:1000577" && parent_tag == "setQuality")) //set members get treated differently!
@@ -1129,6 +1220,10 @@ namespace OpenMS
         //TODO give warning that a run should have a name cv!!!
       }
       registerRun(run_id_, name_);
+      for (std::vector<QualityMetric>::const_iterator it = qms_.begin(); it != qms_.end(); ++it)
+      {
+        addRunQualityMetric(run_id_, *it);
+      }
       for (std::vector<QualityParameter>::const_iterator it = qps_.begin(); it != qps_.end(); ++it)
       {
         addRunQualityParameter(run_id_, *it);
@@ -1139,6 +1234,7 @@ namespace OpenMS
       }
       ats_.clear();
       qps_.clear();
+      qms_.clear();
     }
     else if (tag_ == "setQuality")
     {

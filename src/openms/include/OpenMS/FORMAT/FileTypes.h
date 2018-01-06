@@ -96,6 +96,7 @@ namespace OpenMS
       OBO,                ///< Controlled Vocabulary format
       HTML,               ///< any HTML format
       XML,                ///< any XML format
+      JSON,               ///< any JSON format
       ANALYSISXML,        ///< analysisXML format
       XSD,                ///< XSD schema format
       PSQ,                ///< NCBI binary blast db

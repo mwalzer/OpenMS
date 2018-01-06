@@ -156,7 +156,7 @@ public:
     ///Registers a set in the qcml file with the respective mappings
     void registerSet(const String id, const String name, const std::set<String>& names);
     ///Just adds a qualitymetric to run by the name r
-    void addRunQualityMetric(String r, QualityMetric qp);
+    void addRunQualityMetric(String r, QualityMetric qm);
     ///Just adds a qualityparameter to run by the name r
     void addRunQualityParameter(String r, QualityParameter qp);
     ///Just adds a attachment to run by the name r
@@ -178,7 +178,9 @@ public:
     ///collects the values of given QPs (as CVid) of the given set
     void/* std::vector<String>& */ collectSetParameter(const String setname, const String qp, std::vector<String>& ret);
     ///Returns a String of a tab separated rows if found empty string else from run/set by the name filename of the qualityparameter by the name qpname
-    String exportAttachment(const String filename, const String qpname) const; 
+    String exportAttachment(const String filename, const String qpname) const;
+    ///Returns a String of prettyfied qualitymetric content of the qualitymetric element with name qmname
+    std::string exportContent(const String runname, const String metric, bool unpretty = false, bool is_name = false) const;
     ///Returns a String value in quotation of a qualityparameter by the name qpname in run/set by the name filename
     String exportQP(const String filename, const String qpname) const;
     ///Returns a String of a tab separated qualityparameter by the name qpname in run/set by the name filename
@@ -222,6 +224,7 @@ protected:
     std::map<String, String > set_Name_ID_map_;
 
     String tag_;
+    String content_chunks_;
     UInt progress_;
     QualityParameter qp_;
     QualityMetric qm_;
