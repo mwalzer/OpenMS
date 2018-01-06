@@ -27,6 +27,7 @@ DistanceMatrix.h
 FASTAContainer.h
 GridFeature.h
 IsotopeCluster.h
+json.hpp
 KDTree.h
 ListUtils.h
 ListUtilsIO.h

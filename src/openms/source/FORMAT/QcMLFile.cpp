@@ -1047,6 +1047,17 @@ namespace OpenMS
     //~ progress_ = 0;
     //~ setProgress(++progress_);
 
+    using json = nlohmann::json;
+    auto j2 = R"(
+      {
+        "happy": true,
+        "pi": 3.141
+      }
+    )"_json;
+    auto j3 = json::parse("{ \"happy\": true, \"pi\": 3.141 }");
+    std::cout << j2.dump(4) << std::endl;
+    std::cout << j3.dump(4) << std::endl;
+
     //~ file should either contain the complete stylesheet injection (including the stylesheet file preamble, the DOCTYPE definition and the stylesheet itself) or be empty
     std::string xslt = "";
     std::string xslt_ref = "";
