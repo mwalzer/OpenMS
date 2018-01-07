@@ -207,6 +207,28 @@ protected:
     return qp;
   }
 
+  QcMLFile::QualityMetric fillQualityMetric (string id, string name, string ref, string acc)
+  {
+    QcMLFile::QualityMetric qm = QcMLFile::QualityMetric();
+    qm.id = id;
+    qm.name = name;
+    qm.cvAcc = acc;
+    qm.cvRef = ref;
+
+    return qm;
+  }
+
+  QcMLFile::QualityMetric contentQualityMetric (QcMLFile::QualityMetric& qm, string value, string id, string name, string ref, string acc)
+  {
+    qm.content_value = value;
+    qm.content_id = id;
+    qm.content_name = name;
+    qm.content_cvAcc = acc;
+    qm.content_cvRef = ref;
+
+    return qm;
+  }
+
   QcMLFile::Attachment fillAttachment (string id, string name, string qp, string ref, string acc, vector<OpenMS::String> col_names)
   {
     QcMLFile::Attachment at;
@@ -284,29 +306,20 @@ protected:
 
     qcmlfile.registerRun(base_name,base_name); //TODO use UIDs
 
-    QcMLFile::QualityMetric qm = QcMLFile::QualityMetric();
+    String qp_acc = "MS:1000031";
+    QcMLFile::QualityMetric qm = fillQualityMetric(base_name + "_instrument_name","instrument model","MS",qp_acc);
     qm.value = exp.getInstrument().getName();
-    qm.id = base_name + "_instrument_name";
-    qm.name = "instrument model";
-    qm.cvAcc = "MS:1000031";
-    qm.cvRef = "MS";
     qcmlfile.addRunQualityMetric(base_name, qm);
 
+// TODO fill metadata section (needs de-/ serialiser update)
 //    qp = fillQualityParameter(base_name + "_date", "completion time", "MS", "MS:1000747");
 //    qp.value = exp.getDateTime().getDate();
 //    qcmlfile.addRunQualityParameter(base_name, qp);
 
     //---precursors and SN
-    qm = QcMLFile::QualityMetric();
-        qm.id = base_name + "_precursors";
-        qm.name = "precursors";
-        qm.cvAcc = "QC:0000044";
-        qm.cvRef = "QC";
-        qm.content_value = String(exp.size());
-        qm.content_id = base_name + "_precursors_table";
-        qm.content_name = "precursortable";
-        qm.content_cvAcc = "linkedlist";
-        qm.content_cvRef = "QC";
+    String at_acc = "QC:0000044";
+    qm = fillQualityMetric(base_name + "_precursors","precursors","QC",at_acc);
+    qm = contentQualityMetric(qm, String(exp.size()), base_name + "_precursors_table","precursortable","QC","QC:3000009");
     for (Size i = 0; i < exp.size(); ++i)
     {
       mslevelcounts[exp[i].getMSLevel()]++;
@@ -320,549 +333,417 @@ protected:
         {
           max_mz = exp[i].getPrecursors().front().getMZ();
         }
-        qm.content["MS:1000894_[sec]"].push_back(exp[i].getRT());
-        qm.content["MS:1000040"].push_back(exp[i].getPrecursors().front().getMZ());
-        qm.content["MS:1000041"].push_back(exp[i].getPrecursors().front().getCharge());
-        qm.content["S/N"].push_back(calculateSNmedian(exp[i]));
-        qm.content["peak count"].push_back(exp[i].size());
+        qm.content["MS:1000894_[sec]"].push_back(String(exp[i].getRT()));
+        qm.content["MS:1000040"].push_back(String(exp[i].getPrecursors().front().getMZ()));
+        qm.content["MS:1000041"].push_back(String(exp[i].getPrecursors().front().getCharge()));
+        qm.content["S/N"].push_back(String(calculateSNmedian(exp[i])));
+        qm.content["peak count"].push_back(String(exp[i].size()));
       }
     }
     qcmlfile.addRunQualityMetric(base_name, qm);
 
-//    //---aquisition results qp
-//    qp_acc = "QC:0000006";
-//    qp = fillQualityParameter(base_name + "_ms1aquisition",
-//                              fetchCVTermNameOrDefault(cv, qp_acc, "number of ms1 spectra"),
-//                              "QC",
-//                              qp_acc);
-//    qp.value = String(mslevelcounts[1]);
-//    qcmlfile.addRunQualityParameter(base_name, qp);
+    //---aquisition results qp
+    qp_acc = "QC:0000006";
+    qm = fillQualityMetric(base_name + "_ms1aquisition",
+                              fetchCVTermNameOrDefault(cv, qp_acc, "number of ms1 spectra"),
+                              "QC",
+                              qp_acc);
+    qm.value = String(mslevelcounts[1]);
+    qcmlfile.addRunQualityMetric(base_name, qm);
 
-//    qp_acc = "QC:0000007";
-//    qp = fillQualityParameter(base_name + "_ms2aquisition",
-//                              fetchCVTermNameOrDefault(cv, qp_acc, "number of ms2 spectra"),
-//                              "QC",
-//                              qp_acc);
-//    qp.value = String(mslevelcounts[2]);
-//    qcmlfile.addRunQualityParameter(base_name, qp);
+    qp_acc = "QC:0000007";
+    qm = fillQualityMetric(base_name + "_ms2aquisition",
+                              fetchCVTermNameOrDefault(cv, qp_acc, "number of ms2 spectra"),
+                              "QC",
+                              qp_acc);
+    qm.value = String(mslevelcounts[2]);
+    qcmlfile.addRunQualityMetric(base_name, qm);
 
-//    qp_acc = "QC:0000008";
-//    qp = fillQualityParameter(base_name + "_chromaquisition",
-//                              fetchCVTermNameOrDefault(cv, qp_acc, "number of chromatograms"),
-//                              "QC",
-//                              qp_acc);
-//    qp.value = String(exp.getChromatograms().size());
-//    qcmlfile.addRunQualityParameter(base_name, qp);
+    qp_acc = "QC:0000008";
+    qm = fillQualityMetric(base_name + "_chromaquisition",
+                              fetchCVTermNameOrDefault(cv, qp_acc, "number of chromatograms"),
+                              "QC",
+                              qp_acc);
+    qm.value = String(exp.getChromatograms().size());
+    qcmlfile.addRunQualityMetric(base_name, qm);
 
+    at_acc = "QC:0000009";
+    qm = fillQualityMetric(base_name + "_mzrange",fetchCVTermNameOrDefault(cv, at_acc, "MS MZ aquisition ranges"),"QC",at_acc);
+    qm = contentQualityMetric(qm, String(1), base_name + "_mzrange_pair","n-tuple","QC","QC:3000008");
+    qm.content["QC:0000010"].push_back(String(min_mz));
+    qm.content["QC:0000011"].push_back(String(max_mz));
+    qcmlfile.addRunQualityMetric(base_name, qm);
 
-//    at_acc = "QC:0000009";
-//    at = fillAttachment(base_name + "_mzrange",
-//                        fetchCVTermNameOrDefault(cv, at_acc, "MS MZ aquisition ranges"),
-//                        msaq_ref,
-//                        "QC",
-//                        at_acc,
-//                        {"QC:0000010","QC:0000011"});
-//    std::vector<String> rowmz;
-//    rowmz.push_back(String(min_mz));
-//    rowmz.push_back(String(max_mz));
-//    at.tableRows.push_back(rowmz);
-//    qcmlfile.addRunAttachment(base_name, at);
-
-//    at_acc = "QC:0000012";
-//    at = fillAttachment(base_name + "_rtrange",
-//                        fetchCVTermNameOrDefault(cv, at_acc, "MS RT aquisition ranges"),
-//                        msaq_ref,
-//                        "QC",
-//                        at_acc,
-//                        {"QC:0000013","QC:0000014"});
-//    std::vector<String> rowrt;
-//    rowrt.push_back(String(exp.begin()->getRT()));
-//    rowrt.push_back(String(exp.getSpectra().back().getRT()));
-//    at.tableRows.push_back(rowrt);
-//    qcmlfile.addRunAttachment(base_name, at);
-
+    at_acc = "QC:0000012";
+    qm = fillQualityMetric(base_name + "_rtrange",fetchCVTermNameOrDefault(cv, at_acc, "MS RT aquisition ranges"),"QC",at_acc);
+    qm = contentQualityMetric(qm, String(1), base_name + "_mzrange_pair","n-tuple","QC","QC:3000008");
+    qm.content["QC:0000013"].push_back(String(min_mz));
+    qm.content["QC:0000014"].push_back(String(max_mz));
+    qcmlfile.addRunQualityMetric(base_name, qm);
 
 //    //---ion current stability ( & tic ) qp
-//    at_acc = "QC:0000022";
-//    at = fillAttachment(base_name + "_tics",
-//                        fetchCVTermNameOrDefault(cv, at_acc, "MS TICs"),
-//                        msaq_ref,
-//                        "QC",
-//                        at_acc,
-//                        {"MS:1000894_[sec]","MS:1000285"});
-//    Size below_10k = 0;
-//    std::vector<OpenMS::Chromatogram> chroms = exp.getChromatograms();
-//    if (!chroms.empty()) //real TIC from the mzML
-//    {
-//      for (Size t = 0; t < chroms.size(); ++t)
-//      {
-//        if (chroms[t].getChromatogramType() == ChromatogramSettings::TOTAL_ION_CURRENT_CHROMATOGRAM)
-//        {
-//          for (Size i = 0; i < chroms[t].size(); ++i)
-//          {
-//            double sum = chroms[t][i].getIntensity();
-//            if (sum < 10000)
-//            {
-//              ++below_10k;
-//            }
-//            std::vector<String> row;
-//            row.push_back(chroms[t][i].getRT() * 60);
-//            row.push_back(sum);
-//            at.tableRows.push_back(row);
-//          }
-//          break;  // what if there are more than one? should generally not be though ...
-//        }
-//      }
-//      qcmlfile.addRunAttachment(base_name, at);
+    at_acc = "QC:0000022";
+    Size below_10k = 0;
+    std::vector<OpenMS::Chromatogram> chroms = exp.getChromatograms();
+    qm = fillQualityMetric(base_name + "_tics",fetchCVTermNameOrDefault(cv, at_acc, "MS TICs"),"QC",at_acc);
+    qm = contentQualityMetric(qm, String(chroms.size()), base_name + "_tic_values","table","QC","QC:3000009");
+    if (!chroms.empty()) //real TIC from the mzML
+    {
+      for (Size t = 0; t < chroms.size(); ++t)
+      {
+        if (chroms[t].getChromatogramType() == ChromatogramSettings::TOTAL_ION_CURRENT_CHROMATOGRAM)
+        {
+          for (Size i = 0; i < chroms[t].size(); ++i)
+          {
+            double sum = chroms[t][i].getIntensity();
+            if (sum < 10000)
+            {
+              ++below_10k;
+            }
+            qm.content["MS:1000894_[sec]"].push_back(String(chroms[t][i].getRT() * 60));
+            qm.content["MS:1000285"].push_back(String(sum));
+          }
+          break;  // what if there are more than one? should generally not be though ...
+        }
+      }
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      qp = QcMLFile::QualityParameter();
-//      qp.id = base_name + "_ticslump"; ///< Identifier
-//      qp.cvRef = "QC"; ///< cv reference
-//      qp.cvAcc = "QC:0000023";
-//      qp.value = String((100 / exp.size()) * below_10k);
-//      try
-//      {
-//        const ControlledVocabulary::CVTerm& term = cv.getTerm(qp.cvAcc);
-//        qp.name = term.name; ///< Name
-//      }
-//      catch (...)
-//      {
-//        qp.name = "percentage of tic slumps"; ///< Name
-//      }
-//      qcmlfile.addRunQualityParameter(base_name, qp);
-//    }
+      at_acc = "QC:0000023";
+      qm = fillQualityMetric(base_name + "_ticslump",fetchCVTermNameOrDefault(cv, at_acc, "percentage of tic slumps"),"QC",at_acc);
+      qm.value = String((100 / exp.size()) * below_10k);
+      qcmlfile.addRunQualityMetric(base_name, qm);
+    }
 
-//    // -- reconstructed TIC or RIC from the MS1 intensities
-//    at_acc = "QC:0000056";
-//    at = fillAttachment(base_name + "_rics",
-//                        fetchCVTermNameOrDefault(cv, at_acc, "MS RICs"),
-//                        msaq_ref,
-//                        "QC",
-//                        at_acc,
-//                        {"MS:1000894_[sec]","MS:1000285","S/N","peak count"});
-//    Size prev = 0;
-//    below_10k = 0;
-//    Size jumps = 0;
-//    Size drops = 0;
-//    Size fact = 10;
-//    for (Size i = 0; i < exp.size(); ++i)
-//    {
-//      if (exp[i].getMSLevel() == 1)
-//      {
-//        UInt sum = 0;
-//        for (Size j = 0; j < exp[i].size(); ++j)
-//        {
-//          sum += exp[i][j].getIntensity();
-//        }
-//        if (prev > 0 && sum > fact * prev)  // no jumps after complete drops (or [re]starts)
-//        {
-//          ++jumps;
-//        }
-//        else if (sum < fact*prev)
-//        {
-//          ++drops;
-//        }
-//        if (sum < 10000)
-//        {
-//          ++below_10k;
-//        }
-//        prev = sum;
-//        std::vector<String> row;
-//        row.push_back(exp[i].getRT());
-//        row.push_back(sum);
-//        row.push_back(calculateSNmedian(exp[i]));
-//        row.push_back(exp[i].size());
-//        at.tableRows.push_back(row);
-//      }
-//    }
-//    qcmlfile.addRunAttachment(base_name, at);
+    at_acc = "QC:0000056";
+    qm = fillQualityMetric(base_name + "_rics",fetchCVTermNameOrDefault(cv, at_acc, "MS RICs"),"QC",at_acc);
+    qm = contentQualityMetric(qm, String(exp.size()), base_name + "_ric_values","table","QC","QC:3000009");
+    Size prev = 0;
+    below_10k = 0;
+    Size jumps = 0;
+    Size drops = 0;
+    Size fact = 10;
+    for (Size i = 0; i < exp.size(); ++i)
+    {
+      if (exp[i].getMSLevel() == 1)
+      {
+        UInt sum = 0;
+        for (Size j = 0; j < exp[i].size(); ++j)
+        {
+          sum += exp[i][j].getIntensity();
+        }
+        if (prev > 0 && sum > fact * prev)  // no jumps after complete drops (or [re]starts)
+        {
+          ++jumps;
+        }
+        else if (sum < fact*prev)
+        {
+          ++drops;
+        }
+        if (sum < 10000)
+        {
+          ++below_10k;
+        }
+        prev = sum;
+        qm.content["MS:1000894_[sec]"].push_back(String(exp[i].getRT()));
+        qm.content["MS:1000285"].push_back(String(sum));
+        qm.content["S/N"].push_back(String(calculateSNmedian(exp[i])));
+        qm.content["peak count"].push_back(String(exp[i].size()));
+      }
+    }
+    qm.content_value = String(qm.content.begin()->second.size());
+    qcmlfile.addRunQualityMetric(base_name, qm);
 
-//    qp_acc = "QC:0000057";
-//    qp = fillQualityParameter(base_name + "_ricslump", fetchCVTermNameOrDefault(cv, qp_acc, "percentage of ric slumps"), "QC", qp_acc);
-//    qp.value = String((100 / exp.size()) * below_10k);
-//    qcmlfile.addRunQualityParameter(base_name, qp);
+    qp_acc = "QC:0000057";
+    qm = fillQualityMetric(base_name + "_ricslump",
+                           fetchCVTermNameOrDefault(cv, qp_acc, "percentage of ric slumps"),
+                           "QC",
+                           qp_acc);
+    qm.value = String((100 / exp.size()) * below_10k);
+    qcmlfile.addRunQualityMetric(base_name, qm);
 
-//    qp_acc = "QC:0000059";
-//    qp = fillQualityParameter(base_name + "_ricjump",
-//                              fetchCVTermNameOrDefault(cv, qp_acc, "IS-1A"),
-//                              "QC",
-//                              qp_acc);
-//    qp.value = String(jumps);
-//    qcmlfile.addRunQualityParameter(base_name, qp);
+    qp_acc = "QC:0000059";
+    qm = fillQualityMetric(base_name + "_ricjump",
+                              fetchCVTermNameOrDefault(cv, qp_acc, "IS-1A"),
+                              "QC",
+                              qp_acc);
+    qm.value = String(jumps);
+    qcmlfile.addRunQualityMetric(base_name, qm);
 
-//    qp_acc = "QC:0000060";
-//    qp = fillQualityParameter(base_name + "_ricdump",
-//                              fetchCVTermNameOrDefault(cv, qp_acc, "IS-1B"),
-//                              "QC",
-//                              qp_acc);
-//    qp.value = String(drops);
-//    qcmlfile.addRunQualityParameter(base_name, qp);
+    qp_acc = "QC:0000060";
+    qm = fillQualityMetric(base_name + "_ricdump",
+                              fetchCVTermNameOrDefault(cv, qp_acc, "IS-1B"),
+                              "QC",
+                              qp_acc);
+    qm.value = String(drops);
+    qcmlfile.addRunQualityMetric(base_name, qm);
 
-//    //---injection times MSn
-//    at_acc = "QC:0000018";
-//    at = fillAttachment(base_name + "_ms2inj",
-//                        fetchCVTermNameOrDefault(cv, at_acc, "MS2 injection time"),
-//                        msaq_ref,
-//                        "QC",
-//                        at_acc,
-//                        {"MS:1000894_[sec]","MS:1000927"});
-//    for (Size i = 0; i < exp.size(); ++i)
-//    {
-//      if (exp[i].getMSLevel() > 1 && !exp[i].getAcquisitionInfo().empty())
-//      {
-//        for (Size j = 0; j < exp[i].getAcquisitionInfo().size(); ++j)
-//        {
-//          if (exp[i].getAcquisitionInfo()[j].metaValueExists("MS:1000927"))
-//          {
-//            std::vector<String> row;
-//            row.push_back(String(exp[i].getRT()));
-//            row.push_back(exp[i].getAcquisitionInfo()[j].getMetaValue("MS:1000927"));
-//            at.tableRows.push_back(row);
-//          }
-//        }
-//      }
-//    }
-//    if (!at.tableRows.empty())
-//    {
-//      qcmlfile.addRunAttachment(base_name, at);
-//    }
+    //---injection times MSn
+    at_acc = "QC:0000018";
+    qm = fillQualityMetric(base_name + "_ms2inj",fetchCVTermNameOrDefault(cv, at_acc, "MS2 injection time"),"QC",at_acc);
+    qm = contentQualityMetric(qm, String(exp.size()), base_name + "_ric_values","table","QC","QC:3000009");
+    for (Size i = 0; i < exp.size(); ++i)
+    {
+      if (exp[i].getMSLevel() > 1 && !exp[i].getAcquisitionInfo().empty())
+      {
+        for (Size j = 0; j < exp[i].getAcquisitionInfo().size(); ++j)
+        {
+          if (exp[i].getAcquisitionInfo()[j].metaValueExists("MS:1000927"))
+          {
+            qm.content["MS:1000894_[sec]"].push_back(String(exp[i].getRT()));
+            qm.content["MS:1000927"].push_back(exp[i].getAcquisitionInfo()[j].getMetaValue("MS:1000927"));
+          }
+        }
+      }
+    }
+    qm.content_value = String(qm.content.begin()->second.size());
+    qcmlfile.addRunQualityMetric(base_name, qm);
 
-//    //-------------------------------------------------------------
-//    // MS  id
-//    //------------------------------------------------------------
-//    if (inputfile_id != "")
-//    {
-//      FileTypes::Type in_type = FileHandler::getTypeByFileName(inputfile_id);
 
-//      if (in_type == FileTypes::MZIDENTML)
-//      {
-//        MzIdentMLFile().load(inputfile_id, prot_ids, pep_ids);   //, document_id);
-//      }
-//      else
-//      {
-//        IdXMLFile().load(inputfile_id, prot_ids, pep_ids);
-//      }
-//      cerr << "idXML read ended. Found " << pep_ids.size() << " peptide identifications." << endl;
+    //-------------------------------------------------------------
+    // MS  id
+    //------------------------------------------------------------
+    if (inputfile_id != "")
+    {
+      FileTypes::Type in_type = FileHandler::getTypeByFileName(inputfile_id);
 
-//      ProteinIdentification::SearchParameters params = prot_ids[0].getSearchParameters();
-//      vector<String> var_mods = params.variable_modifications;
-//      //~ boost::regex re("(?<=[KR])(?=[^P])");
+      if (in_type == FileTypes::MZIDENTML)
+      {
+        MzIdentMLFile().load(inputfile_id, prot_ids, pep_ids);   //, document_id);
+      }
+      else
+      {
+        IdXMLFile().load(inputfile_id, prot_ids, pep_ids);
+      }
+      cerr << "idXML read ended. Found " << pep_ids.size() << " peptide identifications." << endl;
 
-//      string msid_ref = base_name + "_msid";
-//      qp_acc = "QC:0000025";
-//      qp = fillQualityParameter(msid_ref, fetchCVTermNameOrDefault(cv, qp_acc, "percentage of ric slumps"), "QC", qp_acc);
-//      qcmlfile.addRunQualityParameter(base_name, qp);
+      ProteinIdentification::SearchParameters params = prot_ids[0].getSearchParameters();
+      vector<String> var_mods = params.variable_modifications;
+      //~ boost::regex re("(?<=[KR])(?=[^P])");
 
-//      at_acc = "QC:0000026";
-//      at = fillAttachment(base_name + "_idsetting",
-//                          fetchCVTermNameOrDefault(cv, at_acc, "MS id settings"),
-//                          msid_ref,
-//                          "QC",
-//                          at_acc,
-//                          {"MS:1001013","MS:1001016","MS:1001020"});
-//      std::vector<String> row;
-//      row.push_back(String(prot_ids.front().getSearchParameters().db));
-//      row.push_back(String(prot_ids.front().getSearchParameters().db_version));
-//      row.push_back(String(prot_ids.front().getSearchParameters().taxonomy));
-//      at.tableRows.push_back(row);
-//      qcmlfile.addRunAttachment(base_name, at);
+      string msid_ref = base_name + "_msid";
+      qp_acc = "QC:0000025";
+      qm = fillQualityMetric(msid_ref, fetchCVTermNameOrDefault(cv, qp_acc, "percentage of ric slumps"), "QC", qp_acc);
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      //---count missed cleavage numbers
-//      UInt spectrum_count = 0;
-//      Size peptide_hit_count = 0;
-//      UInt runs_count = 0;
-//      Size protein_hit_count = 0;
-//      set<String> peptides;
-//      set<String> proteins;
-//      Size missedcleavages = 0;
-//      for (Size i = 0; i < pep_ids.size(); ++i)
-//      {
-//        if (!pep_ids[i].empty())
-//        {
-//          ++spectrum_count;
-//          peptide_hit_count += pep_ids[i].getHits().size();
-//          const vector<PeptideHit>& temp_hits = pep_ids[i].getHits();
-//          for (Size j = 0; j < temp_hits.size(); ++j)
-//          {
-//            peptides.insert(temp_hits[j].getSequence().toString());
-//          }
-//        }
-//      }
-//      for (set<String>::iterator it = peptides.begin(); it != peptides.end(); ++it)
-//      {
-//        for (String::const_iterator st = it->begin(); st != it->end() - 1; ++st)
-//        {
-//          if (*st == 'K' || *st == 'R')
-//          {
-//            ++missedcleavages;
-//          }
-//        }
-//      }
-//      qp_acc = "QC:0000037";
-//      qp = fillQualityParameter(base_name + "_misscleave", fetchCVTermNameOrDefault(cv, qp_acc, "total number of missed cleavages"), "QC", qp_acc);
-//      qp.value = missedcleavages;
-//      qcmlfile.addRunQualityParameter(base_name, qp);
+      at_acc = "QC:0000026";
+      qm = fillQualityMetric(base_name + "_idsetting",fetchCVTermNameOrDefault(cv, at_acc, "MS id settings"),"QC",at_acc);
+      qm = contentQualityMetric(qm, String(1), base_name + "_idsetting_values","table","QC","QC:3000009");
+      qm.content["MS:1001013"].push_back(String(prot_ids.front().getSearchParameters().db));
+      qm.content["MS:1001016"].push_back(String(prot_ids.front().getSearchParameters().db_version));
+      qm.content["MS:1001020"].push_back(String(prot_ids.front().getSearchParameters().taxonomy));
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      for (Size i = 0; i < prot_ids.size(); ++i)
-//      {
-//        ++runs_count;
-//        protein_hit_count += prot_ids[i].getHits().size();
-//        const vector<ProteinHit>& temp_hits = prot_ids[i].getHits();
-//        for (Size j = 0; j < temp_hits.size(); ++j)
-//        {
-//          proteins.insert(temp_hits[j].getAccession());
-//        }
-//      }
-//      qp_acc = "QC:0000032";
-//      qp = fillQualityParameter(base_name + "_totprot", fetchCVTermNameOrDefault(cv, qp_acc, "total number of identified proteins"), "QC", qp_acc);
-//      qp.value = protein_hit_count;
-//      qcmlfile.addRunQualityParameter(base_name, qp);
+      //---count missed cleavage numbers
+      UInt spectrum_count = 0;
+      Size peptide_hit_count = 0;
+      UInt runs_count = 0;
+      Size protein_hit_count = 0;
+      set<String> peptides;
+      set<String> proteins;
+      Size missedcleavages = 0;
+      for (Size i = 0; i < pep_ids.size(); ++i)
+      {
+        if (!pep_ids[i].empty())
+        {
+          ++spectrum_count;
+          peptide_hit_count += pep_ids[i].getHits().size();
+          const vector<PeptideHit>& temp_hits = pep_ids[i].getHits();
+          for (Size j = 0; j < temp_hits.size(); ++j)
+          {
+            peptides.insert(temp_hits[j].getSequence().toString());
+          }
+        }
+      }
+      for (set<String>::iterator it = peptides.begin(); it != peptides.end(); ++it)
+      {
+        for (String::const_iterator st = it->begin(); st != it->end() - 1; ++st)
+        {
+          if (*st == 'K' || *st == 'R')
+          {
+            ++missedcleavages;
+          }
+        }
+      }
+      qp_acc = "QC:0000037";
+      qm = fillQualityMetric(base_name + "_misscleave", fetchCVTermNameOrDefault(cv, qp_acc, "total number of missed cleavages"), "QC", qp_acc);
+      qm.value = String(missedcleavages);
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      qp_acc = "QC:0000033";
-//      qp = fillQualityParameter(base_name + "_totuniprot", fetchCVTermNameOrDefault(cv, qp_acc, "total number of uniquely identified proteins"), "QC", qp_acc);
-//      qp.value = String(proteins.size());
-//      qcmlfile.addRunQualityParameter(base_name, qp);
+      for (Size i = 0; i < prot_ids.size(); ++i)
+      {
+        ++runs_count;
+        protein_hit_count += prot_ids[i].getHits().size();
+        const vector<ProteinHit>& temp_hits = prot_ids[i].getHits();
+        for (Size j = 0; j < temp_hits.size(); ++j)
+        {
+          proteins.insert(temp_hits[j].getAccession());
+        }
+      }
+      qp_acc = "QC:0000032";
+      qm = fillQualityMetric(base_name + "_totprot", fetchCVTermNameOrDefault(cv, qp_acc, "total number of identified proteins"), "QC", qp_acc);
+      qm.value = protein_hit_count;
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      qp_acc = "QC:0000029";
-//      qp = fillQualityParameter(base_name + "_psms", fetchCVTermNameOrDefault(cv, qp_acc, "total number of PSM"), "QC", qp_acc);
-//      qp.value = String(spectrum_count);
-//      qcmlfile.addRunQualityParameter(base_name, qp);
+      qp_acc = "QC:0000033";
+      qm = fillQualityMetric(base_name + "_totuniprot", fetchCVTermNameOrDefault(cv, qp_acc, "total number of uniquely identified proteins"), "QC", qp_acc);
+      qm.value = String(proteins.size());
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      qp_acc = "QC:0000030";
-//      qp = fillQualityParameter(base_name + "_totpeps", fetchCVTermNameOrDefault(cv, qp_acc, "total number of identified petides"), "QC", qp_acc);
-//      qp.value = String(peptide_hit_count);
-//      qcmlfile.addRunQualityParameter(base_name, qp);
+      qp_acc = "QC:0000029";
+      qm = fillQualityMetric(base_name + "_psms", fetchCVTermNameOrDefault(cv, qp_acc, "total number of PSM"), "QC", qp_acc);
+      qm.value = String(spectrum_count);
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      qp_acc = "QC:0000030";
-//      qp = fillQualityParameter(base_name + "_totunipeps", fetchCVTermNameOrDefault(cv, qp_acc, "total number of uniquely identified petides"), "QC", qp_acc);
-//      qp.value = String(peptides.size());
-//      qcmlfile.addRunQualityParameter(base_name, qp);
+      qp_acc = "QC:0000030";
+      qm = fillQualityMetric(base_name + "_totpeps", fetchCVTermNameOrDefault(cv, qp_acc, "total number of identified petides"), "QC", qp_acc);
+      qm.value = String(peptide_hit_count);
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      at_acc = "QC:0000038";
-//      at = fillAttachment(base_name + "_massacc",
-//                          fetchCVTermNameOrDefault(cv, at_acc, "delta ppm tables"),
-//                          msid_ref,
-//                          "QC",
-//                          at_acc,
-//      {"RT","MZ","Score","PeptideSequence","Charge","TheoreticalWeight","delta_ppm","S/N"});
-//      for (UInt w = 0; w < var_mods.size(); ++w)
-//      {
-//        at.colTypes.push_back(String(var_mods[w]).substitute(' ', '_'));
-//      }
+      qp_acc = "QC:0000030";
+      qm = fillQualityMetric(base_name + "_totunipeps", fetchCVTermNameOrDefault(cv, qp_acc, "total number of uniquely identified petides"), "QC", qp_acc);
+      qm.value = String(peptides.size());
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      std::vector<double> deltas;
-//      //~ prot_ids[0].getSearchParameters();
-//      for (vector<PeptideIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
-//      {
-//        if (!it->getHits().empty())
-//        {
-//          std::vector<String> row;
-//          row.push_back(it->getRT());
-//          row.push_back(it->getMZ());
-//          PeptideHit tmp = it->getHits().front();  //N.B.: depends on score & sort
-//          vector<UInt> pep_mods;
-//          for (UInt w = 0; w < var_mods.size(); ++w)
-//          {
-//            pep_mods.push_back(0);
-//          }
-//          for (AASequence::ConstIterator z =  tmp.getSequence().begin(); z != tmp.getSequence().end(); ++z)
-//          {
-//            Residue res = *z;
-//            String temp;
-//            if (res.isModified() && res.getModificationName() != "Carbamidomethyl")
-//            {
-//              temp = res.getModificationName() + " (" + res.getOneLetterCode()  + ")";
-//              //cout<<res.getModification()<<endl;
-//              for (UInt w = 0; w < var_mods.size(); ++w)
-//              {
-//                if (temp == var_mods[w])
-//                {
-//                  //cout<<temp;
-//                  pep_mods[w] += 1;
-//                }
-//              }
-//            }
-//          }
+      at_acc = "QC:0000038";
+      qm = fillQualityMetric(base_name + "_massacc",fetchCVTermNameOrDefault(cv, at_acc, "delta ppm tables"),"QC",at_acc);
+      qm = contentQualityMetric(qm, String(var_mods.size()), base_name + "_delta ppm tables","table","QC","QC:3000009");
+      for (UInt w = 0; w < var_mods.size(); ++w)
+      {
+        qm.content["var mods"].push_back(String(var_mods[w]).substitute(' ', '_'));
+      }
 
-//          row.push_back(tmp.getScore());
-//          row.push_back(tmp.getSequence().toString().removeWhitespaces());
-//          row.push_back(tmp.getCharge());
-//          row.push_back(String((tmp.getSequence().getMonoWeight() + tmp.getCharge() * Constants::PROTON_MASS_U) / tmp.getCharge()));
-//          double dppm = /* std::abs */ (OpenMS::getDeltaPpm(((tmp.getSequence().getMonoWeight() + tmp.getCharge() * Constants::PROTON_MASS_U) / tmp.getCharge()), it->getMZ()));
-//          row.push_back(String(dppm));
-////          row.push_back(String(calculateSNident(tmp)));
-//          deltas.push_back(dppm);
-//          for (UInt w = 0; w < var_mods.size(); ++w)
-//          {
-//            row.push_back(pep_mods[w]);
-//          }
-//          at.tableRows.push_back(row);
-//        }
-//      }
-//      qcmlfile.addRunAttachment(base_name, at);
+      std::vector<double> deltas;
+      //~ prot_ids[0].getSearchParameters();
+      for (vector<PeptideIdentification>::iterator it = pep_ids.begin(); it != pep_ids.end(); ++it)
+      {
+        if (!it->getHits().empty())
+        {
+          qm.content["RT"].push_back(it->getRT());
+          qm.content["MZ"].push_back(it->getMZ());
+          PeptideHit tmp = it->getHits().front();  //N.B.: depends on score & sort
+          vector<UInt> pep_mods;
+          for (UInt w = 0; w < var_mods.size(); ++w)
+          {
+            pep_mods.push_back(0);
+          }
+          for (AASequence::ConstIterator z =  tmp.getSequence().begin(); z != tmp.getSequence().end(); ++z)
+          {
+            Residue res = *z;
+            String temp;
+            if (res.isModified() && res.getModificationName() != "Carbamidomethyl")
+            {
+              temp = res.getModificationName() + " (" + res.getOneLetterCode()  + ")";
+              //cout<<res.getModification()<<endl;
+              for (UInt w = 0; w < var_mods.size(); ++w)
+              {
+                if (temp == var_mods[w])
+                {
+                  //cout<<temp;
+                  pep_mods[w] += 1;
+                }
+              }
+            }
+          }
+          qm.content["Score"].push_back(tmp.getScore());
+          qm.content["PeptideSequence"].push_back(tmp.getSequence().toString().removeWhitespaces());
+          qm.content["Charge"].push_back(tmp.getCharge());
+          qm.content["TheoreticalWeight"].push_back(String((tmp.getSequence().getMonoWeight() + tmp.getCharge() * Constants::PROTON_MASS_U) / tmp.getCharge()));
+          double dppm = /* std::abs */ (OpenMS::getDeltaPpm(((tmp.getSequence().getMonoWeight() + tmp.getCharge() * Constants::PROTON_MASS_U) / tmp.getCharge()), it->getMZ()));
+          qm.content["delta_ppm"].push_back(String(dppm));
+//          qm.content["S/N"].push_back(String(calculateSNident(tmp)));
+          deltas.push_back(dppm);
+          for (UInt w = 0; w < var_mods.size(); ++w)
+          {
+            qm.content["Mods"].push_back(pep_mods[w]);
+          }
+        }
+      }
+      qm.content_value = String(qm.content.begin()->second.size());
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      qp_acc = "QC:0000040";
-//      qp = fillQualityParameter(base_name + "_mean_delta", fetchCVTermNameOrDefault(cv, qp_acc, "mean delta ppm"), "QC", qp_acc);
-//      qp.value = String(OpenMS::Math::mean(deltas.begin(), deltas.end()));
-//      qcmlfile.addRunQualityParameter(base_name, qp);
+      qp_acc = "QC:0000040";
+      qm = fillQualityMetric(base_name + "_mean_delta", fetchCVTermNameOrDefault(cv, qp_acc, "mean delta ppm"), "QC", qp_acc);
+      qm.value = String(OpenMS::Math::mean(deltas.begin(), deltas.end()));
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      qp_acc = "QC:0000041";
-//      qp = fillQualityParameter(base_name + "_median_delta", fetchCVTermNameOrDefault(cv, qp_acc, "median delta ppm"), "QC", qp_acc);
-//      qp.value = String(OpenMS::Math::median(deltas.begin(), deltas.end(), false));
-//      qcmlfile.addRunQualityParameter(base_name, qp);
+      qp_acc = "QC:0000041";
+      qm = fillQualityMetric(base_name + "_median_delta", fetchCVTermNameOrDefault(cv, qp_acc, "median delta ppm"), "QC", qp_acc);
+      qm.value = String(OpenMS::Math::median(deltas.begin(), deltas.end(), false));
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      qp_acc = "QC:0000035";
-//      qp = fillQualityParameter(base_name + "_ratio_id", fetchCVTermNameOrDefault(cv, qp_acc, "id ratio"), "QC", qp_acc);
-//      qp.value = String(double(pep_ids.size()) / double(mslevelcounts[2]));
-//      qcmlfile.addRunQualityParameter(base_name, qp);
-//    }
+      qp_acc = "QC:0000035";
+      qm = fillQualityMetric(base_name + "_ratio_id", fetchCVTermNameOrDefault(cv, qp_acc, "id ratio"), "QC", qp_acc);
+      qm.value = String(double(pep_ids.size()) / double(mslevelcounts[2]));
+      qcmlfile.addRunQualityMetric(base_name, qm);
+    }
 
-//    //-------------------------------------------------------------
-//    // MS quantitation
-//    //------------------------------------------------------------
-//    FeatureMap map;
-//    String msqu_ref = base_name + "_msqu";
-//    if (inputfile_feature != "")
-//    {
-//      FeatureXMLFile f;
-//      f.load(inputfile_feature, map);
+    //-------------------------------------------------------------
+    // MS quantitation
+    //------------------------------------------------------------
+    FeatureMap map;
+    String msqu_ref = base_name + "_msqu";
+    if (inputfile_feature != "")
+    {
+      FeatureXMLFile f;
+      f.load(inputfile_feature, map);
 
-//      cout << "Read featureXML file..." << endl;
+      cout << "Read featureXML file..." << endl;
 
-//      //~ UInt fiter = 0;
-//      map.sortByRT();
-//      map.updateRanges();
+      //~ UInt fiter = 0;
+      map.sortByRT();
+      map.updateRanges();
 
-//      qp_acc = "QC:0000045";
-//      qp = fillQualityParameter(msqu_ref, fetchCVTermNameOrDefault(cv, qp_acc, "MS quantification result details"), "QC", qp_acc);
-//      qcmlfile.addRunQualityParameter(base_name, qp);
+      qp_acc = "QC:0000045";
+      qm = fillQualityMetric(msqu_ref, fetchCVTermNameOrDefault(cv, qp_acc, "MS quantification result details"), "QC", qp_acc);
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      qp_acc = "QC:0000046";
-//      qp = fillQualityParameter(base_name + "_feature_count", fetchCVTermNameOrDefault(cv, qp_acc, "MS quantification result details"), "QC", qp_acc);
-//      qp.value = String(map.size());
-//      qcmlfile.addRunQualityParameter(base_name, qp);
-//    }
+      qp_acc = "QC:0000046";
+      qm = fillQualityMetric(base_name + "_feature_count", fetchCVTermNameOrDefault(cv, qp_acc, "MS quantification result details"), "QC", qp_acc);
+      qm.value = String(map.size());
+      qcmlfile.addRunQualityMetric(base_name, qm);
+    }
 
-//    if (inputfile_feature != "" && !remove_duplicate_features)
-//    {
+    if (inputfile_feature != "" && !remove_duplicate_features)
+    {
 
-//      at_acc = "QC:0000047";
-//      at = fillAttachment(base_name + "_features",
-//                          fetchCVTermNameOrDefault(cv, at_acc, "features"),
-//                          msqu_ref,
-//                          "QC",
-//                          at_acc,
-//                          {"RT","MZ","Intensity","Charge","Quality","FWHM","IDs"});
-//      UInt fiter = 0;
-//      UInt ided = 0;
-//      map.sortByRT();
-//      //ofstream out(outputfile_name.c_str());
-//      while (fiter < map.size())
-//      {
-//        std::vector<String> row;
-//        row.push_back(map[fiter].getMZ());
-//        row.push_back(map[fiter].getRT());
-//        row.push_back(map[fiter].getIntensity());
-//        row.push_back(map[fiter].getCharge());
-//        row.push_back(map[fiter].getOverallQuality());
-//        row.push_back(map[fiter].getWidth());
-//        row.push_back(map[fiter].getPeptideIdentifications().size());
-//        if (map[fiter].getPeptideIdentifications().size() > 0)
-//        {
-//          ++ided;
-//        }
-//        fiter++;
-//        at.tableRows.push_back(row);
-//      }
-//      qcmlfile.addRunAttachment(base_name, at);
+      at_acc = "QC:0000047";
+      qm = fillQualityMetric(base_name + "_features",fetchCVTermNameOrDefault(cv, at_acc, "features"),"QC",at_acc);
+      qm = contentQualityMetric(qm, String(map.size()), base_name + "_features","table","QC","QC:3000009");
+      UInt fiter = 0;
+      UInt ided = 0;
+      map.sortByRT();
+      //ofstream out(outputfile_name.c_str());
+      while (fiter < map.size())
+      {
+        qm.content["RT"].push_back(map[fiter].getMZ());
+        qm.content["MZ"].push_back(map[fiter].getRT());
+        qm.content["Intensity"].push_back(map[fiter].getIntensity());
+        qm.content["Charge"].push_back(map[fiter].getCharge());
+        qm.content["Quality"].push_back(map[fiter].getOverallQuality());
+        qm.content["FWHM"].push_back(map[fiter].getWidth());
+        qm.content["IDs"].push_back(map[fiter].getPeptideIdentifications().size());
+        if (map[fiter].getPeptideIdentifications().size() > 0)
+        {
+          ++ided;
+        }
+        fiter++;
+      }
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//      qp_acc = "QC:0000058";
-//      qp = fillQualityParameter(base_name + "_idfeature_count", fetchCVTermNameOrDefault(cv, qp_acc, "number of identified features"), "QC", qp_acc);
-//      qp.value = ided;
-//      qcmlfile.addRunQualityParameter(base_name, qp);
+      qp_acc = "QC:0000058";
+      qm = fillQualityMetric(base_name + "_idfeature_count", fetchCVTermNameOrDefault(cv, qp_acc, "number of identified features"), "QC", qp_acc);
+      qm.value = String(ided);
+      qcmlfile.addRunQualityMetric(base_name, qm);
 
-//    }
-//    else if (inputfile_feature != "" && remove_duplicate_features)
-//    {
-//      at_acc = "QC:0000047";
-//      at = fillAttachment(base_name + "_features",
-//                          fetchCVTermNameOrDefault(cv, at_acc, "features"),
-//                          msqu_ref,
-//                          "QC",
-//                          at_acc,
-//                          {"RT","MZ","Intensity","Charge"});
-//      FeatureMap map, map_out;
-//      FeatureXMLFile f;
-//      f.load(inputfile_feature, map);
-//      UInt fiter = 0;
-//      map.sortByRT();
-//      while (fiter < map.size())
-//      {
-//        FeatureMap map_tmp;
-//        for (UInt k = fiter; k <= map.size(); ++k)
-//        {
-//          if (abs(map[fiter].getRT() - map[k].getRT()) < 0.1)
-//          {
-//            //~ cout << fiter << endl;
-//            map_tmp.push_back(map[k]);
-//          }
-//          else
-//          {
-//            fiter = k;
-//            break;
-//          }
-//        }
-//        map_tmp.sortByMZ();
-//        UInt retif = 1;
-//        map_out.push_back(map_tmp[0]);
-//        while (retif < map_tmp.size())
-//        {
-//          if (abs(map_tmp[retif].getMZ() - map_tmp[retif - 1].getMZ()) > 0.01)
-//          {
-//            cout << "equal RT, but mass different" << endl;
-//            map_out.push_back(map_tmp[retif]);
-//          }
-//          retif++;
-//        }
-//      }
-//      qcmlfile.addRunAttachment(base_name, at);
-//    }
-//    if (inputfile_consensus != "")
-//    {
-//      cout << "Reading consensusXML file..." << endl;
-//      ConsensusXMLFile f;
-//      ConsensusMap map;
-//      f.load(inputfile_consensus, map);
-//      //~ String CONSENSUS_NAME = "_consensus.tsv";
-//      //~ String combined_out = outputfile_name + CONSENSUS_NAME;
-//      //~ ofstream out(combined_out.c_str());
-
-//      at_acc = "QC:xxxxxxxx";
-//      at = fillAttachment(base_name + "_consensuses",
-//                          fetchCVTermNameOrDefault(cv, at_acc, "consensuspoints"),
-//                          msqu_ref,
-//                          "QC",
-//                          at_acc,
-//      {"Native_spectrum_ID","DECON_RT_(sec)","DECON_MZ_(Th)","DECON_Intensity","Feature_RT_(sec)","Feature_MZ_(Th)","Feature_Intensity","Feature_Charge"});
-//      for (ConsensusMap::const_iterator cmit = map.begin(); cmit != map.end(); ++cmit)
-//      {
-//        const ConsensusFeature& CF = *cmit;
-//        for (ConsensusFeature::const_iterator cfit = CF.begin(); cfit != CF.end(); ++cfit)
-//        {
-//          std::vector<String> row;
-//          FeatureHandle FH = *cfit;
-//          row.push_back(CF.getMetaValue("spectrum_native_id"));
-//          row.push_back(CF.getRT()); row.push_back(CF.getMZ());
-//          row.push_back(CF.getIntensity());
-//          row.push_back(FH.getRT());
-//          row.push_back(FH.getMZ());
-//          row.push_back(FH.getCharge());
-//          at.tableRows.push_back(row);
-//        }
-//      }
-//      qcmlfile.addRunAttachment(base_name, at);
-//    }
-
+    }
+    else if (inputfile_feature != "" && remove_duplicate_features)
+    {
+      throw Exception::NotImplemented(__FILE__, __LINE__, OPENMS_PRETTY_FUNCTION);
+    }
+    if (inputfile_consensus != "")
+    {
+      throw Exception::NotImplemented(__FILE__, __LINE__, OPENMS_PRETTY_FUNCTION);
+    }
 
     //-------------------------------------------------------------
     // finalize

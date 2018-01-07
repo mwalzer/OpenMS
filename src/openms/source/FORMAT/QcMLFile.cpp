@@ -1293,6 +1293,9 @@ namespace OpenMS
     //~ setProgress(++progress_);
     //header & xslt
 
+    // deactivate xslt for now
+    xslt_ref = "";
+
     os << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
     if (!xslt_ref.empty())
     {
@@ -1311,7 +1314,7 @@ namespace OpenMS
         os << "\t<runQuality ID=\"" << String(qmsit->first) << "\">\n";
         for (std::vector<QualityMetric>::const_iterator qit = qmsit->second.begin(); qit != qmsit->second.end(); ++qit)
         {
-          os << qit->toXMLString(4);
+          os << qit->toXMLString(2);
         }
         os << "\t</runQuality>\n";
       }

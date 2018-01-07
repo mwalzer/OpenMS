@@ -1,32 +1,51 @@
 format-version: 1.2
-data-version: 0.1.0
-date: 20:11:2013 11:03
-saved-by: Mathias Walzer
-remark: creator: Mathias Walzer <walzer <-at-> informatik.uni-tuebingen.de>
-import: http://unit-ontology.googlecode.com/svn/trunk/unit.obo
-import: http://psidev.cvs.sourceforge.net/viewvc/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo
+data-version: releases/2015-11-18
+date: 07:01:2018 17:54
+saved-by: mwalzer
+auto-generated-by: OBO-Edit 2.3.1
+subsetdef: abnormal_slim "Abnormal/normal slim"
+subsetdef: absent_slim "Absent/present slim"
+subsetdef: attribute_slim "Attribute slim"
+subsetdef: cell_quality "cell_quality"
+subsetdef: disposition_slim "Disposition slim"
+subsetdef: hpo_slim "Human phenotype slim"
+subsetdef: mpath_slim "Pathology slim"
+subsetdef: prefix_slim "prefix slim"
+subsetdef: relational_slim "Relational slim: types of quality that require an additional entity in order to exist"
+subsetdef: scalar_slim "Scalar slim"
+subsetdef: unit_group_slim "unit group slim"
+subsetdef: unit_slim "unit slim"
+subsetdef: value_slim "Value slim"
 default-namespace: QC
+remark: creator: Martin Eisenacher <martin.eisenacher <-at-> ruhr-uni-bochum.de>
 remark: namespace: QC
-remark: version: 0.1.0
+remark: version: 0.1.2
+remark: ########################################################################
+remark: # MASS SPECTROMETRY QC PARAMETERS - NAMESPACE QC:0000001... see qc-cv.obo
+remark: # META DATA PARAMETERS - NAMESPACE QC:1000001... see qc-cv.obo
+remark: # NEXT GENERATION SEQUENCING QC PARAMETERS - NAMESPACE QC:2000001... see qc-cv.obo
+remark: # PSI QC PARAMETERS - NAMESPACE QC:3000001...
+remark: ########################################################################
+remark: most terms will describe values as they will be enclosed b the content field of aquality metric, otherwise value field
+remark: TO DECIDE do we want to impose value type restrictions?
+remark: TO DO check is_a accessions
+remark: ########################################################################
+remark: relationship: has_units UO:00000XX
+remark: Filtered by Ancestor ID equals "UO:0000000"
+import: ./unit.obo
 ontology: uo
-ontology: ms
 
 [Typedef]
-id: has_regexp
-name: has regexp
+id: has_relation
+name: has_relation
+
+[Typedef]
+id: has_type
+name: has_type
 
 [Typedef]
 id: has_units
 name: has_units
-
-[Typedef]
-id: part_of
-name: part_of
-is_transitive: true
-
-[Typedef]
-id: has_order
-name: has_order
 
 [Term]
  id: QC:0000001
@@ -384,25 +403,28 @@ remark: TIC plot is MS:1000235
  id: QC:0000048
  name: value table
  def: "The table contains generic information." [PXS:QC]
+is_obsolete: true
 
 [Term]
  id: QC:0000049
  name: generic table
  def: "The table contains generic information." [PXS:QC]
  is_a: QC:0000048 ! value table
-
+is_obsolete: true
 
 [Term]
  id: QC:0000050
  name: image plot
  def: "The plot contains generic information." [PXS:QC]
+is_obsolete: true
  
- 
+
 [Term]
  id: QC:0000051
  name: generic plot
- def: "The plot contains generic information." [PXS:QC]
+ def: "The plot contains selfdescriptive information." [PXS:QC]
  is_a: QC:0000050 ! image plot
+is_obsolete: true
 
 
 [Term]
@@ -469,3 +491,454 @@ remark: TIC plot is MS:1000235
  def: "The number of 10fold dumps in MS1 Intensity" [PXS:QC]
  is_a: QC:0000045 ! MS quantification result details
  is_a: QC:0000025 ! MS identification result details
+
+[Term]
+id: QC:3000001
+name: QC metric
+def: "Parent term for QC metrics (in contrast to QC metric value types and relations)." [PSI:QC]
+
+[Term]
+id: QC:3000002
+name: QC metric relation
+def: "Parent term for QC metric relations (in contrast to QC metrics and types)." [PSI:QC]
+
+[Term]
+id: QC:3000003
+name: QC metric group
+def: "Parent term for QC metrics groups." [PSI:QC]
+
+[Term]
+id: QC:3000005
+name: QC metric value type
+def: "Parent term for QC metric value types such as n-tuple, single_value, quantile (in contrast to QC metrics and relations)." [PSI:QC]
+
+[Term]
+id: QC:3000006
+name: single_value
+def: "metrics consisting of a single value (in contrast to quadruples or tables)" [PSI:QC]
+is_a: QC:3000005 ! QC metric value type
+
+[Term]
+id: QC:3000007
+name: quadruple
+def: "metrics consisting of a quadruple such as quartiles (in contrast to single_value or tables)" [PSI:QC]
+is_a: QC:3000005 ! QC metric value type
+
+[Term]
+id: QC:3000008
+name: n-tuple
+def: "metrics consisting of a n-tuples such as percentiles (in contrast to single_value or tables). In JSON representation, the unit of the values is expected as key of the array of values. The length of the array will be the value field of any instance of this cv term." [PSI:QC]
+is_a: QC:3000005 ! QC metric value type
+
+[Term]
+id: QC:3000009
+name: table
+def: "metrics consisting of a table of values (in contrast to single_value or n-tuples). In JSON representation, the unit of the values is expected as key of an array of values. Each array of values represents one column in the table. The length of the table will be the value field of any instance of this cv term." [PSI:QC]
+is_a: QC:3000005 ! QC metric value type
+
+[Term]
+id: QC:3000010
+name: image
+def: "Visual representation of a metric in base64 encoding." [PSI:QC]
+is_a: QC:3000005 ! QC metric value type
+
+
+[Term]
+id: QC:3000020
+name: Category: Chromatography
+def: "TODO: description of this category." [PSI:QC]
+is_a: QC:30000xx ! QC metric
+
+[Term]
+id: QC:3000021
+name: Category: MS1
+def: "TODO: description of this category." [PSI:QC]
+is_a: QC:30000xx ! QC metric
+
+[Term]
+id: QC:3000022
+name: Category: MS2
+def: "TODO: description of this category." [PSI:QC]
+is_a: QC:30000xx ! QC metric
+
+[Term]
+id: QC:3000023
+name: Category: Feature Extraction
+def: "TODO: description of this category." [PSI:QC]
+is_a: QC:30000xx ! QC metric
+
+[Term]
+id: QC:3000024
+name: Quant_based
+def: "metrics based on a previous quantification run (in contrast to ID_free, ID_based)" [PSI:QC]
+is_a: QC:30000xx ! QC metric
+
+[Term]
+id: QC:3000025
+name: Category: Dynamic sampling
+def: "TODO: description of this category." [PSI:QC]
+is_a: QC:30000xx ! QC metric
+
+[Term]
+id: QC:3000026
+name: Category: Ion source
+def: "TODO: description of this category." [PSI:QC]
+is_a: QC:30000xx ! QC metric
+
+[Term]
+id: QC:3000027
+name: Category: Peptide Identification
+def: "TODO: description of this category." [PSI:QC]
+is_a: QC:30000xx ! QC metric
+
+[Term]
+id: QC:3000040
+name: QC metric relation: one run
+def: "metrics which are calculated on one run (one .raw file)" [PSI:QC]
+is_a: QC:3000002 ! QC metric relation
+
+[Term]
+id: QC:3000041
+name: QC metric relation: multiple runs
+def: "metrics which are calculated on multiple runs / a set of runs (multiple .raw files)" [PSI:QC]
+is_a: QC:3000002 ! QC metric relation
+
+[Term]
+id: QC:3000042
+name: QC metric relation: one spectrum
+def: "metrics which are calculated on one spectrum." [PSI:QC]
+is_a: QC:3000002 ! QC metric relation
+
+[Term]
+id: QC:3000043
+name: ID_based
+def: "metrics based on a previous identification run (in contrast to ID_free, Quant_based)" [PSI:QC]
+is_a: QC:3000002 ! QC metric relation
+
+[Term]
+id: QC:3000044
+name: ID_free
+def: "metrics not based on a previous identification run (in contrast to ID_based, quant_based)" [PSI:QC]
+is_a: QC:3000002 ! QC metric relation
+
+remark: Nist metrics are merged within one category as long as ID_free/based is not mixed and categorisation makes sense.
+
+[Term]
+id: QC:3000100
+name: NIST/Quameter Metric - Fraction of repeat peptide IDs with -/+4 min
+def: "Fraction of all peptides identified at least 4 min earlier/later than max MS1 for ID; Estimates peak broadening. First value is -4min(C-1A), second +4min(C-1B)"
+is_a: QC:3000008 ! n-tuple
+is_a: QC:30000xx ! Category: Chromatography
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "C-1A" NARROW []
+Synonym: "C-1B" NARROW []
+
+[Term]
+id: QC:3000101
+name: NIST/Quameter Metric - Interquartile retention time period Period (min)
+def: "Time period over which 50% of peptides were identified; Longer times indicate better chromatographic separation"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: Chromatography
+relationship: has_relation QC:30000xx ! ID_free
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "C-2A" NARROW []
+
+[Term]
+id: QC:3000102
+name: NIST/Quameter Metric - Interquartile retention time period Pep ID rate
+def: "Rate of peptide identification during C-2A; Higher rates indicate efficient sampling and identification"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: Chromatography
+relationship: has_relation QC:30000xx ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "C-2B" NARROW []
+
+[Term]
+id: QC:3000103
+name: NIST/Quameter Metric - Peak width at half-height for IDs 
+def: "FWHM summary values for IDs. First value is median(C-3A) for all identified unique peptides (s); Sharper peak widths indicate better chromatographic resolution. Second value is interquartile distance(C-3B); small values indicate consistency; Tighter distributions indicate more peak width uniformity"
+is_a: QC:3000008 ! n-tuple
+is_a: QC:30000xx ! Category: Chromatography
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "C-3A" NARROW []
+Synonym: "C-3B" NARROW []
+
+[Term]
+id: QC:3000104
+name: NIST/Quameter Metric - Peak widths at half-max over RT deciles for IDs
+def: "Median peak width for identified peptides in first, middle, end RT decile, (C-4A,C-4C,C-4B); Estimates peak widths at sections of the gradient"
+is_a: QC:3000008 ! n-tuple
+is_a: QC:30000xx ! Category: Chromatography
+relationship: has_relation QC:30000xx ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "C-4A" NARROW []
+Synonym: "C-4B" NARROW []
+Synonym: "C-4C" NARROW []
+
+[Term]
+id: QC:3000105
+name: NIST/Quameter Metric - Peptide elution order max diff in first and last N(a, b)/10 peptides
+def: "Peptide elution order can be used to measure elution differences early (hydrophilic) and late (hydrophobic) in the chromatographic gradient.; Values: Fraction of extra early (hydrophilic) eluters, Fraction of extra late (hydrophobic) eluters"
+is_a: QC:3000008 ! n-tuple
+is_a: QC:30000xx ! Category: Chromatography
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000011 ! QC metric relation: multiple runs
+Synonym: "C-6A" NARROW []
+Synonym: "C-6B" NARROW []
+
+[Term]
+id: QC:3000106
+name: NIST/Quameter Metric - Dynamic sampling Ratio
+def: "Estimates oversampling Ratio; First value once/twice (DS-1A): of peptides identified by 1 spectrum divided by number identified by 2 spectra, second value Twice/thrice (DS-1B): of peptides identified by 2 spectra divided by number identified by 3 spectra"
+is_a: QC:3000008 ! n-tuple
+is_a: QC:30000xx ! Category: Dynamic sampling
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "DS-1A" NARROW []
+Synonym: "DS-1B" NARROW []
+
+[Term]
+id: QC:3000107
+name: NIST/Quameter Metric - Spectrum counts 
+def: "Number of scans taken over C-2A; Fewer scans indicates more sampling; first value MS1 scans/full (DS-2A), second value MS2 scans (DS-2B)"
+is_a: QC:3000008 ! n-tuple
+is_a: QC:30000xx ! Category: Dynamic sampling
+relationship: has_relation QC:30000xx ! ID_free
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "DS-2A" NARROW []
+Synonym: "DS-2B" NARROW []
+
+[Term]
+id: QC:3000108
+name: NIST/Quameter Metric - MS1 max/MS1 sampled abundance ratio IDs Median all IDs
+def: "Ratio of MS1 maximum to MS1 value at sampling for median decile of peptides by MS1 maximum intensity (1 = sampled at peak maxima); Estimates position on peak where sampled for peptides of all abundances"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: Dynamic sampling
+relationship: has_relation QC:30000xx ! ID_free
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "DS-3A" NARROW []
+
+[Term]
+id: QC:3000109
+name: NIST/Quameter Metric - MS1 max/MS1 sampled abundance ratio IDs Med bottom 1/2
+def: "Ratio of MS1 maximum to MS1 value at sampling for bottom 50% of peptides by MS1 maximum intensity (1 = sampled at peak maxima); Estimates position on peak where sampled for least abundant 50% of peptides"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: Dynamic sampling
+relationship: has_relation QC:30000xx ! ID_free
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "DS-3B" NARROW []
+
+[Term]
+id: QC:3000110
+name: NIST/Quameter Metric - MS1 during middle (and early) peptide retention period MS1 jumps/falls >10×
+def: "Number of times where MS1 signal greatly decreased/increased between adjacent scans more than 10-fold (electrospray instability); Flags ESI instability; First value jumps(IS-1A), second value falls(IS-1B)"
+is_a: QC:3000008 ! n-tuple
+is_a: QC:30000xx ! Category: Ion source
+relationship: has_relation QC:30000xx ! ID_free
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "IS-1A" NARROW []
+Synonym: "IS-1B" NARROW []
+
+[Term]
+id: QC:3000111
+name: NIST/Quameter Metric - Precursor m/z for IDs Median
+def: "Median m/z value for all identified peptides (unique ions); Higher median m/z can correlate with inefficient or partial ionization"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: Ion source
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "IS-2" NARROW []
+
+[Term]
+id: QC:3000112
+name: NIST/Quameter Metric - IDs by charge state (relative to 2+)
+def: "Numbers of 1+/3+/4+ peptides over 2+ peptides; High ratios of 1+/2+ peptides may indicate inefficient ionization, higher ratios of 3+/2+ peptides may preferentially favor longer peptides, higher ratios of 4+/2+ peptides may preferentially favor longer peptides"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: Ion source
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "IS-3A" NARROW []
+Synonym: "IS-3B" NARROW []
+Synonym: "IS-3C" NARROW []
+
+[Term]
+id: QC:3000113
+name: NIST/Quameter Metric - Ion injection times for IDs MS1 median
+def: "MS1 ion injection time; Lower times indicate an abundance of ions"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: MS1
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "MS1-1" NARROW []
+
+[Term]
+id: QC:3000114
+name: NIST/Quameter Metric - MS1 during middle (and early) peptide retention period S/N median
+def: "Median signal-to-noise value (ratio of maximum to median peak height) for MS1 spectra up to and including C-2A; Higher MS1 S/N may correlate with higher signal discrimination"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: MS1
+relationship: has_relation QC:30000xx ! ID_free
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "MS1-2A" NARROW []
+
+[Term]
+id: QC:3000115
+name: NIST/Quameter Metric - MS1 during middle (and early) peptide retention period TIC median
+def: "Median TIC value for identified peptides over same time period as used for MS1-2A; Estimates the total absolute signal for peptides (may vary significantly between instruments)"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: MS1
+relationship: has_relation QC:30000xx ! ID_free
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "MS1-2B" NARROW []
+
+[Term]
+id: QC:3000116
+name: NIST/Quameter Metric - MS1 ID max 95/5 percentile
+def: "Ratio of 95th over 5th percentile MS1 maximum intensity values for identified peptides (approximates dynamic range of signal); Estimates the dynamic range of the peptide signals"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: MS1
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "MS1-3A" NARROW []
+
+[Term]
+id: QC:3000117
+name: NIST/Quameter Metric - MS1 ID max Median
+def: "Median maximum MS1 value for identified peptides; Estimates the median MS1 signal for peptides"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: MS1
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "MS1-3B" NARROW []
+
+[Term]
+id: QC:3000118
+name: NIST/Quameter Metric - MS1 intensity variation for peptides Within series
+def: "Average of between series intensity variations for identified peptides; Used to monitor relative intensity differences with a series"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: MS1
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000011 ! QC metric relation: multiple runs
+Synonym: "MS1-4A" NARROW []
+
+[Term]
+id: QC:3000119
+name: NIST/Quameter Metric - MS1 intensity variation for peptides Between/in
+def: "Ratio of average intensity variation between series to average intensity variation within a series (low values indicate similarity between series); Used to monitor relative intensity differences with a series compared with between series"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: MS1
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000011 ! QC metric relation: multiple runs
+Synonym: "MS1-4B" NARROW []
+
+[Term]
+id: QC:3000120
+name: NIST/Quameter Metric - Precursor m/z - Peptide ion m/z
+def: "Precursor errors; Measures the accuracy of the identifications, first value median real m/z value, second mean absolute m/z value, third median real value in ppm, forth ppm interQ."
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: MS1
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "MS1-5A" NARROW []
+Synonym: "MS1-5B" NARROW []
+Synonym: "MS1-5C" NARROW []
+Synonym: "MS1-5D" NARROW []
+
+[Term]
+id: QC:3000121
+name: NIST/Quameter Metric - Ion injection times for IDs MS2 median
+def: "MS2 ion injection time; "
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: MS2
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "MS2-1" NARROW []
+
+[Term]
+id: QC:3000122
+name: NIST/Quameter Metric - MS2 ID S/N Median
+def: "Median S/N (ratio of maximum to median peak height) for identified MS2 spectra; Higher S/N correlates with increased frequency of peptide identification"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: MS2
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "MS2-2" NARROW []
+
+[Term]
+id: QC:3000123
+name: NIST/Quameter Metric - MS2 ID peaks Median
+def: "Median number of peaks in an MS2 scan; Higher peak counts can correlate with more signal"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: MS2
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "MS2-3" NARROW []
+
+[Term]
+id: QC:3000124
+name: NIST/Quameter Metric - Fraction of MS2 identified at different MS1 max quartiles ID fract
+def: "Fraction of total MS2 scans identified in each quartile of peptides sorted by MS1 maximum intensity; Higher fractions of identified MS2 spectra indicate efficiency of detection and sampling"
+is_a: QC:3000008 ! n-tuple
+is_a: QC:30000xx ! Category: MS2
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "MS2-4A" NARROW []
+Synonym: "MS2-4B" NARROW []
+Synonym: "MS2-4C" NARROW []
+Synonym: "MS2-4D" NARROW []
+
+[Term]
+id: QC:3000125
+name: NIST/Quameter Metric - MS2 ID score Median
+def: "Median peptide identification score for all peptides; higher scores generally correlate with increased MS2 S/N; Higher scores correlate with higher S/N and frequency of identification"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: Peptide Identification
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "P-1" NARROW []
+
+[Term]
+id: QC:3000126
+name: NIST/Quameter Metric - Tryptic peptide counts Identifications
+def: "Number of MS2 spectra identifying tryptic peptide ions (total 'spectral counts'); Total identifications correlate with high levels of peptide signals, performance"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: Peptide Identification
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "P-2A" NARROW []
+
+[Term]
+id: QC:3000127
+name: NIST/Quameter Metric - Tryptic peptide counts Ions
+def: "Number of tryptic peptide ions identified; ions differing by charge state and/or modification state are counted separately; A good overall performance measure"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: Peptide Identification
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "P-2B" NARROW []
+
+[Term]
+id: QC:3000128
+name: NIST/Quameter Metric - Tryptic peptide counts Peptide
+def: "Number of unique tryptic peptide sequences identified; A good overall performance measure"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: Peptide Identification
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "P-2C" NARROW []
+
+[Term]
+id: QC:3000129
+name: NIST/Quameter Metric - Peptides Count Semi/tryp
+def: "Peptides Count; Indicates prevalence of semitryptic peptides in sample; increasing ratios may indicate changes in sample or in source"
+is_a: QC:300000x ! single_value
+is_a: QC:30000xx ! Category: Peptide Identification
+relationship: has_relation QC:3000043 ! ID_based
+relationship: has_relation QC:3000040 ! QC metric relation: one run
+Synonym: "P-3" NARROW []
+
+
+
+
