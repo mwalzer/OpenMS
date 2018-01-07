@@ -40,6 +40,7 @@ PSMFeatureExtractor
 QCCalculator
 QCEmbedder
 QCExporter
+QCtoJSON
 QCExtractor
 QCImporter
 QCMerger

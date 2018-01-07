@@ -303,6 +303,10 @@ protected:
         qm.cvAcc = "QC:0000044";
         qm.cvRef = "QC";
         qm.content_value = String(exp.size());
+        qm.content_id = base_name + "_precursors_table";
+        qm.content_name = "precursortable";
+        qm.content_cvAcc = "linkedlist";
+        qm.content_cvRef = "QC";
     for (Size i = 0; i < exp.size(); ++i)
     {
       mslevelcounts[exp[i].getMSLevel()]++;

@@ -115,6 +115,7 @@ protected:
     registerOutputFile_("out", "<file>", "", "Output json formatted table.");
     setValidFormats_("out", ListUtils::create<String>("json"));
     registerFlag_("acc_is_name", "give name instead of cv accession", false);
+    registerFlag_("webuse", "produce compact json for webuse", false);
   }
 
   ExitCodes main_(int, const char**) override
@@ -171,7 +172,7 @@ protected:
     else
     {
       //TODO warn when target_run is empty or not present in qcml
-      json_str = qcmlfile.exportContent(target_run, target_qp, getFlag_("acc_is_name"));
+      json_str = qcmlfile.exportContent(target_run, target_qp, getFlag_("webuse"), getFlag_("acc_is_name"));
     }
 
     ofstream fout(out.c_str());
