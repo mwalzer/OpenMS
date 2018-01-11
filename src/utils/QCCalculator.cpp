@@ -599,7 +599,7 @@ protected:
       qm.value = String(peptide_hit_count);
       qcmlfile.addRunQualityMetric(base_name, qm);
 
-      qp_acc = "QC:0000030";
+      qp_acc = "QC:0000031";
       qm = fillQualityMetric(base_name + "_totunipeps", fetchCVTermNameOrDefault(cv, qp_acc, "total number of uniquely identified petides"), "QC", qp_acc);
       qm.value = String(peptides.size());
       qcmlfile.addRunQualityMetric(base_name, qm);
